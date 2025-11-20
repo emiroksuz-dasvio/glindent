@@ -296,9 +296,29 @@ export default function Home() {
           }}
         >
           <div className="relative z-10 flex h-full flex-col justify-start">
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12 xl:gap-16 pt-4 md:pt-8 lg:items-start">
-              {/* Text Content */}
-              <div className="flex flex-col justify-start max-w-3xl">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-12 xl:gap-16 pt-4 md:pt-8 lg:items-start">
+              {/* Image Area - First on mobile, second on desktop */}
+              <div className="relative block lg:order-2 animate-in fade-in slide-in-from-right-8 duration-1000 delay-200 self-start">
+                <div className="relative w-full min-h-[250px] sm:min-h-[300px] md:min-h-[400px] lg:min-h-[500px] xl:min-h-[600px]">
+                  {/* Glass effect container */}
+                  <div className="glass absolute inset-0 rounded-2xl sm:rounded-3xl overflow-hidden">
+                    <Image
+                      src="/hero-dental.jpg"
+                      alt="Professional dental care - Patient receiving quality dental treatment"
+                      fill
+                      className="object-cover"
+                      priority
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                    />
+                  </div>
+                  
+                  {/* Decorative elements */}
+                  <div className="absolute -inset-4 bg-linear-to-br from-primary/20 to-accent/20 rounded-2xl sm:rounded-3xl blur-2xl -z-10 opacity-50" />
+                </div>
+              </div>
+
+              {/* Text Content - Second on mobile, first on desktop */}
+              <div className="flex flex-col justify-start max-w-3xl lg:order-1">
                 <div className="glass mb-4 sm:mb-6 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-2xl px-3 py-1.5 sm:px-4 duration-700 w-fit">
                   <p className="text-xs sm:text-sm leading-none text-white">High-Quality Dental Supplies</p>
                 </div>
@@ -326,26 +346,6 @@ export default function Home() {
                   <MagneticButton size="lg" variant="secondary" onClick={() => scrollToSection(4)} className="w-full sm:w-auto min-h-12">
                     Contact Us
                   </MagneticButton>
-                </div>
-              </div>
-
-              {/* Image Area */}
-              <div className="relative hidden lg:block animate-in fade-in slide-in-from-right-8 duration-1000 delay-200 self-start">
-                <div className="relative w-full min-h-[400px] lg:min-h-[500px] xl:min-h-[600px]">
-                  {/* Glass effect container */}
-                  <div className="glass absolute inset-0 rounded-3xl overflow-hidden">
-                    <Image
-                      src="/hero-dental.jpg"
-                      alt="Professional dental care - Patient receiving quality dental treatment"
-                      fill
-                      className="object-cover"
-                      priority
-                      sizes="(max-width: 1024px) 0vw, 50vw"
-                    />
-                  </div>
-                  
-                  {/* Decorative elements */}
-                  <div className="absolute -inset-4 bg-linear-to-br from-primary/20 to-accent/20 rounded-3xl blur-2xl -z-10 opacity-50" />
                 </div>
               </div>
             </div>
