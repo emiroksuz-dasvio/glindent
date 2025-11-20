@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #007A72;
+  --background: #00A89A;
   /* Primary brand colors split into tokens for reuse */
   --primary-start: #007A72;
   --primary-end: #3ACCFF;
@@ -55,7 +55,7 @@
 }
 
 .dark {
-  --background: #007A72;
+  --background: #00A89A;
   --foreground: oklch(0.98 0 0);
   --card: oklch(0.15 0 0);
   --card-foreground: oklch(0.98 0 0);
@@ -137,6 +137,11 @@
 @layer base {
   html {
     font-size: 16px;
+    background-color: #00A89A;
+  }
+  
+  body {
+    background-color: #00A89A;
   }
   
   @media (max-width: 640px) {
@@ -172,7 +177,8 @@
   }
   
   html, body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: #00A89A !important;
     overflow-x: hidden;
     max-width: 100vw;
   }

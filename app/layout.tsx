@@ -22,7 +22,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#007A72',
+  themeColor: '#00A89A',
 }
 
 export const metadata: Metadata = {
@@ -94,13 +94,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable}`} style={{ overflowX: 'hidden' }}>
+    <html lang="en" className={`${geist.variable} ${geistMono.variable}`} style={{ overflowX: 'hidden', backgroundColor: '#00A89A' }}>
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className={`font-sans antialiased`} style={{ overflowX: 'hidden', maxWidth: '100vw' }}>
+      <body className={`font-sans antialiased`} style={{ overflowX: 'hidden', maxWidth: '100vw', backgroundColor: '#00A89A' }}>
         {children}
         <Analytics />
       </body>

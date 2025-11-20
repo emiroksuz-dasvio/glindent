@@ -28,7 +28,7 @@ export default function Home() {
     mass: 0.8 
   })
   
-  // Parallax gradient that follows scroll position
+  // Parallax gradient that follows scroll position - initialize at correct position
   const gradientX = useMotionValue(0)
   const springGradientX = useSpring(gradientX, { stiffness: 80, damping: 20 })
   
@@ -38,6 +38,8 @@ export default function Home() {
 
   useEffect(() => {
     setIsLoaded(true)
+    // Initialize gradient position on mount
+    gradientX.set(0)
   }, [])
 
   // Update gradient position based on horizontal scroll
@@ -184,20 +186,30 @@ export default function Home() {
   }, [currentSection])
 
   return (
-    <main className="relative h-screen w-full overflow-hidden bg-background">
+    <main className="relative h-screen w-full overflow-hidden bg-[#00A89A]">
       <CustomCursor />
       <GrainOverlay />
       <ToothParticles currentSection={currentSection} />
 
       {/* Static Gradient Background */}
+      <div
+        className="fixed inset-0 z-0"
+        style={{
+          background: 'linear-gradient(315deg, #00A89A 0%, #3ACCFF 100%)',
+          transform: 'translateX(0px)',
+          width: '500%',
+          left: '-100%'
+        }}
+      />
       <motion.div
         className="fixed inset-0 z-0"
         style={{
           x: springGradientX,
-          background: 'linear-gradient(315deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%)',
+          background: 'linear-gradient(315deg, #00A89A 0%, #3ACCFF 100%)',
           width: '500%',
-          left: '-200%',
-          willChange: 'transform'
+          left: '-100%',
+          willChange: 'transform',
+          opacity: isLoaded ? 1 : 0
         }}
       />
       <div className="fixed inset-0 z-0 bg-black/20" />
@@ -218,7 +230,7 @@ export default function Home() {
       >
         <button
           onClick={() => scrollToSection(0)}
-          className="flex items-center gap-2 transition-transform active:scale-95 touch-manipulation min-h-[44px]"
+          className="flex items-center gap-2 transition-transform active:scale-95 touch-manipulation min-h-11"
         >
           <GlindentLogo variant="white" className="h-7 sm:h-8 md:h-9 w-auto" />
         </button>
@@ -244,7 +256,7 @@ export default function Home() {
 
         <button
           onClick={() => scrollToSection(2)}
-          className="hidden lg:block font-sans text-sm font-medium text-foreground/80 transition-colors hover:text-foreground active:text-foreground touch-manipulation min-h-[44px] px-4"
+          className="hidden lg:block font-sans text-sm font-medium text-foreground/80 transition-colors hover:text-foreground active:text-foreground touch-manipulation min-h-11 px-4"
         >
           Shop Now
         </button>
