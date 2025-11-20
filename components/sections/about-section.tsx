@@ -37,16 +37,21 @@ export function AboutSection({ scrollToSection }: { scrollToSection?: (index: nu
   return (
     <section
       ref={ref}
-      className="flex min-h-screen w-screen shrink-0 snap-start flex-col px-6 pt-32 pb-8 md:px-12 md:pt-40 md:pb-12 lg:px-16"
+      className="flex min-h-screen w-screen shrink-0 snap-start flex-col px-4 pt-24 pb-6 sm:px-6 sm:pt-28 sm:pb-8 md:px-12 md:pt-40 md:pb-12 lg:px-16 overflow-x-hidden"
+      style={{
+        paddingLeft: 'max(1rem, env(safe-area-inset-left))',
+        paddingRight: 'max(1rem, env(safe-area-inset-right))',
+        paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))'
+      }}
     >
       <div className="h-full flex flex-col">
         {/* Title - aligned with other sections */}
         <div
-          className={`mb-8 shrink-0 md:mb-12 transition-all duration-1000 ease-out ${
+          className={`mb-6 sm:mb-8 md:mb-12 shrink-0 transition-all duration-1000 ease-out ${
             isVisible ? "translate-y-0 scale-100 opacity-100 blur-0" : "-translate-y-20 scale-95 opacity-0 blur-sm"
           }`}
         >
-          <h2 className="font-sans text-4xl font-light leading-none tracking-tight text-foreground whitespace-nowrap md:text-5xl lg:text-6xl">
+          <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light leading-none tracking-tight text-foreground whitespace-nowrap">
             Our Story
           </h2>
         </div>

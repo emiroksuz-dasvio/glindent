@@ -1,13 +1,20 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null)
   const positionRef = useRef({ x: 0, y: 0 })
   const targetPositionRef = useRef({ x: 0, y: 0 })
+  const [isTouchDevice, setIsTouchDevice] = useState(false)
 
   useEffect(() => {
+    // Disable custom cursor on touch devices
+    if (typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+      setIsTouchDevice(true)
+      return
+    }
+
     let animationFrameId: number
 
     const updateCursor = () => {
@@ -34,6 +41,11 @@ export function CustomCursor() {
       cancelAnimationFrame(animationFrameId)
     }
   }, [])
+
+  // Hide cursor on touch devices
+  if (isTouchDevice) {
+    return null
+  }
 
   return (
     <div

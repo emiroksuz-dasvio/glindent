@@ -19,22 +19,27 @@ export function ProductsSection() {
     <>
       <section
         ref={sectionRef}
-        className="relative flex min-h-screen w-screen shrink-0 flex-col px-6 pt-32 pb-8 md:px-12 md:pt-40 md:pb-12 lg:px-16"
+        className="relative flex min-h-screen w-screen shrink-0 flex-col px-4 pt-24 pb-6 sm:px-6 sm:pt-28 sm:pb-8 md:px-12 md:pt-40 md:pb-12 lg:px-16 overflow-x-hidden"
+        style={{
+          paddingLeft: 'max(1rem, env(safe-area-inset-left))',
+          paddingRight: 'max(1rem, env(safe-area-inset-right))',
+          paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))'
+        }}
       >
         <div className="flex h-full w-full flex-col">
           <div
-            className={`mb-8 shrink-0 md:mb-12 transition-all duration-1000 ${
+            className={`mb-6 sm:mb-8 md:mb-12 shrink-0 transition-all duration-1000 ${
               isRevealed ? "translate-y-0 opacity-100 blur-0" : "translate-y-8 opacity-0 blur-md"
             }`}
           >
-            <h2 className="font-sans text-4xl font-light tracking-tight text-foreground md:text-5xl lg:text-6xl">Products</h2>
-            <p className="mt-3 max-w-2xl text-base leading-relaxed text-foreground/80 md:text-lg">
+            <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-foreground">Products</h2>
+            <p className="mt-2 sm:mt-3 max-w-2xl text-sm sm:text-base md:text-lg leading-relaxed text-foreground/80">
               Explore our comprehensive range of premium dental supplies designed for excellence
             </p>
           </div>
 
           <div className="flex-1 overflow-y-auto pr-2" style={{ scrollbarWidth: "thin" }} onWheel={(e) => e.stopPropagation()}>
-            <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {products.map((product, index) => (
                 <button
                   key={product.id}

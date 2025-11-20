@@ -196,30 +196,34 @@ export default function Home() {
           x: springGradientX,
           background: 'linear-gradient(315deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%)',
           width: '500%',
-          left: '-200%'
+          left: '-200%',
+          willChange: 'transform'
         }}
       />
       <div className="fixed inset-0 z-0 bg-black/20" />
 
       <nav
-        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-6 py-6 transition-opacity duration-700 md:px-12 ${
+        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-4 py-4 sm:px-6 sm:py-5 md:px-12 md:py-6 transition-opacity duration-700 ${
           isLoaded ? "opacity-100" : "opacity-0"
         }`}
         style={{
           background: 'transparent',
           backdropFilter: 'none',
           WebkitBackdropFilter: 'none',
-          borderBottom: '1px solid var(--header-border)'
+          borderBottom: '1px solid var(--header-border)',
+          paddingLeft: 'max(1rem, env(safe-area-inset-left))',
+          paddingRight: 'max(1rem, env(safe-area-inset-right))',
+          paddingTop: 'max(1rem, env(safe-area-inset-top))'
         }}
       >
         <button
           onClick={() => scrollToSection(0)}
-          className="flex items-center gap-2 transition-transform hover:scale-105"
+          className="flex items-center gap-2 transition-transform active:scale-95 touch-manipulation min-h-[44px]"
         >
-          <GlindentLogo variant="white" className="h-9 w-auto" />
+          <GlindentLogo variant="white" className="h-7 sm:h-8 md:h-9 w-auto" />
         </button>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-4 sm:gap-6 md:gap-8 lg:flex">
           {["Home", "About Us", "Products", "FAQ", "Contact"].map((item, index) => (
             <button
               key={item}
@@ -240,10 +244,28 @@ export default function Home() {
 
         <button
           onClick={() => scrollToSection(2)}
-          className="hidden font-sans text-sm font-medium text-foreground/80 transition-colors hover:text-foreground md:block"
+          className="hidden lg:block font-sans text-sm font-medium text-foreground/80 transition-colors hover:text-foreground active:text-foreground touch-manipulation min-h-[44px] px-4"
         >
           Shop Now
         </button>
+        
+        {/* Mobile Navigation Dots */}
+        <div className="flex lg:hidden items-center gap-2">
+          {[0, 1, 2, 3, 4].map((index) => (
+            <button
+              key={index}
+              onClick={() => scrollToSection(index)}
+              className="touch-manipulation p-2"
+              aria-label={`Go to section ${index + 1}`}
+            >
+              <div className={`w-2 h-2 rounded-full transition-all ${
+                currentSection === index 
+                  ? 'bg-foreground w-6' 
+                  : 'bg-foreground/30'
+              }`} />
+            </button>
+          ))}
+        </div>
       </nav>
 
       <motion.div
@@ -254,23 +276,28 @@ export default function Home() {
         }`}
       >
         <section 
-          className="relative flex min-h-screen w-screen shrink-0 flex-col px-6 pt-32 pb-8 md:px-12 md:pt-40 md:pb-12 lg:px-16"
+          className="relative flex min-h-screen w-screen shrink-0 flex-col px-4 pt-24 pb-6 sm:px-6 sm:pt-28 sm:pb-8 md:px-12 md:pt-40 md:pb-12 lg:px-16"
+          style={{
+            paddingLeft: 'max(1rem, env(safe-area-inset-left))',
+            paddingRight: 'max(1rem, env(safe-area-inset-right))',
+            paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))'
+          }}
         >
           <div className="relative z-10 flex h-full flex-col justify-start">
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12 xl:gap-16 pt-4 md:pt-8 lg:items-start">
               {/* Text Content */}
               <div className="flex flex-col justify-start max-w-3xl">
-                <div className="glass mb-6 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-2xl px-4 py-1.5 duration-700 w-fit">
-                  <p className="text-[14px] leading-none text-white">High-Quality Dental Supplies</p>
+                <div className="glass mb-4 sm:mb-6 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-2xl px-3 py-1.5 sm:px-4 duration-700 w-fit">
+                  <p className="text-xs sm:text-sm leading-none text-white">High-Quality Dental Supplies</p>
                 </div>
-                <h1 className="mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-5xl font-light leading-[1.1] tracking-tight text-white duration-1000 md:text-6xl lg:text-7xl xl:text-8xl">
+                <h1 className="mb-4 sm:mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light leading-[1.1] tracking-tight text-white duration-1000">
                   <span className="text-balance">
                     Where quality
                     <br />
                     meets care
                   </span>
                 </h1>
-                <p className="mb-8 max-w-xl animate-in fade-in slide-in-from-bottom-4 text-base leading-relaxed text-white/95 duration-1000 delay-200 md:text-lg lg:text-xl">
+                <p className="mb-6 sm:mb-8 max-w-xl animate-in fade-in slide-in-from-bottom-4 text-sm sm:text-base md:text-lg leading-relaxed text-white/95 duration-1000 delay-200">
                   <span className="text-pretty">
                     We believe dental professionals deserve materials they can trust. That's why Glindent delivers
                     world-class products, supported by responsive service and a commitment to helping you achieve the best
@@ -278,13 +305,13 @@ export default function Home() {
                   </span>
                 </p>
 
-                <div className="flex animate-in fade-in slide-in-from-bottom-4 flex-col gap-4 duration-1000 delay-300 sm:flex-row sm:items-center">
-                  <Link href="/products">
-                    <MagneticButton size="lg" variant="primary">
+                <div className="flex animate-in fade-in slide-in-from-bottom-4 flex-col gap-3 sm:gap-4 duration-1000 delay-300 sm:flex-row sm:items-center">
+                  <Link href="/products" className="w-full sm:w-auto">
+                    <MagneticButton size="lg" variant="primary" className="w-full sm:w-auto min-h-12">
                       Shop Now
                     </MagneticButton>
                   </Link>
-                  <MagneticButton size="lg" variant="secondary" onClick={() => scrollToSection(4)}>
+                  <MagneticButton size="lg" variant="secondary" onClick={() => scrollToSection(4)} className="w-full sm:w-auto min-h-12">
                     Contact Us
                   </MagneticButton>
                 </div>

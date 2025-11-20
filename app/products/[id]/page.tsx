@@ -85,7 +85,7 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background overflow-x-hidden">
       <GrainOverlay />
 
       <header
