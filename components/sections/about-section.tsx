@@ -106,9 +106,9 @@ export function AboutSection({ scrollToSection }: { scrollToSection?: (index: nu
           {/* Right side - Stats with creative layout */}
           <div className="flex flex-col justify-center space-y-6 md:space-y-12 md:w-[48%]">
             {[
-              { value: "40+", label: "Years", sublabel: "Supporting dental professionals", direction: "right" },
-              { value: "1000+", label: "Products", sublabel: "Premium dental supplies", direction: "left" },
-              { value: "Global", label: "Reach", sublabel: "Serving worldwide", direction: "right" },
+              { number: "40+", label: "Years", sublabel: "Supporting dental professionals", direction: "right" },
+              { number: "1000+", label: "Products", sublabel: "Premium dental supplies", direction: "left" },
+              { number: "Global", label: "Reach", sublabel: "Serving worldwide", direction: "right" },
             ].map((stat, i) => {
               const getRevealClass = () => {
                 if (!isVisible) {
