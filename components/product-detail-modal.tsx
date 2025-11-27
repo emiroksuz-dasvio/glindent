@@ -51,12 +51,12 @@ export function ProductDetailModal({ product, isOpen, onClose }: ProductDetailMo
 
   return createPortal(
     <div
-      className="fixed inset-0 z-9999 flex items-center justify-center bg-black/20 p-4"
+      className="fixed inset-0 z-9999 flex items-center justify-center bg-black/50 p-4"
       onClick={onClose}
     >
       <div
         ref={modalRef}
-        className="glass relative max-h-[90vh] w-full max-w-6xl overflow-y-auto rounded-3xl border border-white/20 shadow-2xl backdrop-blur-2xl"
+        className="glass relative max-h-[90vh] w-full max-w-6xl overflow-y-auto rounded-3xl border border-white/20 shadow-2xl backdrop-blur-3xl bg-black/40"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}

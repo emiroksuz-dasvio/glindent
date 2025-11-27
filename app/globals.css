@@ -3,17 +3,40 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ============================================================================
+   GLINDENT DESIGN SYSTEM - Centralized Theme Variables
+   ============================================================================
+   This file contains all centralized theming tokens for the Glindent project.
+   All colors, spacing, typography, and effects are defined here for consistency.
+   ============================================================================ */
+
 :root {
+  /* ==========================================================================
+     BRAND COLORS
+     ========================================================================== */
   --background: #00A89A;
-  /* Primary brand colors split into tokens for reuse */
+  
+  /* Primary brand colors - Teal/Cyan gradient palette */
   --primary-start: #007A72;
   --primary-end: #3ACCFF;
-  /* Page background gradient tokens (lighter start to match previous look) */
+  --brand-teal: #00A89A;
+  --brand-teal-dark: #007A72;
+  --brand-cyan: #3ACCFF;
+  
+  /* Page background gradient tokens */
   --bg-gradient-start: #00A89A;
   --bg-gradient-end: var(--primary-end);
-  /* Subtle header glassmorphism tokens (very transparent) */
+  --bg-gradient: linear-gradient(315deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+  
+  /* ==========================================================================
+     HEADER & NAVIGATION
+     ========================================================================== */
   --header-glass-bg: rgba(255,255,255,0.04);
   --header-border: rgba(255,255,255,0.06);
+  
+  /* ==========================================================================
+     SEMANTIC COLORS (shadcn/ui compatible)
+     ========================================================================== */
   --foreground: oklch(0.98 0 0);
   --card: oklch(0.15 0 0);
   --card-foreground: oklch(0.98 0 0);
@@ -32,12 +55,105 @@
   --border: oklch(0.25 0 0);
   --input: oklch(0.25 0 0);
   --ring: linear-gradient(135deg, var(--primary-start) 0%, var(--primary-end) 100%);
+  
+  /* Chart colors */
   --chart-1: linear-gradient(135deg, var(--primary-start) 0%, var(--primary-end) 100%);
   --chart-2: oklch(0.68 0.18 45);
   --chart-3: oklch(0.6 0.15 280);
   --chart-4: oklch(0.7 0.2 30);
   --chart-5: oklch(0.55 0.18 200);
+  
+  /* ==========================================================================
+     SPACING & SIZING
+     ========================================================================== */
   --radius: 0.75rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  
+  /* Section padding - consistent across all sections */
+  --section-px-mobile: 1rem;
+  --section-px-sm: 1.5rem;
+  --section-px-md: 3rem;
+  --section-px-lg: 4rem;
+  --section-pt-mobile: 6rem;
+  --section-pt-sm: 7rem;
+  --section-pt-md: 10rem;
+  --section-pb-mobile: 1.5rem;
+  --section-pb-sm: 2rem;
+  --section-pb-md: 3rem;
+  
+  /* ==========================================================================
+     GLASSMORPHISM EFFECTS
+     ========================================================================== */
+  --glass-bg: rgba(255, 255, 255, 0.14);
+  --glass-border: rgba(255, 255, 255, 0.28);
+  --glass-highlight: rgba(255, 255, 255, 0.35);
+  --glass-blur: 12px;
+  --glass-radius: 20px;
+  
+  /* Modal glass effect */
+  --modal-glass-bg: rgba(255, 255, 255, 0.14);
+  --modal-glass-border: rgba(255, 255, 255, 0.20);
+  --modal-backdrop: rgba(0, 0, 0, 0.20);
+  
+  /* ==========================================================================
+     ANIMATION TIMING
+     ========================================================================== */
+  --transition-fast: 300ms;
+  --transition-medium: 500ms;
+  --transition-slow: 700ms;
+  --transition-slower: 1000ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  
+  /* Reveal animation delays (staggered) */
+  --delay-1: 100ms;
+  --delay-2: 200ms;
+  --delay-3: 300ms;
+  --delay-4: 400ms;
+  --delay-5: 500ms;
+  
+  /* ==========================================================================
+     TYPOGRAPHY
+     ========================================================================== */
+  --font-sans: "Geist", "Geist Fallback", system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
+  
+  /* ==========================================================================
+     PRODUCT DETAIL PAGE SPECIFIC TOKENS
+     ========================================================================== */
+  --product-card-bg: rgba(250, 250, 250, 0.05);
+  --product-card-border: rgba(250, 250, 250, 0.10);
+  --product-card-radius: 1.5rem;
+  --product-spec-bg: rgba(250, 250, 250, 0.05);
+  --product-spec-border: rgba(250, 250, 250, 0.10);
+  --product-spec-radius: 1rem;
+  
+  /* Color swatch styling */
+  --swatch-size: 4rem;
+  --swatch-border: rgba(250, 250, 250, 0.20);
+  --swatch-border-selected: var(--foreground);
+  --swatch-radius: 0.75rem;
+  
+  /* ==========================================================================
+     OVERLAY & Z-INDEX LAYERS
+     ========================================================================== */
+  --z-background: 0;
+  --z-content: 10;
+  --z-header: 50;
+  --z-modal: 9999;
+  --z-grain: 50;
+  
+  /* Grain overlay */
+  --grain-opacity: 0.08;
+  
+  /* ==========================================================================
+     SIDEBAR (shadcn/ui)
+     ========================================================================== */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -46,14 +162,41 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  /* Adding glass effect CSS variables */
-  --glass-bg: rgba(255, 255, 255, 0.14);
-  --glass-border: rgba(255, 255, 255, 0.28);
-  --glass-highlight: rgba(255, 255, 255, 0.35);
-  --glass-blur: 12px;
-  --glass-radius: 20px;
+  
+  /* ==========================================================================
+     COMPONENT-SPECIFIC TOKENS
+     ========================================================================== */
+  /* Cards & Boxes */
+  --card-glass-bg: rgba(250, 250, 250, 0.05);
+  --card-glass-border: rgba(250, 250, 250, 0.10);
+  
+  /* Form inputs */
+  --input-border-width: 2px;
+  --input-border-color: rgba(250, 250, 250, 0.20);
+  --input-focus-border: var(--foreground);
+  
+  /* Buttons - Magnetic button specific */
+  --btn-primary-bg: rgba(250, 250, 250, 0.95);
+  --btn-primary-text: var(--background);
+  --btn-secondary-bg: var(--glass-bg);
+  --btn-secondary-text: white;
+  
+  /* FAQ accordion */
+  --accordion-border: rgba(250, 250, 250, 0.10);
+  --accordion-hover-border: rgba(250, 250, 250, 0.20);
+  
+  /* ==========================================================================
+     SAFE AREA INSETS (for notched devices)
+     ========================================================================== */
+  --safe-area-inset-top: env(safe-area-inset-top, 0);
+  --safe-area-inset-right: env(safe-area-inset-right, 0);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0);
+  --safe-area-inset-left: env(safe-area-inset-left, 0);
 }
 
+/* =============================================================================
+   DARK MODE OVERRIDES
+   ============================================================================= */
 .dark {
   --background: #00A89A;
   --foreground: oklch(0.98 0 0);
@@ -91,8 +234,10 @@
   --header-border: rgba(255,255,255,0.04);
 }
 
+/* =============================================================================
+   TAILWIND THEME INLINE (Tailwind CSS v4)
+   ============================================================================= */
 @theme inline {
-  /* optional: --font-sans, --font-serif, --font-mono if they are applied in the layout.tsx */
   --font-sans: "Geist", "Geist Fallback";
   --font-mono: "Geist Mono", "Geist Mono Fallback";
   --color-background: var(--background);
@@ -131,6 +276,11 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  
+  /* Brand color utilities */
+  --color-brand-teal: var(--brand-teal);
+  --color-brand-teal-dark: var(--brand-teal-dark);
+  --color-brand-cyan: var(--brand-cyan);
 }
 
 /* Mobile-first responsive typography */
@@ -151,15 +301,9 @@
   }
 }
 
-/* Safe area insets for notched devices */
-:root {
-  --safe-area-inset-top: env(safe-area-inset-top, 0);
-  --safe-area-inset-right: env(safe-area-inset-right, 0);
-  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0);
-  --safe-area-inset-left: env(safe-area-inset-left, 0);
-}
-
-/* Touch-friendly tap targets */
+/* =============================================================================
+   MOBILE ACCESSIBILITY - Touch-friendly tap targets
+   ============================================================================= */
 @media (hover: none) and (pointer: coarse) {
   button,
   a,
@@ -170,6 +314,9 @@
   }
 }
 
+/* =============================================================================
+   BASE LAYER STYLES
+   ============================================================================= */
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -178,7 +325,7 @@
   
   html, body {
     @apply text-foreground;
-    background-color: #00A89A !important;
+    background-color: var(--brand-teal) !important;
     overflow-x: hidden;
     max-width: 100vw;
   }
@@ -188,7 +335,9 @@
     max-width: 100vw;
   }
 
-  /* Glassmorphism scrollbar for all browsers */
+  /* ==========================================================================
+     SCROLLBAR STYLES - Glassmorphism effect
+     ========================================================================== */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -205,7 +354,7 @@
     backdrop-filter: blur(10px);
     border-radius: 10px;
     border: 2px solid rgba(255, 255, 255, 0.05);
-    transition: background 0.3s ease;
+    transition: background var(--transition-fast) ease;
   }
 
   ::-webkit-scrollbar-thumb:hover {
@@ -218,6 +367,9 @@
     scrollbar-color: rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.03);
   }
 
+  /* ==========================================================================
+     SCROLL CONTAINER OPTIMIZATIONS
+     ========================================================================== */
   [data-scroll-container] {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
@@ -238,12 +390,193 @@
     transform: translateZ(0);
     backface-visibility: hidden;
   }
+}
 
-  /* Adding reusable glass utility class */
-  .glass {
-    background: var(--glass-bg);
-    backdrop-filter: blur(var(--glass-blur)) saturate(1.1);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--glass-radius);
+/* =============================================================================
+   UTILITY CLASSES
+   ============================================================================= */
+
+/* Glass effect - reusable glassmorphism */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.1);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.1);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+}
+
+/* Glass variants */
+.glass-subtle {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px) saturate(1.05);
+  -webkit-backdrop-filter: blur(8px) saturate(1.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--glass-radius);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.20);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--glass-radius);
+}
+
+/* Card glass effect - for product cards and info boxes */
+.card-glass {
+  background: var(--card-glass-bg);
+  border: 1px solid var(--card-glass-border);
+  border-radius: var(--radius-2xl);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Product detail specific utilities */
+.product-card {
+  background: var(--product-card-bg);
+  border: 1px solid var(--product-card-border);
+  border-radius: var(--product-card-radius);
+}
+
+.product-spec-card {
+  background: var(--product-spec-bg);
+  border: 1px solid var(--product-spec-border);
+  border-radius: var(--product-spec-radius);
+}
+
+/* Color swatch utility */
+.color-swatch {
+  width: var(--swatch-size);
+  height: var(--swatch-size);
+  border: 2px solid var(--swatch-border);
+  border-radius: var(--swatch-radius);
+  transition: all var(--transition-fast) ease;
+}
+
+.color-swatch.selected {
+  border-color: var(--swatch-border-selected);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Form input utilities */
+.input-underline {
+  border-bottom: var(--input-border-width) solid var(--input-border-color);
+  background: transparent;
+  transition: border-color var(--transition-fast) ease;
+}
+
+.input-underline:focus {
+  border-color: var(--input-focus-border);
+  outline: none;
+}
+
+/* Reveal animation utilities */
+.reveal-hidden {
+  opacity: 0;
+  transform: translateY(2rem);
+  filter: blur(4px);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* Section padding utility */
+.section-padding {
+  padding-left: max(var(--section-px-mobile), env(safe-area-inset-left));
+  padding-right: max(var(--section-px-mobile), env(safe-area-inset-right));
+  padding-bottom: max(var(--section-pb-mobile), env(safe-area-inset-bottom));
+}
+
+@media (min-width: 640px) {
+  .section-padding {
+    padding-left: max(var(--section-px-sm), env(safe-area-inset-left));
+    padding-right: max(var(--section-px-sm), env(safe-area-inset-right));
+    padding-bottom: max(var(--section-pb-sm), env(safe-area-inset-bottom));
   }
 }
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding-left: max(var(--section-px-md), env(safe-area-inset-left));
+    padding-right: max(var(--section-px-md), env(safe-area-inset-right));
+    padding-bottom: max(var(--section-pb-md), env(safe-area-inset-bottom));
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding-left: max(var(--section-px-lg), env(safe-area-inset-left));
+    padding-right: max(var(--section-px-lg), env(safe-area-inset-right));
+  }
+}
+
+/* Transition utilities using CSS variables */
+.transition-theme {
+  transition-duration: var(--transition-medium);
+  transition-timing-function: var(--ease-out);
+}
+
+.transition-fast {
+  transition-duration: var(--transition-fast);
+  transition-timing-function: ease-out;
+}
+
+.transition-slow {
+  transition-duration: var(--transition-slow);
+  transition-timing-function: var(--ease-out);
+}
+
+/* Background gradient utility */
+.bg-brand-gradient {
+  background: var(--bg-gradient);
+}
+
+/* Text gradient utility */
+.text-brand-gradient {
+  background: var(--primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  background: var(--modal-backdrop);
+}
+
+/* Modal glass container */
+.modal-glass {
+  background: var(--modal-glass-bg);
+  border: 1px solid var(--modal-glass-border);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+}
+
+/* Accordion styling */
+.accordion-item {
+  border-bottom: 1px solid var(--accordion-border);
+  transition: border-color var(--transition-fast) ease;
+}
+
+.accordion-item:hover {
+  border-color: var(--accordion-hover-border);
+}
+
+/* Header transparent style */
+.header-transparent {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid var(--header-border);
+}
+
+/* Grain overlay utility */
+.grain-overlay {
+  opacity: var(--grain-opacity);
+  mix-blend-mode: overlay;
+}
+
