@@ -21,7 +21,7 @@ export function MagneticButton({
 }: MagneticButtonProps) {
   const variants = {
     primary:
-      "bg-foreground/95 text-background hover:bg-foreground hover:brightness-110 backdrop-blur-md",
+      "bg-white/95 text-[#1a365d] hover:bg-white hover:brightness-110 backdrop-blur-md font-semibold",
     secondary: "glass text-white hover:bg-white/30",
     ghost: "bg-transparent text-foreground hover:bg-foreground/20 backdrop-blur-sm",
   }

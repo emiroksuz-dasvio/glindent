@@ -3,6 +3,80 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Fix for animate-in not completing - ensure animation fills forwards */
+.animate-in {
+  animation-fill-mode: forwards !important;
+}
+
+/* =============================================================================
+   HERO SWIPER - Custom Styles for Cards Effect
+   ============================================================================= */
+.hero-swiper {
+  overflow: visible !important;
+}
+
+.hero-swiper .swiper-slide {
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+  transform-origin: center center !important;
+}
+
+@media (min-width: 640px) {
+  .hero-swiper .swiper-slide {
+    border-radius: 1.5rem !important;
+  }
+}
+
+/* Fix cards effect shadow and border radius */
+.hero-swiper .swiper-slide-shadow,
+.hero-swiper .swiper-slide-shadow-left,
+.hero-swiper .swiper-slide-shadow-right,
+.hero-swiper .swiper-slide-shadow-top,
+.hero-swiper .swiper-slide-shadow-bottom {
+  border-radius: 1.5rem !important;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.15) 100%) !important;
+}
+
+/* Smooth transitions for all swiper elements */
+.hero-swiper .swiper-slide {
+  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+              opacity 0.35s ease,
+              box-shadow 0.35s ease !important;
+}
+
+/* Active slide enhancement */
+.hero-swiper .swiper-slide-active {
+  z-index: 10 !important;
+}
+
+/* Animated gradient background */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient-bg {
+  background: linear-gradient(
+    315deg,
+    #00A89A 0%,
+    #00B8A9 15%,
+    #3ACCFF 35%,
+    #00C4B4 50%,
+    #3ACCFF 65%,
+    #00B8A9 85%,
+    #00A89A 100%
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 30s ease infinite;
+}
+
 /* ============================================================================
    GLINDENT DESIGN SYSTEM - Centralized Theme Variables
    ============================================================================
@@ -75,10 +149,10 @@
   --radius-3xl: 1.5rem;
   
   /* Section padding - consistent across all sections */
-  --section-px-mobile: 1rem;
-  --section-px-sm: 1.5rem;
-  --section-px-md: 3rem;
-  --section-px-lg: 4rem;
+  --section-px-mobile: 1.5rem;
+  --section-px-sm: 2rem;
+  --section-px-md: 4rem;
+  --section-px-lg: 5rem;
   --section-pt-mobile: 6rem;
   --section-pt-sm: 7rem;
   --section-pt-md: 10rem;

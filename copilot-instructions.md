@@ -1,6 +1,6 @@
 # Copilot Instructions - Glindent Dental Supplies Website
 
-**Last Updated:** November 14, 2025  
+**Last Updated:** November 27, 2025  
 **Project Status:** ✅ Active Development  
 **Developer:** USER  
 **Location:** `c:\Users\USER\Documents\GitHub\glindent`
@@ -50,16 +50,17 @@ Glindent is the UK branch of Gülsa Medical Devices and Materials (Turkey-based,
 
 ### UI & Styling
 - **Tailwind CSS 4.1.9** - Utility-first CSS framework
-- **Framer Motion 11.15.0** - Animation library for smooth transitions
+- **Framer Motion 12.23.24** - Animation library for smooth transitions
+  - Used for: Animated background, product filters, page transitions
 - **shadcn/ui** - Component library (New York style)
 - **tw-animate-css 1.3.3** - Animation utilities
 - **Radix UI** - Headless accessible components
-- **shaders** - WebGL shader effects library
-  - Used for animated background (Swirl + ChromaFlow)
+- **Sonner** - Toast notification library
 
 ### State Management & Hooks
 - React built-in hooks (useState, useEffect, useRef)
 - Custom hooks: `use-reveal.ts`, `use-mobile.ts`, `use-toast.ts`
+- **Cart Context** (`lib/cart-context.tsx`) - Cart state with localStorage
 
 ### Forms & Validation
 - **react-hook-form 7.60.0**
@@ -77,28 +78,32 @@ Glindent is the UK branch of Gülsa Medical Devices and Materials (Turkey-based,
 ## 📁 Project Structure
 
 ```
-c:\Users\USER\Desktop\code/
+c:\Users\USER\Documents\GitHub\glindent/
 ├── app/                          # Next.js App Router
 │   ├── globals.css              # Global styles & CSS variables
-│   ├── layout.tsx               # Root layout with Analytics
+│   ├── layout.tsx               # Root layout with Analytics, CartProvider, Toaster
 │   ├── page.tsx                 # Homepage (horizontal scroll sections)
+│   ├── checkout/
+│   │   └── page.tsx             # Checkout page with order summary
 │   └── products/
 │       └── [id]/
 │           └── page.tsx         # Dynamic product detail page
 │
 ├── components/
+│   ├── animated-background.tsx  # Framer Motion gradient background
+│   ├── cart-menu.tsx            # Dropdown cart menu
 │   ├── custom-cursor.tsx        # Custom cursor with magnetic effect
 │   ├── glindent-logo.tsx        # SVG logo component (white/green variants)
 │   ├── grain-overlay.tsx        # Noise texture overlay
 │   ├── magnetic-button.tsx      # Interactive button with hover effects
-│   ├── product-detail-modal.tsx # Product quick-view modal
+│   ├── product-detail-modal.tsx # Product quick-view modal (with qty selector, related products)
 │   ├── theme-provider.tsx       # Dark/light theme context
 │   │
 │   ├── sections/                # Page sections
 │   │   ├── about-section.tsx   # Company story & stats
 │   │   ├── contact-section.tsx # Contact form & info
 │   │   ├── faq-section.tsx     # Accordion FAQ section
-│   │   ├── products-section.tsx# Product grid with modal
+│   │   ├── products-section.tsx# Product grid with Framer Motion animations
 │   │   └── services-section.tsx# (Future) Services listing
 │   │   └── work-section.tsx    # (Future) Portfolio/case studies
 │   │
@@ -118,6 +123,7 @@ c:\Users\USER\Desktop\code/
 │   └── use-toast.ts            # Toast notification system
 │
 ├── lib/
+│   ├── cart-context.tsx        # Cart state management with localStorage
 │   ├── products.ts             # Product data & types
 │   └── utils.ts                # Utility functions (cn, etc.)
 │
@@ -164,11 +170,17 @@ c:\Users\USER\Desktop\code/
   - Active section tracking with visual indicator
   - All sections full-screen width with proper alignment
 
-### 2. **WebGL Animated Background**
-- **Library:** `shaders/react`
-- **Effects:** Swirl + ChromaFlow
-- **Colors:** Teal/green theme (#3db8a4, #2c8e8a)
-- Loading state with fade-in transition
+### 2. **Framer Motion Animated Background**
+- **Component:** `components/animated-background.tsx`
+- **Main Layer:** Gradient animation cycling through teal/cyan colors
+  - Colors: #00A89A, #00B8A9, #3ACCFF, #00C4B4
+  - 60-second cycle, linear easing, infinite loop
+- **Floating Orbs:** 3 blurred gradient orbs
+  - Independent movement paths (70-90s cycles)
+  - Scale animations for breathing effect
+  - Opacity: 20-30%
+- **Dark Overlay:** `bg-black/20` for content contrast
+- Used on: Homepage, Checkout page
 
 ### 3. **Custom Cursor**
 - **Component:** `components/custom-cursor.tsx`
@@ -206,8 +218,40 @@ c:\Users\USER\Desktop\code/
 - Shipping information (standard/express)
 - Price display
 - Image gallery (single image per product)
+- **Quantity selector** (+/- buttons in modal)
+- **Related products** (category-based suggestions in modal)
 
-### 8. **Contact Form**
+### 8. **Cart System**
+- **Context:** `lib/cart-context.tsx`
+- **Component:** `components/cart-menu.tsx`
+- **Features:**
+  - Add to cart from product modal only
+  - Quantity controls (+/-)
+  - Remove individual items
+  - Clear entire cart
+  - localStorage persistence
+  - Selected color tracking per item
+- **UI:** Dropdown menu with glassmorphism
+  - Background: `bg-white/25 backdrop-blur-xl`
+  - Item cards: `bg-black/15`
+  - White text throughout
+- **Toast notifications** for all cart actions
+
+### 9. **Checkout Page**
+- **Location:** `app/checkout/page.tsx`
+- **Layout:** Matches main page exactly (same padding, header, background)
+- **Form Sections:**
+  1. Contact Information (email, phone)
+  2. Shipping Address (name, company, address, city, postcode)
+  3. Payment (placeholder for future integration)
+- **Order Summary:** Sticky sidebar with:
+  - Cart items with quantity controls
+  - Subtotal, shipping (free over £100), total
+  - "Place Order" button
+- **Trust Badges:** Secure, Fast Delivery, Quality icons
+- **Empty State:** Glass card with "Browse Products" CTA
+
+### 10. **Contact Form**
 - **Location:** `components/sections/contact-section.tsx`
 - **Layout:** Two-column design with space-between justification
   - Left: Contact info (42% width) - flex column structure
@@ -325,6 +369,23 @@ c:\Users\USER\Desktop\code/
   - Back navigation to products
 - **Error Handling:** 404 state with return home button
 
+#### `/checkout` (Checkout Page)
+- **File:** `app/checkout/page.tsx`
+- **Type:** Client-side rendered (uses cart context)
+- **Layout:** Matches main page (same header, padding, animated background)
+- **Features:**
+  - Contact information form
+  - Shipping address form
+  - Payment placeholder
+  - Order summary with cart items
+  - Quantity editing
+  - Remove items
+  - Subtotal, shipping, total calculation
+  - Free shipping over £100
+  - "Place Order" button with loading state
+- **Empty State:** Redirects/prompts to browse products
+- **Notifications:** Toast on successful order
+
 ### Navigation Methods
 
 1. **Top Navigation Bar**
@@ -332,6 +393,7 @@ c:\Users\USER\Desktop\code/
    - Logo (scrolls to home)
    - Section links: Home, About Us, Products, FAQ, Contact
    - "Shop Now" button
+   - **Cart icon with dropdown menu**
    - Active section indicator (underline)
 
 2. **Programmatic Scrolling**
@@ -700,7 +762,7 @@ npx tsc --noEmit
 
 ## 📊 Current Progress
 
-### ✅ Completed Features (November 13, 2025)
+### ✅ Completed Features (November 27, 2025)
 
 #### Core Functionality
 - [x] Next.js 15 App Router setup
@@ -708,25 +770,33 @@ npx tsc --noEmit
 - [x] Tailwind CSS v4 integration
 - [x] shadcn/ui component library setup
 - [x] pnpm package management
+- [x] **Cart system with localStorage persistence**
+- [x] **Checkout page with order summary**
 
 #### Design & UX
 - [x] Custom cursor with magnetic effect
-- [x] WebGL shader background (Swirl + ChromaFlow)
+- [x] **Framer Motion animated gradient background**
 - [x] Grain overlay texture
 - [x] Horizontal scroll navigation system
 - [x] Scroll-based reveal animations
 - [x] Magnetic button interactions
 - [x] Responsive mobile layout
 - [x] Touch gesture support
+- [x] **Toast notifications (Sonner)**
+- [x] **Glassmorphism cart dropdown**
 
 #### Pages & Sections
 - [x] Hero section with animated background
 - [x] About section with company story
 - [x] Products section with grid layout
+- [x] **Products search and category filter with Framer Motion animations**
 - [x] FAQ section with accordion
 - [x] Contact section with form
 - [x] Dynamic product detail pages (/products/[id])
 - [x] Product modal quick-view
+- [x] **Product quantity selector in modal**
+- [x] **Related products in modal**
+- [x] **Full checkout page (/checkout)**
 
 #### Data & Content
 - [x] Product data structure (9 products)
@@ -743,6 +813,9 @@ npx tsc --noEmit
 - [x] Custom hook: use-toast
 - [x] Reusable magnetic button
 - [x] Logo component (white/green variants)
+- [x] **Cart context provider**
+- [x] **Cart menu dropdown**
+- [x] **Animated background component**
 
 ---
 
@@ -1195,47 +1268,543 @@ pnpm add -D [dev-dependency]
 ---
 
 **End of Copilot Instructions**  
-*Keep this document updated as the project evolves. Last update: November 14, 2025*
+*Keep this document updated as the project evolves. Last update: November 27, 2025*
 
 ---
 
-## 🔄 Recent Updates (November 14, 2025)
+## 🔄 Recent Updates (November 27, 2025)
 
-### Major Changes
-1. **Framer Motion Integration**
-   - Replaced native browser smooth scroll with Framer Motion
-   - Implemented spring physics for natural, smooth transitions
-   - Added animation locking to prevent navigation conflicts
-   - Fixed all teleportation/jumping issues
+### Session Summary - Major Feature Additions & Polish
 
-2. **Section Alignment Overhaul**
-   - Removed all centered `max-w-7xl` containers
-   - Implemented consistent padding across all sections
-   - Aligned all content with header logo position
-   - Two-column layouts now use `justify-between` with explicit widths
+This session focused on implementing e-commerce functionality, improving animations, and polishing the overall user experience.
 
-3. **Contact Section Redesign**
-   - Two-column layout: Info (42%) + Form (52%)
-   - Larger text sizes and prominent styling
-   - Thick borders on inputs (border-b-2)
-   - Uppercase labels with tracking
-   - Improved spacing and gaps (gap-20 xl:gap-24)
-   - Info fields use flex column structure for consistency
+---
 
-4. **About Section Enhancements**
-   - Added scrollable content area with gradient overlay
-   - Dynamic gradient using CSS `--background` variable
-   - Gradient disappears at scroll bottom
-   - Buttons always visible below scrollable area
-   - Two-column layout with 48% width each
+### 1. **Cart System Implementation**
 
-5. **Magnetic Button Optimization**
-   - Reduced magnetic strength from 0.15 to 0.08
-   - Prevents horizontal scroll overflow
-   - Maintains smooth magnetic effect without layout issues
+#### Cart Context (`lib/cart-context.tsx`)
+- Created full cart state management with React Context
+- **Features:**
+  - Add/remove items
+  - Update quantities
+  - Calculate totals (items count, total price)
+  - localStorage persistence (cart survives page refresh)
+  - Selected color tracking per item
+- **Interface:** `CartItem { product, quantity, selectedColor }`
+- **Exports:** `useCart()` hook, `CartProvider` wrapper
 
-6. **Bug Fixes**
-   - Fixed FAQ section dynamic Tailwind class issues
-   - Resolved build errors with missing closing divs
-   - Fixed horizontal overflow issues throughout application
-   - Corrected gradient overlay implementation
+#### Cart Menu Component (`components/cart-menu.tsx`)
+- Dropdown menu (not sidebar) triggered by shopping bag icon in header
+- **Styling:** White icy glassmorphism
+  - Background: `bg-white/25` with `backdrop-blur-xl`
+  - Item cards: `bg-black/15` for contrast
+  - All white text for readability
+- **Features:**
+  - Quantity controls (+/- buttons)
+  - Remove item button
+  - Clear cart option
+  - Link to checkout page
+  - Shows item count badge on icon
+  - Toast notifications for actions
+
+#### Wishlist Removal
+- Completely removed all wishlist functionality
+- Deleted wishlist context, components, and references
+- Cart is now the only "save for later" mechanism
+
+---
+
+### 2. **Checkout Page (`app/checkout/page.tsx`)**
+
+#### Layout & Structure
+- **Matches main page layout exactly:**
+  - Same padding: `px-6 pt-24 pb-6 sm:px-8 sm:pt-28 sm:pb-8 md:px-16 md:pt-40 md:pb-12 lg:px-20`
+  - Same header styling (transparent, border-bottom)
+  - Same background (animated gradient)
+  - Same title typography
+- Two-column layout: Form (left) + Order Summary (right, sticky)
+
+#### Form Sections (numbered 1-2-3)
+1. **Contact Information:** Email, Phone
+2. **Shipping Address:** First/Last name, Company, Address, Apartment, City, Postcode
+3. **Payment:** Placeholder (integration coming soon)
+
+#### Form Styling
+- Glass cards with `.glass` class
+- Inputs: `border-2 rounded-xl` with focus states (ring effect)
+- Labels: `font-medium text-white/80`
+- Custom checkbox with animated checkmark icon
+- "Save this information" option
+
+#### Order Summary Sidebar
+- Sticky on desktop (`lg:sticky lg:top-32`)
+- Cart items in individual cards with hover effect
+- Quantity controls (+/-)
+- Remove item button
+- Subtotal, shipping (free over £100), grand total
+- "Place Order" button with processing state
+- Trust badges section (Secure, Fast Delivery, Quality)
+
+#### Empty Cart State
+- Glass card with shopping bag icon
+- "Browse Products" CTA button
+
+---
+
+### 3. **Product Detail Modal Enhancements**
+
+#### Quantity Selector
+- Added +/- buttons before "Add to Cart"
+- Minimum quantity: 1
+- Shows current quantity between buttons
+- Styled to match modal glassmorphism
+
+#### Related Products Section
+- Shows 4 related products based on category
+- Excludes current product from suggestions
+- Clickable product cards
+- Appears at bottom of modal
+- Smooth scroll within modal
+
+#### Modal Styling
+- Darker overlay: `bg-black/40`
+- Enhanced glassmorphism: `backdrop-blur-3xl`
+- Faster animations (150ms)
+- ESC key to close
+- Image hover zoom effect
+
+---
+
+### 4. **Products Section Rewrite (`components/sections/products-section.tsx`)**
+
+#### Framer Motion Integration
+- Complete rewrite using Framer Motion for animations
+- `AnimatePresence` with `mode="wait"` for filter transitions
+- Smooth product grid animations on category/search change
+
+#### Search & Filter
+- Search input aligned with section title
+- Category filter buttons (All, Zirconia, X-Ray, etc.)
+- Active category highlighted
+- Staggered button animations
+
+#### Product Cards
+- Simplified hover effects (subtle scale)
+- Key-based re-animation on filter change
+- Smooth entry animations with stagger delay
+
+---
+
+### 5. **Animated Background System**
+
+#### AnimatedBackground Component (`components/animated-background.tsx`)
+- Framer Motion-based gradient animation (replaced CSS keyframes)
+- **Main gradient layer:**
+  - 5-step color cycle through teal/cyan palette
+  - 60-second duration, linear easing, infinite loop
+- **Floating orbs (3 total):**
+  - Blurred radial gradients
+  - Independent movement paths (80-90s cycles)
+  - Scale animations for breathing effect
+  - Different opacities (20-30%)
+- **Colors used:**
+  - `#00A89A` - Primary teal
+  - `#00B8A9` - Light teal
+  - `#3ACCFF` - Cyan
+  - `#00C4B4` - Mid teal
+- Dark overlay included (`bg-black/20`)
+
+#### Layout Integration
+- Used in `app/page.tsx` (main page)
+- Used in `app/checkout/page.tsx`
+- `html` element has static gradient fallback
+
+#### Initial Load Fix
+- Removed static `backgroundColor: '#00A89A'` from layout
+- Gradient visible immediately (no green flash)
+
+---
+
+### 6. **Page Padding Synchronization**
+
+All sections now use consistent padding:
+```
+px-6 pt-24 pb-6
+sm:px-8 sm:pt-28 sm:pb-8
+md:px-16 md:pt-40 md:pb-12
+lg:px-20
+```
+
+#### Files Updated:
+- `app/page.tsx` (hero section)
+- `app/checkout/page.tsx`
+- `components/sections/about-section.tsx`
+- `components/sections/products-section.tsx`
+- `components/sections/faq-section.tsx`
+- `components/sections/contact-section.tsx`
+
+#### Removed Inline Overrides
+- Deleted all `style={{ paddingLeft, paddingRight, paddingBottom }}` overrides
+- Tailwind classes now control all spacing
+
+---
+
+### 7. **Hero Animation Bug Fix**
+
+#### Problem
+- Text appeared faded on first page load
+- Animation didn't complete properly
+
+#### Solution
+- Removed `fade-in` class from individual hero elements
+- Container already handles fade animation
+- Added CSS rule in globals.css:
+  ```css
+  .animate-in {
+    animation-fill-mode: forwards !important;
+  }
+  ```
+
+---
+
+### 8. **Toast Notifications (Sonner)**
+
+#### Implementation
+- Added Sonner toast library
+- Configured in `app/layout.tsx` with dark glassmorphism styling:
+  ```tsx
+  style: {
+    background: 'rgba(0,0,0,0.8)',
+    backdropFilter: 'blur(12px)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    color: 'white',
+  }
+  ```
+
+#### Usage Locations
+- Add to cart: "Product added to cart"
+- Update quantity: "Quantity updated"
+- Remove item: "Product removed"
+- Clear cart: "Cart cleared"
+- Checkout: "Order placed successfully"
+- Contact form: Success/error messages
+
+---
+
+### 9. **Files Created This Session**
+
+| File | Purpose |
+|------|---------|
+| `lib/cart-context.tsx` | Cart state management with localStorage |
+| `components/cart-menu.tsx` | Dropdown cart menu component |
+| `app/checkout/page.tsx` | Full checkout page |
+| `components/animated-background.tsx` | Framer Motion gradient background |
+
+---
+
+### 10. **Files Modified This Session**
+
+| File | Changes |
+|------|---------|
+| `app/page.tsx` | Added AnimatedBackground, removed parallax gradient code, cleaned up unused motion values |
+| `app/layout.tsx` | Added CartProvider wrapper, Sonner Toaster, removed static backgroundColor |
+| `app/globals.css` | Added `.animate-in { animation-fill-mode: forwards }` |
+| `components/product-detail-modal.tsx` | Added quantity selector, related products, improved styling |
+| `components/sections/products-section.tsx` | Complete Framer Motion rewrite, search/filter animations |
+| `components/sections/about-section.tsx` | Synced padding |
+| `components/sections/faq-section.tsx` | Synced padding |
+| `components/sections/contact-section.tsx` | Synced padding |
+
+---
+
+### 11. **Current Color Palette**
+
+| Color | Hex | Usage |
+|-------|-----|-------|
+| Primary Teal | `#00A89A` | Main brand color, gradient anchor |
+| Light Teal | `#00B8A9` | Gradient transition |
+| Cyan | `#3ACCFF` | Gradient highlight, accent |
+| Mid Teal | `#00C4B4` | Gradient transition |
+| Glass Background | `rgba(255,255,255,0.14)` | Cards, modals |
+| Glass Border | `rgba(255,255,255,0.28)` | Borders |
+| Text Primary | `#FAFAFA` | Main text (white) |
+| Text Secondary | `rgba(255,255,255,0.6-0.8)` | Muted text |
+
+---
+
+### 12. **Animation Timings**
+
+| Animation | Duration | Easing |
+|-----------|----------|--------|
+| Background gradient | 60s | linear |
+| Floating orbs | 70-90s | easeInOut |
+| Modal open/close | 150ms | ease-out |
+| Product card hover | 200ms | ease |
+| Filter transitions | 300ms | spring |
+| Page section scroll | spring | stiffness: 300, damping: 30 |
+| Toast notifications | 4s display | - |
+
+---
+
+### 13. **Dependencies Added**
+
+- `sonner` - Toast notifications (already in package.json)
+- Framer Motion features used: `AnimatePresence`, `motion.div`, `motion.button`, gradient animation
+
+---
+
+### 14. **Known Issues / Future Work**
+
+- [ ] Payment integration (checkout page shows placeholder)
+- [ ] Newsletter signup in contact section (todo item)
+- [ ] Backend API for orders
+- [ ] Email notifications for orders
+- [ ] Product image galleries (multiple images per product)
+- [ ] User authentication for order history
+
+---
+
+### 15. **Testing Checklist**
+
+- [x] Cart add/remove/update works
+- [x] Cart persists on page refresh (localStorage)
+- [x] Checkout page layout matches main page
+- [x] Animated background runs smoothly
+- [x] No initial green flash on page load
+- [x] Product filtering animates smoothly
+- [x] Modal opens/closes correctly
+- [x] Toast notifications appear
+- [x] Responsive on mobile
+- [x] All sections have consistent padding
+
+---
+
+**End of November 27, 2025 Session Updates**
+
+---
+
+## 🔄 Latest Updates (November 27, 2025 - Evening Session)
+
+### Session Summary - Hero Slider & Mobile Navigation Overhaul
+
+This session focused on implementing a premium hero slider with Swiper.js, adding mobile navigation, and refining animations throughout the site.
+
+---
+
+### 16. **Hero Slider Implementation (`components/hero-slider.tsx`)**
+
+#### Swiper.js Integration
+- **Library:** Swiper with React bindings
+- **Installation:** `npm install swiper`
+- **Modules Used:**
+  - `EffectCards` - 3D stacked cards effect
+  - `Mousewheel` - Scroll-based navigation
+  - `Keyboard` - Arrow key navigation
+
+#### Slider Configuration
+```tsx
+direction="vertical"
+effect="cards"
+cardsEffect={{
+  perSlideOffset: 10,
+  perSlideRotate: 2,
+  rotate: true,
+  slideShadows: false,  // Disabled for clean border radius
+}}
+speed={500}  // Fast, snappy transitions
+```
+
+#### Slides Content (3 slides)
+1. **"Where quality meets care"** - High-quality dental supplies
+2. **"Precision crafted for you"** - Premium zirconia discs
+3. **"40+ years of excellence"** - Trusted by professionals
+
+#### Features
+- Vertical card stacking with 3D perspective
+- Subtle floating animation (rotateX/rotateY)
+- Decorative glow behind cards
+- Slide indicators (right side dots)
+- Slide counter (bottom right)
+- Scroll-to-explore button
+- Proper border-radius throughout
+
+#### Keyboard Navigation (Separated)
+- **ArrowDown/ArrowUp:** Navigate slides within hero
+- **ArrowLeft/ArrowRight:** Navigate page sections
+- At last slide, ArrowDown triggers section change via `onSlideEnd` callback
+
+#### Initial Load Fix
+- Added `isMounted` state with 100ms delay
+- `initial={false}` on motion elements prevents jarring animations
+- Cards appear smoothly without scale/opacity pop-in effect
+
+---
+
+### 17. **Mobile Navigation Overhaul**
+
+#### Hamburger Menu Button
+- Replaced dot indicators with hamburger icon
+- Position: Top-right corner
+- **Icon:** Menu (hamburger) / X (close) from Lucide
+- Glass background with border
+- Visible only on mobile/tablet (`lg:hidden`)
+
+#### Slide-Out Panel Design
+- **Animation:** Slide in from right with Framer Motion
+- **Background:** Blue-green gradient matching site theme
+  ```tsx
+  background: "linear-gradient(165deg, #0d9488 0%, #0891b2 50%, #06b6d4 100%)"
+  ```
+- **Effects:** Backdrop blur, left border glow, drop shadow
+
+#### Panel Content
+1. **Close button** - Top-right, circular with X icon
+2. **Glindent logo** - White variant
+3. **Navigation links** - Numbered (01-05) with active state
+4. **Section indicator** - Dot progress bar
+5. **Shop Now CTA** - Prominent white button
+6. **Keyboard hint** - "Use ← → keys to navigate"
+
+#### Animation Details
+- `AnimatePresence mode="wait"` for clean transitions
+- Backdrop: Fade in/out (200ms)
+- Panel: Slide with custom ease curve `[0.32, 0.72, 0, 1]`
+- Simple, no nested motion components (fixed animation bugs)
+- Close button is regular `<button>` not motion (fixed click issues)
+
+#### Close Button Fix
+- Changed from `motion.button` to regular `button`
+- Added `z-10` for proper stacking
+- Added `touch-manipulation` for mobile touch response
+- `active:scale-90` for feedback
+
+---
+
+### 18. **CSS Additions (`app/globals.css`)**
+
+#### Hero Swiper Styles
+```css
+.hero-swiper {
+  overflow: visible !important;
+}
+.hero-swiper .swiper-wrapper {
+  overflow: visible !important;
+}
+.hero-swiper .swiper-slide {
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+@media (min-width: 640px) {
+  .hero-swiper .swiper-slide {
+    border-radius: 1.5rem;
+  }
+}
+```
+
+---
+
+### 19. **Files Created This Session**
+
+| File | Purpose |
+|------|---------|
+| `components/hero-slider.tsx` | Swiper-based hero slider with 3D cards effect |
+
+---
+
+### 20. **Files Modified This Session**
+
+| File | Changes |
+|------|---------|
+| `app/page.tsx` | Added HeroSlider, mobile hamburger menu, glassmorphism nav panel |
+| `app/globals.css` | Added `.hero-swiper` styles for border radius |
+
+---
+
+### 21. **Dependencies Added**
+
+```bash
+npm install swiper
+```
+
+- **Swiper 12.x** - Touch-enabled slider library
+- **Modules:** EffectCards, Mousewheel, Keyboard
+
+---
+
+### 22. **Animation Timings (Updated)**
+
+| Animation | Duration | Easing |
+|-----------|----------|--------|
+| Hero slide transition | 500ms | Swiper default |
+| Hero card floating | 4s | easeInOut, infinite |
+| Mobile menu open | 300ms | `[0.32, 0.72, 0, 1]` |
+| Mobile menu backdrop | 200ms | linear |
+| Mobile menu close button | instant | - |
+| Text content transition | 300-350ms | easeOut |
+
+---
+
+### 23. **Mobile Navigation Breakdown**
+
+```
+┌─────────────────────────────────┐
+│  [X Close]                      │  ← Top right, z-10
+│                                 │
+│  [Glindent Logo]                │  ← White variant
+│                                 │
+│  01  Home           ●───────    │  ← Active state
+│  02  About Us       ○           │
+│  03  Products       ○           │
+│  04  FAQ            ○           │
+│  05  Contact        ○           │
+│                                 │
+│  ─────────────────────────────  │  ← Divider
+│                                 │
+│  [●●●○○]  01/05                 │  ← Progress dots
+│                                 │
+│  ┌───────────────────────────┐  │
+│  │       Shop Now            │  │  ← White CTA button
+│  └───────────────────────────┘  │
+│                                 │
+│  Use ← → keys to navigate       │  ← Hint text
+│                                 │
+└─────────────────────────────────┘
+```
+
+---
+
+### 24. **Known Issues Fixed This Session**
+
+| Issue | Solution |
+|-------|----------|
+| Border radius bug on Swiper slides | Disabled `slideShadows`, added custom CSS |
+| Keyboard conflicts (slides vs pages) | Separated: Down/Up for slides, Left/Right for pages |
+| Slow animations | Reduced from 900ms to 500ms |
+| Mobile menu close button not working | Changed to regular button, added z-index |
+| Mobile menu animation bugs | Simplified structure, removed nested motion elements |
+| Hero slider jarring initial load | Added `isMounted` state, `initial={false}` on cards |
+
+---
+
+### 25. **Testing Checklist (This Session)**
+
+- [x] Hero slider swipes vertically
+- [x] 3D card effect works smoothly
+- [x] Keyboard down/up navigates slides
+- [x] Keyboard left/right navigates sections
+- [x] At last slide, down arrow changes section
+- [x] No autoplay on slider
+- [x] Mobile hamburger menu opens
+- [x] Mobile menu closes on X click
+- [x] Mobile menu closes on backdrop click
+- [x] Mobile menu closes on link click
+- [x] Glassmorphism styling matches theme
+- [x] No animation bugs on menu open
+- [x] Hero slider loads cleanly (no pop-in)
+
+---
+
+**End of November 27, 2025 Evening Session**
+
+**Last Updated:** November 27, 2025 - 11:30 PM

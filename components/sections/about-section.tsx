@@ -37,12 +37,7 @@ export function AboutSection({ scrollToSection }: { scrollToSection?: (index: nu
   return (
     <section
       ref={ref}
-      className="flex min-h-screen w-screen shrink-0 snap-start flex-col px-4 pt-24 pb-6 sm:px-6 sm:pt-28 sm:pb-8 md:px-12 md:pt-40 md:pb-12 lg:px-16 overflow-x-hidden"
-      style={{
-        paddingLeft: 'max(1rem, env(safe-area-inset-left))',
-        paddingRight: 'max(1rem, env(safe-area-inset-right))',
-        paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))'
-      }}
+      className="flex min-h-screen w-screen shrink-0 snap-start flex-col px-6 pt-24 pb-6 sm:px-8 sm:pt-28 sm:pb-8 md:px-16 md:pt-40 md:pb-12 lg:px-20 overflow-x-hidden"
     >
       <div className="h-full flex flex-col">
         {/* Title - aligned with other sections */}

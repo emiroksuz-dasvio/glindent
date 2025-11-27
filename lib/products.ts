@@ -1,3 +1,5 @@
+export type ProductCategory = "zirconia" | "imaging" | "composites" | "accessories"
+
 export interface Product {
   id: string
   name: string
@@ -5,6 +7,7 @@ export interface Product {
   image: string
   description: string
   detailedDescription: string
+  category: ProductCategory
   colors: {
     name: string
     hex: string
@@ -20,6 +23,13 @@ export interface Product {
   }
 }
 
+export const categories: { value: ProductCategory; label: string }[] = [
+  { value: "zirconia", label: "Zirconia Discs" },
+  { value: "imaging", label: "Imaging" },
+  { value: "composites", label: "Composites" },
+  { value: "accessories", label: "Accessories" },
+]
+
 export const products: Product[] = [
   {
     id: "pre-shaded-zirconia",
@@ -29,6 +39,7 @@ export const products: Product[] = [
     description: "High-quality pre-shaded zirconia disc with superior translucency for natural-looking restorations.",
     detailedDescription:
       "Our pre-shaded zirconia discs offer exceptional translucency and natural aesthetics, perfect for anterior restorations. The super translucent formula provides lifelike color gradients that mimic natural teeth, reducing chairside time and improving patient satisfaction.",
+    category: "zirconia",
     colors: [
       { name: "A1", hex: "#F5F5DC" },
       { name: "A2", hex: "#F0E68C" },
@@ -56,6 +67,7 @@ export const products: Product[] = [
     description: "Convenient self-developing X-ray film pack containing 25 sheets for quick and reliable imaging.",
     detailedDescription:
       "Self-developing X-ray films that eliminate the need for processing equipment. Perfect for chairside diagnostics with instant results. High-resolution imaging with excellent contrast for accurate diagnosis.",
+    category: "imaging",
     colors: [{ name: "Standard", hex: "#E8E8E8" }],
     specifications: [
       { label: "Film Size", value: "30mm x 40mm" },
@@ -78,6 +90,7 @@ export const products: Product[] = [
     description: "Premium multi-layer zirconia disc with exceptional translucency for aesthetic anterior restorations.",
     detailedDescription:
       "Our multi-layer zirconia discs feature gradient translucency from cervical to incisal areas, providing the most natural-looking restorations. Ideal for highly aesthetic cases where lifelike appearance is critical.",
+    category: "zirconia",
     colors: [
       { name: "BL1", hex: "#F8F8F0" },
       { name: "BL2", hex: "#F5F5E8" },
@@ -105,6 +118,7 @@ export const products: Product[] = [
     description: "Versatile white zirconia disc with high translucency for both anterior and posterior applications.",
     detailedDescription:
       "Our white zirconia discs offer excellent versatility for all restoration types. High translucency provides good aesthetics while maintaining superior strength for posterior applications.",
+    category: "zirconia",
     colors: [{ name: "White", hex: "#FFFFFF" }],
     specifications: [
       { label: "Material", value: "Zirconia (ZrO2)" },
@@ -127,6 +141,7 @@ export const products: Product[] = [
     description: "Professional-grade modelling wax for precise dental work and temporary restorations.",
     detailedDescription:
       "High-quality modelling wax with excellent carving properties and dimensional stability. Perfect for wax-ups, temporary restorations, and diagnostic models.",
+    category: "accessories",
     colors: [
       { name: "Pink", hex: "#FFB6C1" },
       { name: "Blue", hex: "#87CEEB" },
@@ -153,6 +168,7 @@ export const products: Product[] = [
     description: "High-strength ceramic blocks for CAD/CAM fabrication of durable dental restorations.",
     detailedDescription:
       "Premium ceramic blocks designed for CAD/CAM milling systems. Exceptional strength and aesthetics for long-lasting restorations with superior marginal fit.",
+    category: "accessories",
     colors: [
       { name: "A1", hex: "#F5F5DC" },
       { name: "A2", hex: "#F0E68C" },
@@ -181,6 +197,7 @@ export const products: Product[] = [
     description: "Versatile universal composite resin suitable for all cavity classes and restoration types.",
     detailedDescription:
       "Our universal composite resin offers exceptional handling and polishability. Nano-hybrid formula provides superior strength and aesthetics for all restoration types.",
+    category: "composites",
     colors: [
       { name: "A1", hex: "#F5F5DC" },
       { name: "A2", hex: "#F0E68C" },
@@ -209,6 +226,7 @@ export const products: Product[] = [
     description: "Time-saving bulk fill composite with excellent depth of cure and polishability.",
     detailedDescription:
       "Revolutionary bulk fill technology allows 4mm increments with reliable polymerization. Reduces placement time while maintaining excellent mechanical properties.",
+    category: "composites",
     colors: [
       { name: "Universal", hex: "#F0E68C" },
       { name: "A2", hex: "#F0E68C" },
@@ -235,6 +253,7 @@ export const products: Product[] = [
     description: "Premium light-curing composite with superior handling and aesthetic properties.",
     detailedDescription:
       "Premium light-curing composite featuring advanced nano-technology for exceptional aesthetics and durability. Extended working time allows precise sculpting before curing.",
+    category: "composites",
     colors: [
       { name: "A1", hex: "#F5F5DC" },
       { name: "A2", hex: "#F0E68C" },

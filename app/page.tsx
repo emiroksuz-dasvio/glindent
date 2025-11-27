@@ -3,22 +3,23 @@
 import { CustomCursor } from "@/components/custom-cursor"
 import { GrainOverlay } from "@/components/grain-overlay"
 import { ToothParticles } from "@/components/tooth-particles"
+import { AnimatedBackground } from "@/components/animated-background"
 import { AboutSection } from "@/components/sections/about-section"
 import { ProductsSection } from "@/components/sections/products-section"
 import { ContactSection } from "@/components/sections/contact-section"
-import { MagneticButton } from "@/components/magnetic-button"
+import { HeroSlider } from "@/components/hero-slider"
 import { useRef, useEffect, useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
 import { FAQSection } from "@/components/sections/faq-section"
 import { GlindentLogo } from "@/components/glindent-logo"
-import { ChevronDown } from "lucide-react"
-import { motion, useMotionValue, useSpring, animate } from "framer-motion"
+import { motion, useMotionValue, useSpring, animate, AnimatePresence } from "framer-motion"
+import { CartMenu } from "@/components/cart-menu"
+import { Menu, X } from "lucide-react"
 
 export default function Home() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [currentSection, setCurrentSection] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   
   // Framer Motion values for smooth animations
   const x = useMotionValue(0)
@@ -28,30 +29,13 @@ export default function Home() {
     mass: 0.8 
   })
   
-  // Parallax gradient that follows scroll position - initialize at correct position
-  const gradientX = useMotionValue(0)
-  const springGradientX = useSpring(gradientX, { stiffness: 80, damping: 20 })
-  
   const isAnimating = useRef(false)
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
 
   useEffect(() => {
     setIsLoaded(true)
-    // Initialize gradient position on mount
-    gradientX.set(0)
   }, [])
-
-  // Update gradient position based on horizontal scroll
-  useEffect(() => {
-    const unsubscribe = x.on('change', (latest) => {
-      // Move gradient opposite to scroll direction for parallax effect
-      // Increased scale factor for faster, more visible color changes
-      gradientX.set(latest * 0.5)
-    })
-
-    return () => unsubscribe()
-  }, [x, gradientX])
 
   const scrollToSection = (index: number) => {
     if (index < 0 || index > 4 || isAnimating.current) return
@@ -157,17 +141,18 @@ export default function Home() {
     }
   }, [currentSection])
 
-  // Keyboard navigation
+  // Keyboard navigation - only horizontal arrows for page navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isAnimating.current) return
 
-      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      // Only ArrowRight and ArrowLeft for page navigation
+      if (e.key === "ArrowRight") {
         e.preventDefault()
         if (currentSection < 4) {
           scrollToSection(currentSection + 1)
         }
-      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      } else if (e.key === "ArrowLeft") {
         e.preventDefault()
         if (currentSection > 0) {
           scrollToSection(currentSection - 1)
@@ -179,6 +164,7 @@ export default function Home() {
         e.preventDefault()
         scrollToSection(4)
       }
+      // ArrowUp and ArrowDown are now handled by HeroSlider for slide navigation
     }
 
     window.addEventListener("keydown", handleKeyDown)
@@ -186,46 +172,21 @@ export default function Home() {
   }, [currentSection])
 
   return (
-    <main className="relative h-screen w-full overflow-hidden bg-[#00A89A]">
+    <main className="relative h-screen w-full overflow-hidden">
       <CustomCursor />
       <GrainOverlay />
       <ToothParticles currentSection={currentSection} />
-
-      {/* Static Gradient Background */}
-      <div
-        className="fixed inset-0 z-0"
-        style={{
-          background: 'linear-gradient(315deg, #00A89A 0%, #3ACCFF 100%)',
-          transform: 'translateX(0px)',
-          width: '500%',
-          left: '-100%'
-        }}
-      />
-      <motion.div
-        className="fixed inset-0 z-0"
-        style={{
-          x: springGradientX,
-          background: 'linear-gradient(315deg, #00A89A 0%, #3ACCFF 100%)',
-          width: '500%',
-          left: '-100%',
-          willChange: 'transform',
-          opacity: isLoaded ? 1 : 0
-        }}
-      />
-      <div className="fixed inset-0 z-0 bg-black/20" />
+      <AnimatedBackground />
 
       <nav
-        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-4 py-4 sm:px-6 sm:py-5 md:px-12 md:py-6 transition-opacity duration-700 ${
+        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-6 py-4 sm:px-8 sm:py-5 md:px-16 md:py-6 transition-opacity duration-700 ${
           isLoaded ? "opacity-100" : "opacity-0"
         }`}
         style={{
           background: 'transparent',
           backdropFilter: 'none',
           WebkitBackdropFilter: 'none',
-          borderBottom: '1px solid var(--header-border)',
-          paddingLeft: 'max(1rem, env(safe-area-inset-left))',
-          paddingRight: 'max(1rem, env(safe-area-inset-right))',
-          paddingTop: 'max(1rem, env(safe-area-inset-top))'
+          borderBottom: '1px solid var(--header-border)'
         }}
       >
         <button
@@ -254,31 +215,166 @@ export default function Home() {
           ))}
         </div>
 
-        <button
-          onClick={() => scrollToSection(2)}
-          className="hidden lg:block font-sans text-sm font-medium text-foreground/80 transition-colors hover:text-foreground active:text-foreground touch-manipulation min-h-11 px-4"
-        >
-          Shop Now
-        </button>
+        <div className="hidden lg:flex items-center gap-4">
+          <button
+            onClick={() => scrollToSection(2)}
+            className="font-sans text-sm font-medium text-foreground/80 transition-colors hover:text-foreground active:text-foreground touch-manipulation min-h-11 px-4"
+          >
+            Shop Now
+          </button>
+          <CartMenu />
+        </div>
         
-        {/* Mobile Navigation Dots */}
+        {/* Mobile Navigation */}
         <div className="flex lg:hidden items-center gap-2">
-          {[0, 1, 2, 3, 4].map((index) => (
-            <button
-              key={index}
-              onClick={() => scrollToSection(index)}
-              className="touch-manipulation p-2"
-              aria-label={`Go to section ${index + 1}`}
-            >
-              <div className={`w-2 h-2 rounded-full transition-all ${
-                currentSection === index 
-                  ? 'bg-foreground w-6' 
-                  : 'bg-foreground/30'
-              }`} />
-            </button>
-          ))}
+          <CartMenu />
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="touch-manipulation p-2 min-h-11 min-w-11 flex items-center justify-center"
+            aria-label="Open menu"
+          >
+            <Menu className="w-6 h-6 text-white" />
+          </button>
         </div>
       </nav>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence mode="wait">
+        {mobileMenuOpen && (
+          <motion.div
+            key="mobile-menu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-60 lg:hidden"
+          >
+            {/* Backdrop */}
+            <motion.div
+              className="absolute inset-0 bg-black/50 backdrop-blur-md"
+              onClick={() => setMobileMenuOpen(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            />
+            
+            {/* Slide-out Panel - Glassmorphism */}
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "tween", duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+              className="absolute right-0 top-0 bottom-0 w-[300px] overflow-hidden"
+              style={{
+                background: "linear-gradient(165deg, #0d9488 0%, #0891b2 50%, #06b6d4 100%)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                borderLeft: "1px solid rgba(255,255,255,0.2)",
+                boxShadow: "-10px 0 40px rgba(0,0,0,0.4)",
+              }}
+            >
+              {/* Glass overlay */}
+              <div className="absolute inset-0 bg-linear-to-b from-white/10 via-transparent to-black/20 pointer-events-none" />
+              
+              {/* Close button */}
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="absolute top-5 right-5 z-10 p-3 rounded-full bg-white/10 border border-white/20 touch-manipulation active:scale-90 transition-transform"
+                aria-label="Close menu"
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+
+              {/* Menu content */}
+              <div className="relative flex flex-col h-full pt-20 pb-8 px-5 overflow-y-auto">
+                {/* Logo area */}
+                <div className="mb-8 px-2">
+                  <GlindentLogo variant="white" className="h-7 w-auto opacity-90" />
+                </div>
+
+                {/* Navigation Links */}
+                <nav className="flex flex-col gap-2">
+                  {["Home", "About Us", "Products", "FAQ", "Contact"].map((item, index) => (
+                    <button
+                      key={item}
+                      onClick={() => {
+                        scrollToSection(index)
+                        setMobileMenuOpen(false)
+                      }}
+                      className={`group relative text-left py-4 px-4 rounded-2xl text-base font-medium transition-all duration-150 ${
+                        currentSection === index
+                          ? "text-white bg-white/15 border border-white/20"
+                          : "text-white/80 hover:text-white hover:bg-white/10 active:bg-white/15"
+                      }`}
+                    >
+                      {/* Active indicator line */}
+                      {currentSection === index && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-full" />
+                      )}
+                      
+                      <span className="flex items-center gap-3">
+                        <span className={`text-xs font-mono ${
+                          currentSection === index ? "text-white/70" : "text-white/40"
+                        }`}>
+                          0{index + 1}
+                        </span>
+                        {item}
+                      </span>
+                    </button>
+                  ))}
+                </nav>
+
+                {/* Divider */}
+                <div className="my-6 h-px bg-white/15" />
+
+                {/* Section indicator */}
+                <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-white/10 mb-6">
+                  <div className="flex gap-2">
+                    {[0, 1, 2, 3, 4].map((idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          scrollToSection(idx)
+                          setMobileMenuOpen(false)
+                        }}
+                        className={`h-2 rounded-full transition-all duration-200 ${
+                          currentSection === idx
+                            ? "w-8 bg-white"
+                            : "w-2 bg-white/30 hover:bg-white/50"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-xs font-mono text-white/50">
+                    {String(currentSection + 1).padStart(2, '0')}/05
+                  </span>
+                </div>
+
+                {/* Bottom section */}
+                <div className="mt-auto space-y-4">
+                  <button
+                    onClick={() => {
+                      scrollToSection(2)
+                      setMobileMenuOpen(false)
+                    }}
+                    className="w-full py-4 px-4 bg-white text-[#007A72] rounded-2xl font-semibold text-center active:scale-[0.98] transition-transform shadow-lg"
+                  >
+                    Shop Now
+                  </button>
+                  
+                  <p className="text-center text-xs text-white/40">
+                    Use ← → keys to navigate
+                  </p>
+                </div>
+              </div>
+              
+              {/* Decorative glows */}
+              <div className="absolute top-0 right-0 w-40 h-40 bg-cyan-400/15 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-20 left-0 w-32 h-32 bg-teal-300/10 rounded-full blur-3xl pointer-events-none" />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <motion.div
         ref={scrollContainerRef}
@@ -287,80 +383,14 @@ export default function Home() {
           isLoaded ? "opacity-100" : "opacity-0"
         }`}
       >
-        <section 
-          className="relative flex min-h-screen w-screen shrink-0 flex-col px-4 pt-24 pb-6 sm:px-6 sm:pt-28 sm:pb-8 md:px-12 md:pt-40 md:pb-12 lg:px-16"
-          style={{
-            paddingLeft: 'max(1rem, env(safe-area-inset-left))',
-            paddingRight: 'max(1rem, env(safe-area-inset-right))',
-            paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))'
+        <HeroSlider 
+          scrollToSection={scrollToSection} 
+          onSlideEnd={() => {
+            if (currentSection === 0) {
+              scrollToSection(1)
+            }
           }}
-        >
-          <div className="relative z-10 flex h-full flex-col justify-start">
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-12 xl:gap-16 pt-4 md:pt-8 lg:items-start">
-              {/* Image Area - First on mobile, second on desktop */}
-              <div className="relative block lg:order-2 animate-in fade-in slide-in-from-right-8 duration-1000 delay-200 self-start">
-                <div className="relative w-full min-h-[250px] sm:min-h-[300px] md:min-h-[400px] lg:min-h-[500px] xl:min-h-[600px]">
-                  {/* Glass effect container */}
-                  <div className="glass absolute inset-0 rounded-2xl sm:rounded-3xl overflow-hidden">
-                    <Image
-                      src="/hero-dental.jpg"
-                      alt="Professional dental care - Patient receiving quality dental treatment"
-                      fill
-                      className="object-cover"
-                      priority
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                    />
-                  </div>
-                  
-                  {/* Decorative elements */}
-                  <div className="absolute -inset-4 bg-linear-to-br from-primary/20 to-accent/20 rounded-2xl sm:rounded-3xl blur-2xl -z-10 opacity-50" />
-                </div>
-              </div>
-
-              {/* Text Content - Second on mobile, first on desktop */}
-              <div className="flex flex-col justify-start max-w-3xl lg:order-1">
-                <div className="glass mb-4 sm:mb-6 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-2xl px-3 py-1.5 sm:px-4 duration-700 w-fit">
-                  <p className="text-xs sm:text-sm leading-none text-white">High-Quality Dental Supplies</p>
-                </div>
-                <h1 className="mb-4 sm:mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light leading-[1.1] tracking-tight text-white duration-1000">
-                  <span className="text-balance">
-                    Where quality
-                    <br />
-                    meets care
-                  </span>
-                </h1>
-                <p className="mb-6 sm:mb-8 max-w-xl animate-in fade-in slide-in-from-bottom-4 text-sm sm:text-base md:text-lg leading-relaxed text-white/95 duration-1000 delay-200">
-                  <span className="text-pretty">
-                    We believe dental professionals deserve materials they can trust. That's why Glindent delivers
-                    world-class products, supported by responsive service and a commitment to helping you achieve the best
-                    results for your patients.
-                  </span>
-                </p>
-
-                <div className="flex animate-in fade-in slide-in-from-bottom-4 flex-col gap-3 sm:gap-4 duration-1000 delay-300 sm:flex-row sm:items-center">
-                  <Link href="/products" className="w-full sm:w-auto">
-                    <MagneticButton size="lg" variant="primary" className="w-full sm:w-auto min-h-12">
-                      Shop Now
-                    </MagneticButton>
-                  </Link>
-                  <MagneticButton size="lg" variant="secondary" onClick={() => scrollToSection(4)} className="w-full sm:w-auto min-h-12">
-                    Contact Us
-                  </MagneticButton>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => scrollToSection(1)}
-              className="mt-auto mb-8 flex flex-col items-center gap-2 transition-transform duration-1000 delay-500 hover:scale-105 animate-in fade-in lg:self-start"
-            >
-              <p className="text-[13px] font-medium text-white/90">Scroll to explore</p>
-              <div className="animate-bounce">
-                <ChevronDown className="h-5 w-5 text-white/90" strokeWidth={2} />
-              </div>
-            </button>
-          </div>
-        </section>
+        />
 
         <AboutSection scrollToSection={scrollToSection} />
         <ProductsSection />
