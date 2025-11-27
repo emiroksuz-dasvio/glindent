@@ -1,6 +1,6 @@
 "use client"
 
-import { Mail, MapPin, Phone, Send } from "lucide-react"
+import { Mail, MapPin, Phone, Send, Twitter, Instagram, Linkedin, Dribbble } from "lucide-react"
 import { useReveal } from "@/hooks/use-reveal"
 import { useState, type FormEvent } from "react"
 import { MagneticButton } from "@/components/magnetic-button"
@@ -106,104 +106,113 @@ export function ContactSection() {
       ref={ref}
       className="relative z-20 flex min-h-screen w-screen shrink-0 snap-start flex-col px-6 pt-24 pb-6 sm:px-8 sm:pt-28 sm:pb-8 md:px-16 md:pt-40 md:pb-12 lg:px-20 overflow-x-hidden"
     >
-      <div className="h-full flex flex-col">
+      <div className="h-full flex flex-col w-full">
         {/* Title */}
         <div
-          className={`mb-6 sm:mb-8 md:mb-12 shrink-0 transition-all duration-700 ${
+          className={`mb-8 sm:mb-12 shrink-0 transition-all duration-700 ${
             isVisible ? "translate-x-0 opacity-100" : "-translate-x-12 opacity-0"
           }`}
         >
-          <h2 className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light leading-none tracking-tight text-foreground whitespace-nowrap">
+          <h2 className="font-sans text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light leading-none tracking-tight text-foreground whitespace-nowrap">
             Let's talk
           </h2>
-          <p className="mt-1.5 sm:mt-2 font-mono text-xs sm:text-sm text-foreground/60">/ Get in touch</p>
+          <p className="mt-2 font-mono text-sm text-foreground/60">/ Get in touch</p>
         </div>
 
-        {/* Scrollable Content Area */}
-        <div className="flex-1 overflow-y-auto pr-2" style={{ scrollbarWidth: "thin" }}>
-          <div className="flex flex-col lg:flex-row lg:justify-between gap-6 sm:gap-8 md:gap-10 lg:gap-20 xl:gap-24">
-            {/* Left side - Contact Info Boxes */}
-            <div className="lg:w-[42%]">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
-                {/* Email Box */}
-                <a
-                  href="mailto:info@glindent.co.uk"
-                  className={`flex flex-col items-center text-center p-4 sm:p-5 md:p-6 rounded-2xl border border-white/20 bg-white/15 backdrop-blur-xl touch-manipulation min-h-[120px] transition-all duration-500 hover:bg-white/20 ${
-                    isVisible ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
-                  }`}
-                  style={{ transitionDelay: "100ms" }}
-                >
-                  <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-foreground mb-2 sm:mb-3" />
-                  <span className="font-mono text-xs text-foreground/60 uppercase tracking-wider mb-1.5 sm:mb-2">Email</span>
-                  <p className="text-sm sm:text-base text-foreground break-all">
-                    info@glindent.co.uk
-                  </p>
-                </a>
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col lg:flex-row gap-12 lg:gap-24">
+          {/* Left side - Contact Info & Socials */}
+          <div className="lg:w-[40%] flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
+              {/* Email Box */}
+              <a
+                href="mailto:info@glindent.co.uk"
+                className={`group flex items-center gap-5 p-5 rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl transition-all duration-500 hover:bg-white/15 hover:border-white/30 hover:scale-[1.02] ${
+                  isVisible ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
+                }`}
+                style={{ transitionDelay: "100ms" }}
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-foreground group-hover:bg-white/20 transition-colors">
+                  <Mail className="h-5 w-5" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-mono text-xs text-foreground/60 uppercase tracking-wider mb-1">Email</span>
+                  <span className="text-base sm:text-lg text-foreground font-medium">info@glindent.co.uk</span>
+                </div>
+              </a>
 
-                {/* Phone Box */}
-                <div
-                  className={`flex flex-col items-center text-center p-4 sm:p-5 md:p-6 rounded-2xl border border-white/20 bg-white/15 backdrop-blur-xl min-h-[120px] transition-all duration-500 hover:bg-white/20 ${
-                    isVisible ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
-                  }`}
-                  style={{ transitionDelay: "200ms" }}
-                >
-                  <Phone className="h-5 w-5 sm:h-6 sm:w-6 text-foreground mb-2 sm:mb-3" />
-                  <span className="font-mono text-xs text-foreground/60 uppercase tracking-wider mb-1.5 sm:mb-2">Phone</span>
-                  <div className="flex flex-col gap-1">
-                    <a
-                      href="tel:01202402675"
-                      className="text-sm sm:text-base text-foreground touch-manipulation"
-                    >
-                      01202 402675
-                    </a>
-                    <a
-                      href="tel:07717886717"
-                      className="text-sm sm:text-base text-foreground touch-manipulation"
-                    >
-                      07717 886717
-                    </a>
+              {/* Phone Box */}
+              <div
+                className={`group flex items-center gap-5 p-5 rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl transition-all duration-500 hover:bg-white/15 hover:border-white/30 hover:scale-[1.02] ${
+                  isVisible ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
+                }`}
+                style={{ transitionDelay: "200ms" }}
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-foreground group-hover:bg-white/20 transition-colors">
+                  <Phone className="h-5 w-5" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-mono text-xs text-foreground/60 uppercase tracking-wider mb-1">Phone</span>
+                  <div className="flex flex-col sm:flex-row sm:gap-4">
+                    <a href="tel:01202402675" className="text-base sm:text-lg text-foreground font-medium hover:text-white/80 transition-colors">01202 402675</a>
+                    <span className="hidden sm:block text-foreground/40">|</span>
+                    <a href="tel:07717886717" className="text-base sm:text-lg text-foreground font-medium hover:text-white/80 transition-colors">07717 886717</a>
                   </div>
                 </div>
+              </div>
 
-                {/* Address Box - Centered below first two */}
-                <div
-                  className={`flex flex-col items-center text-center p-4 sm:p-5 md:p-6 rounded-2xl border border-white/20 bg-white/15 backdrop-blur-xl sm:col-span-2 sm:max-w-md sm:mx-auto sm:w-full min-h-[120px] transition-all duration-500 hover:bg-white/20 ${
-                    isVisible ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
-                  }`}
-                  style={{ transitionDelay: "300ms" }}
-                >
-                  <MapPin className="h-5 w-5 sm:h-6 sm:w-6 text-foreground mb-2 sm:mb-3" />
-                  <span className="font-mono text-xs text-foreground/60 uppercase tracking-wider mb-1.5 sm:mb-2">Address</span>
-                  <p className="text-sm sm:text-base leading-relaxed text-foreground">
+              {/* Address Box */}
+              <div
+                className={`group flex items-center gap-5 p-5 rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl transition-all duration-500 hover:bg-white/15 hover:border-white/30 hover:scale-[1.02] ${
+                  isVisible ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
+                }`}
+                style={{ transitionDelay: "300ms" }}
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-foreground group-hover:bg-white/20 transition-colors">
+                  <MapPin className="h-5 w-5" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-mono text-xs text-foreground/60 uppercase tracking-wider mb-1">Address</span>
+                  <p className="text-base sm:text-lg text-foreground font-medium leading-snug">
                     Bourne House, 23 Hinton Road<br />
                     Bournemouth, BH1 2EF
                   </p>
                 </div>
               </div>
+            </div>
 
-              {/* Social Links */}
-              <div
-                className={`flex flex-wrap justify-center sm:justify-start lg:justify-between items-center w-full pt-6 sm:pt-8 md:pt-10 lg:pt-20 gap-3 sm:gap-4 transition-all duration-700 ${
-                  isVisible ? "translate-x-0 opacity-100" : "-translate-x-8 opacity-0"
-                }`}
-                style={{ transitionDelay: "400ms" }}
-              >
-                {["Twitter", "Instagram", "LinkedIn", "Dribbble"].map((social) => (
+            {/* Social Links */}
+            <div
+              className={`flex flex-col gap-4 transition-all duration-700 ${
+                isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+              }`}
+              style={{ transitionDelay: "400ms" }}
+            >
+              <span className="font-mono text-xs text-foreground/60 uppercase tracking-wider">Follow Us</span>
+              <div className="flex gap-4">
+                {[
+                  { icon: Twitter, label: "Twitter" },
+                  { icon: Instagram, label: "Instagram" },
+                  { icon: Linkedin, label: "LinkedIn" },
+                  { icon: Dribbble, label: "Dribbble" }
+                ].map(({ icon: Icon, label }) => (
                   <a
-                    key={social}
+                    key={label}
                     href="#"
-                    className="group relative lg:flex-1 text-center font-mono text-xs text-foreground/60 uppercase tracking-wider transition-all hover:text-foreground touch-manipulation min-h-11 flex items-center px-2"
+                    className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 text-foreground transition-all hover:bg-white hover:text-[#007A72] hover:scale-110"
+                    aria-label={label}
                   >
-                    {social}
-                    <span className="absolute -bottom-1 left-0 h-px w-0 bg-foreground transition-all duration-300 group-hover:w-full" />
+                    <Icon className="h-5 w-5" />
                   </a>
                 ))}
               </div>
             </div>
+          </div>
 
-            {/* Right side - Contact Form */}
-            <div className="lg:w-[52%]">
-              <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+          {/* Right side - Contact Form */}
+          <div className="lg:w-[60%]">
+            <form onSubmit={handleSubmit} className="space-y-6 p-6 sm:p-8 rounded-3xl border border-white/20 bg-white/10 backdrop-blur-xl">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div
                   className={`transition-all duration-700 ${
                     isVisible ? "translate-x-0 opacity-100" : "translate-x-16 opacity-0"
@@ -220,10 +229,10 @@ export function ContactSection() {
                       setFormData({ ...formData, name: e.target.value })
                       if (errors.name) setErrors({ ...errors, name: undefined })
                     }}
-                    className={`w-full border-b-2 bg-transparent py-3 sm:py-3.5 text-sm sm:text-base text-foreground placeholder:text-foreground/30 transition-all focus:outline-none touch-manipulation min-h-12 ${
-                      errors.name ? "border-red-400 focus:border-red-400" : "border-foreground/20 focus:border-foreground"
+                    className={`w-full rounded-xl border bg-white/5 px-4 py-3.5 text-base text-foreground placeholder:text-foreground/30 transition-all focus:bg-white/10 focus:outline-none ${
+                      errors.name ? "border-red-400 focus:border-red-400" : "border-white/10 focus:border-white/30"
                     }`}
-                    placeholder="Your name"
+                    placeholder="John Doe"
                   />
                   {errors.name && (
                     <p className="mt-1 text-xs text-red-400">{errors.name}</p>
@@ -246,96 +255,94 @@ export function ContactSection() {
                       setFormData({ ...formData, email: e.target.value })
                       if (errors.email) setErrors({ ...errors, email: undefined })
                     }}
-                    className={`w-full border-b-2 bg-transparent py-3 sm:py-3.5 text-sm sm:text-base text-foreground placeholder:text-foreground/30 transition-all focus:outline-none touch-manipulation min-h-12 ${
-                      errors.email ? "border-red-400 focus:border-red-400" : "border-foreground/20 focus:border-foreground"
+                    className={`w-full rounded-xl border bg-white/5 px-4 py-3.5 text-base text-foreground placeholder:text-foreground/30 transition-all focus:bg-white/10 focus:outline-none ${
+                      errors.email ? "border-red-400 focus:border-red-400" : "border-white/10 focus:border-white/30"
                     }`}
-                    placeholder="your@email.com"
+                    placeholder="john@example.com"
                   />
                   {errors.email && (
                     <p className="mt-1 text-xs text-red-400">{errors.email}</p>
                   )}
                 </div>
+              </div>
 
-                <div
-                  className={`transition-all duration-700 ${
-                    isVisible ? "translate-x-0 opacity-100" : "translate-x-16 opacity-0"
+              <div
+                className={`transition-all duration-700 ${
+                  isVisible ? "translate-x-0 opacity-100" : "translate-x-16 opacity-0"
+                }`}
+                style={{ transitionDelay: "400ms" }}
+              >
+                <label className="mb-2 block font-mono text-xs text-foreground/60 uppercase tracking-wider">
+                  Message
+                </label>
+                <textarea
+                  rows={6}
+                  value={formData.message}
+                  onChange={(e) => {
+                    setFormData({ ...formData, message: e.target.value })
+                    if (errors.message) setErrors({ ...errors, message: undefined })
+                  }}
+                  className={`w-full resize-none rounded-xl border bg-white/5 px-4 py-3.5 text-base text-foreground placeholder:text-foreground/30 transition-all focus:bg-white/10 focus:outline-none ${
+                    errors.message ? "border-red-400 focus:border-red-400" : "border-white/10 focus:border-white/30"
                   }`}
-                  style={{ transitionDelay: "400ms" }}
-                >
-                  <label className="mb-2 block font-mono text-xs text-foreground/60 uppercase tracking-wider">
-                    Message
-                  </label>
-                  <textarea
-                    rows={5}
-                    value={formData.message}
-                    onChange={(e) => {
-                      setFormData({ ...formData, message: e.target.value })
-                      if (errors.message) setErrors({ ...errors, message: undefined })
-                    }}
-                    className={`w-full resize-none border-b-2 bg-transparent py-3 sm:py-3.5 text-sm sm:text-base text-foreground placeholder:text-foreground/30 transition-all focus:outline-none touch-manipulation ${
-                      errors.message ? "border-red-400 focus:border-red-400" : "border-foreground/20 focus:border-foreground"
-                    }`}
-                    placeholder="Tell us about your project..."
-                  />
-                  {errors.message && (
-                    <p className="mt-1 text-xs text-red-400">{errors.message}</p>
-                  )}
-                </div>
+                  placeholder="Tell us about your project..."
+                />
+                {errors.message && (
+                  <p className="mt-1 text-xs text-red-400">{errors.message}</p>
+                )}
+              </div>
 
-                <div
-                  className={`transition-all duration-700 ${
-                    isVisible ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
-                  }`}
-                  style={{ transitionDelay: "500ms" }}
+              <div
+                className={`transition-all duration-700 ${
+                  isVisible ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0"
+                }`}
+                style={{ transitionDelay: "500ms" }}
+              >
+                <MagneticButton
+                  variant="primary"
+                  size="lg"
+                  className="w-full sm:w-auto min-w-[200px]"
+                  disabled={isSubmitting}
                 >
-                  <MagneticButton
-                    variant="primary"
-                    size="lg"
-                    className="w-full disabled:opacity-50 disabled:cursor-not-allowed min-h-12"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Sending..." : "Send Message"}
-                  </MagneticButton>
-                </div>
-              </form>
-            </div>
+                  {isSubmitting ? "Sending..." : "Send Message"}
+                </MagneticButton>
+              </div>
+            </form>
           </div>
         </div>
 
-        {/* Newsletter Signup - Full Width */}
+        {/* Newsletter Signup - Integrated at bottom */}
         <div
-          className={`w-full mt-6 sm:mt-8 transition-all duration-700 ${
+          className={`mt-12 sm:mt-16 border-t border-white/20 pt-8 sm:pt-12 transition-all duration-700 ${
             isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
           }`}
           style={{ transitionDelay: "600ms" }}
         >
-          <div className="p-4 sm:p-5 md:p-6 rounded-2xl border border-white/20 bg-white/15 backdrop-blur-xl">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <h3 className="font-mono text-xs text-foreground/60 uppercase tracking-wider mb-1">
-                  Newsletter
-                </h3>
-                <p className="text-sm text-foreground/80">
-                  Subscribe for updates on new products, tips, and exclusive offers.
-                </p>
-              </div>
-              <form onSubmit={handleNewsletterSubmit} className="flex gap-2 md:min-w-[320px]">
-                <input
-                  type="email"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="flex-1 border-b-2 border-foreground/20 bg-transparent py-2 text-sm text-foreground placeholder:text-foreground/30 transition-all focus:border-foreground focus:outline-none touch-manipulation min-h-10"
-                />
-                <button
-                  type="submit"
-                  disabled={isSubscribing}
-                  className="flex items-center justify-center p-2 rounded-lg bg-white/95 text-[#1a365d] transition-all hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation min-h-10 min-w-10"
-                >
-                  <Send className="h-4 w-4" />
-                </button>
-              </form>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+              <h3 className="font-sans text-2xl font-light text-foreground mb-2">
+                Stay updated
+              </h3>
+              <p className="text-sm text-foreground/60 max-w-md">
+                Subscribe to our newsletter for the latest products, dental tips, and exclusive offers.
+              </p>
             </div>
+            <form onSubmit={handleNewsletterSubmit} className="flex gap-3 w-full md:w-auto md:min-w-[400px]">
+              <input
+                type="email"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                placeholder="your@email.com"
+                className="flex-1 rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-foreground placeholder:text-foreground/30 transition-all focus:bg-white/15 focus:border-white/40 focus:outline-none"
+              />
+              <button
+                type="submit"
+                disabled={isSubscribing}
+                className="flex items-center justify-center px-6 rounded-xl bg-white text-[#007A72] font-medium transition-all hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Subscribe
+              </button>
+            </form>
           </div>
         </div>
       </div>
