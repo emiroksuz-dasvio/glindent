@@ -1,6 +1,5 @@
 "use client"
 
-import { CustomCursor } from "@/components/custom-cursor"
 import { GrainOverlay } from "@/components/grain-overlay"
 import { ToothParticles } from "@/components/tooth-particles"
 import { AnimatedBackground } from "@/components/animated-background"
@@ -173,7 +172,6 @@ export default function Home() {
 
   return (
     <main className="relative h-screen w-full overflow-hidden">
-      <CustomCursor />
       <GrainOverlay />
       <ToothParticles currentSection={currentSection} />
       <AnimatedBackground />

@@ -147,9 +147,9 @@ export function ProductsSection() {
                         ease: "easeOut"
                       }}
                       onClick={() => handleProductClick(product)}
-                      className="group relative flex flex-col overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/5 backdrop-blur-sm text-left transition-colors duration-200 hover:border-foreground/20 hover:bg-foreground/8"
+                      className="group relative flex flex-col overflow-hidden rounded-2xl bg-white text-left transition-all duration-200 hover:shadow-xl hover:shadow-black/10 hover:-translate-y-1"
                     >
-                      <div className="relative aspect-square overflow-hidden bg-foreground/5">
+                      <div className="relative aspect-square overflow-hidden bg-gray-50">
                         <Image
                           src={product.image || "/placeholder.svg"}
                           alt={`${product.name} - ${product.description}`}
@@ -159,15 +159,15 @@ export function ProductsSection() {
                         />
                       </div>
                       <div className="flex flex-col flex-1 p-4">
-                        <h3 className="mb-1 font-sans text-base font-medium text-foreground">
+                        <h3 className="mb-1 font-sans text-base font-medium text-gray-900">
                           {product.name}
                         </h3>
-                        <p className="mb-3 line-clamp-2 text-xs leading-relaxed text-foreground/70 flex-1">
+                        <p className="mb-3 line-clamp-2 text-xs leading-relaxed text-gray-600 flex-1">
                           {product.description}
                         </p>
                         <div className="flex items-center justify-between mt-auto">
-                          <span className="font-mono text-lg font-semibold text-foreground">{product.price}</span>
-                          <span className="text-xs text-foreground/60 transition-colors duration-200 group-hover:text-foreground">
+                          <span className="font-mono text-lg font-semibold text-gray-900">{product.price}</span>
+                          <span className="text-xs text-gray-500 transition-colors duration-200 group-hover:text-teal-600">
                             View →
                           </span>
                         </div>
