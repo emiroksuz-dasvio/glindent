@@ -1,0 +1,818 @@
+"use client"
+
+import { useState, useRef, useEffect } from "react"
+import { observer } from "mobx-react-lite"
+
+// SVG Icons
+const MailIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="20" height="16" x="2" y="4" rx="2"/>
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+  </svg>
+)
+
+const PhoneIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+  </svg>
+)
+
+const MapPinIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/>
+    <circle cx="12" cy="10" r="3"/>
+  </svg>
+)
+
+const SendIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/>
+    <path d="m21.854 2.147-10.94 10.939"/>
+  </svg>
+)
+
+const TwitterIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>
+  </svg>
+)
+
+const InstagramIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+  </svg>
+)
+
+const LinkedInIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+    <rect width="4" height="12" x="2" y="9"/>
+    <circle cx="4" cy="4" r="2"/>
+  </svg>
+)
+
+const DribbbleIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94"/>
+    <path d="M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32"/>
+    <path d="M8.56 2.75c4.37 6 6 9.42 8 17.72"/>
+  </svg>
+)
+
+interface FormData {
+  name: string
+  email: string
+  message: string
+}
+
+interface FormErrors {
+  name?: string
+  email?: string
+  message?: string
+}
+
+const ContactSection: React.FC = () => {
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    email: "",
+    message: ""
+  })
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true)
+        }
+      },
+      { threshold: 0.3 }
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
+
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  }
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {}
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required"
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters"
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required"
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = "Please enter a valid email address"
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required"
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = "Message must be at least 10 characters"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!validateForm()) return
+
+    setIsSubmitting(true)
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      alert("Message sent successfully! We'll get back to you soon.")
+      setFormData({ name: "", email: "", message: "" })
+      setErrors({})
+    } catch {
+      alert("Something went wrong. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <section
+      ref={sectionRef}
+      id="contact"
+      className="contact-section horizontal-section"
+    >
+      <div className="contact-container">
+        {/* Title */}
+        <div className={`section-header ${isVisible ? 'visible' : ''}`}>
+          <h2 className="section-title">Let&apos;s talk</h2>
+          <p className="section-subtitle">/ Get in touch</p>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="contact-grid">
+          {/* Left Card - Contact Information */}
+          <div 
+            className={`contact-info-card ${isVisible ? 'visible' : ''}`}
+            style={{ transitionDelay: '100ms' }}
+          >
+            <div>
+              <h3 className="card-title">Contact Information</h3>
+              <p className="card-description">Fill up the form and our Team will get back to you within 24 hours.</p>
+              
+              <div className="contact-items">
+                {/* Email */}
+                <a href="mailto:info@glindent.co.uk" className="contact-item">
+                  <div className="contact-icon">
+                    <MailIcon />
+                  </div>
+                  <div className="contact-text">
+                    <span className="contact-label">Email</span>
+                    <span className="contact-value">info@glindent.co.uk</span>
+                  </div>
+                </a>
+
+                {/* Phone */}
+                <div className="contact-item">
+                  <div className="contact-icon">
+                    <PhoneIcon />
+                  </div>
+                  <div className="contact-text">
+                    <span className="contact-label">Phone</span>
+                    <div className="phone-numbers">
+                      <a href="tel:01202402675" className="phone-link">01202 402675</a>
+                      <span className="phone-divider">|</span>
+                      <a href="tel:07717886717" className="phone-link">07717 886717</a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Address */}
+                <div className="contact-item">
+                  <div className="contact-icon">
+                    <MapPinIcon />
+                  </div>
+                  <div className="contact-text">
+                    <span className="contact-label">Address</span>
+                    <p className="address-text">
+                      Bourne House, 23 Hinton Road<br />
+                      Bournemouth, BH1 2EF
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Social Links */}
+            <div className="social-section">
+              <span className="social-label">Follow Us</span>
+              <div className="social-links">
+                <a href="#" className="social-link twitter" aria-label="Twitter">
+                  <TwitterIcon />
+                </a>
+                <a href="#" className="social-link instagram" aria-label="Instagram">
+                  <InstagramIcon />
+                </a>
+                <a href="#" className="social-link linkedin" aria-label="LinkedIn">
+                  <LinkedInIcon />
+                </a>
+                <a href="#" className="social-link dribbble" aria-label="Dribbble">
+                  <DribbbleIcon />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Card - Contact Form */}
+          <div 
+            className={`contact-form-card ${isVisible ? 'visible' : ''}`}
+            style={{ transitionDelay: '200ms' }}
+          >
+            <h3 className="card-title">Send a Message</h3>
+            
+            <form onSubmit={handleSubmit} className="contact-form">
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label">Name</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => {
+                      setFormData({ ...formData, name: e.target.value })
+                      if (errors.name) setErrors({ ...errors, name: undefined })
+                    }}
+                    className={`form-input ${errors.name ? 'has-error' : ''}`}
+                    placeholder="John Doe"
+                  />
+                  {errors.name && (
+                    <p className="form-error">{errors.name}</p>
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Email</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => {
+                      setFormData({ ...formData, email: e.target.value })
+                      if (errors.email) setErrors({ ...errors, email: undefined })
+                    }}
+                    className={`form-input ${errors.email ? 'has-error' : ''}`}
+                    placeholder="john@example.com"
+                  />
+                  {errors.email && (
+                    <p className="form-error">{errors.email}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="form-group form-group-message">
+                <label className="form-label">Message</label>
+                <textarea
+                  value={formData.message}
+                  onChange={(e) => {
+                    setFormData({ ...formData, message: e.target.value })
+                    if (errors.message) setErrors({ ...errors, message: undefined })
+                  }}
+                  className={`form-textarea ${errors.message ? 'has-error' : ''}`}
+                  placeholder="Tell us about your project..."
+                />
+                {errors.message && (
+                  <p className="form-error">{errors.message}</p>
+                )}
+              </div>
+
+              <div className="form-submit">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="submit-button"
+                >
+                  <span className="button-shine" />
+                  <span className="button-content">
+                    {isSubmitting ? (
+                      <>
+                        <span className="spinner" />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <SendIcon />
+                        <span>Send Message</span>
+                      </>
+                    )}
+                  </span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .contact-section {
+          position: relative;
+          z-index: 20;
+          display: flex;
+          min-height: 100vh;
+          height: 100vh;
+          min-width: 100vw;
+          width: 100vw;
+          flex-shrink: 0;
+          flex-direction: column;
+          padding: 6rem 1.5rem 1.5rem;
+          overflow: hidden;
+        }
+
+        @media (min-width: 640px) {
+          .contact-section {
+            padding: 7rem 2rem 2rem;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .contact-section {
+            padding: 10rem 4rem 3rem;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .contact-section {
+            padding: 10rem 5rem 3rem;
+          }
+        }
+
+        .contact-container {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          justify-content: center;
+        }
+
+        .section-header {
+          margin-bottom: 1.5rem;
+          flex-shrink: 0;
+          transition: all 0.7s ease;
+          transform: translateY(-3rem);
+          opacity: 0;
+        }
+
+        .section-header.visible {
+          transform: translateY(0);
+          opacity: 1;
+        }
+
+        @media (min-width: 640px) {
+          .section-header {
+            margin-bottom: 2rem;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .section-header {
+            margin-bottom: 3rem;
+          }
+        }
+
+        .section-title {
+          font-family: system-ui, -apple-system, sans-serif;
+          font-size: 1.875rem;
+          font-weight: 300;
+          line-height: 1;
+          letter-spacing: -0.025em;
+          color: white;
+          white-space: nowrap;
+        }
+
+        @media (min-width: 640px) {
+          .section-title {
+            font-size: 2.25rem;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .section-title {
+            font-size: 3rem;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .section-title {
+            font-size: 3.75rem;
+          }
+        }
+
+        .section-subtitle {
+          margin-top: 0.5rem;
+          font-family: monospace;
+          font-size: 0.875rem;
+          color: rgba(255, 255, 255, 0.6);
+        }
+
+        .contact-grid {
+          flex: 1;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+          align-items: stretch;
+        }
+
+        @media (min-width: 1024px) {
+          .contact-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+          }
+        }
+
+        .contact-info-card,
+        .contact-form-card {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          border-radius: 1.5rem;
+          background: white;
+          padding: 2rem;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+          transition: all 0.7s ease;
+          opacity: 0;
+        }
+
+        .contact-info-card {
+          transform: translateX(-4rem);
+        }
+
+        .contact-form-card {
+          transform: translateX(4rem);
+        }
+
+        .contact-info-card.visible,
+        .contact-form-card.visible {
+          transform: translateX(0);
+          opacity: 1;
+        }
+
+        @media (min-width: 640px) {
+          .contact-info-card,
+          .contact-form-card {
+            padding: 2.5rem;
+          }
+        }
+
+        .card-title {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #111827;
+          margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+          color: #6b7280;
+          margin-bottom: 2.5rem;
+        }
+
+        .contact-items {
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+        }
+
+        .contact-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 1.25rem;
+          text-decoration: none;
+          transition: transform 0.3s ease;
+        }
+
+        .contact-item:hover {
+          transform: translateX(0.5rem);
+        }
+
+        .contact-icon {
+          flex-shrink: 0;
+          width: 3rem;
+          height: 3rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 0.75rem;
+          color: white;
+          background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #06b6d4 100%);
+          transition: transform 0.3s ease;
+        }
+
+        .contact-item:hover .contact-icon {
+          transform: scale(1.1);
+        }
+
+        .contact-text {
+          display: flex;
+          flex-direction: column;
+          padding-top: 0.25rem;
+        }
+
+        .contact-label {
+          font-family: monospace;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: #9ca3af;
+          margin-bottom: 0.25rem;
+        }
+
+        .contact-value {
+          font-size: 1.125rem;
+          font-weight: 500;
+          color: #111827;
+          transition: color 0.3s ease;
+        }
+
+        .contact-item:hover .contact-value {
+          color: #0d9488;
+        }
+
+        .phone-numbers {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+
+        @media (min-width: 640px) {
+          .phone-numbers {
+            flex-direction: row;
+            gap: 1rem;
+          }
+        }
+
+        .phone-link {
+          font-size: 1.125rem;
+          font-weight: 500;
+          color: #111827;
+          text-decoration: none;
+          transition: color 0.3s ease;
+        }
+
+        .phone-link:hover {
+          color: #0d9488;
+        }
+
+        .phone-divider {
+          display: none;
+          color: #d1d5db;
+        }
+
+        @media (min-width: 640px) {
+          .phone-divider {
+            display: block;
+          }
+        }
+
+        .address-text {
+          font-size: 1.125rem;
+          font-weight: 500;
+          color: #111827;
+          line-height: 1.4;
+          margin: 0;
+        }
+
+        .social-section {
+          margin-top: 2rem;
+          padding-top: 2rem;
+          border-top: 1px solid #f3f4f6;
+        }
+
+        .social-label {
+          display: block;
+          font-family: monospace;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: #9ca3af;
+          margin-bottom: 1.25rem;
+        }
+
+        .social-links {
+          display: flex;
+          gap: 0.75rem;
+        }
+
+        .social-link {
+          width: 3rem;
+          height: 3rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 0.75rem;
+          border: 1px solid #e5e7eb;
+          background: #f9fafb;
+          color: #6b7280;
+          transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+          transform: scale(1.1);
+          color: white;
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-link.twitter:hover {
+          background: #0ea5e9;
+          border-color: #0ea5e9;
+        }
+
+        .social-link.instagram:hover {
+          background: #db2777;
+          border-color: #db2777;
+        }
+
+        .social-link.linkedin:hover {
+          background: #2563eb;
+          border-color: #2563eb;
+        }
+
+        .social-link.dribbble:hover {
+          background: #ec4899;
+          border-color: #ec4899;
+        }
+
+        .contact-form {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .form-row {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+          .form-row {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .form-group-message {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          min-height: 120px;
+        }
+
+        .form-label {
+          display: block;
+          font-family: monospace;
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: #6b7280;
+          margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-textarea {
+          width: 100%;
+          padding: 0.875rem 1rem;
+          font-size: 1rem;
+          color: #111827;
+          background: #f9fafb;
+          border: none;
+          border-radius: 0.75rem;
+          transition: all 0.2s ease;
+        }
+
+        .form-input:hover,
+        .form-textarea:hover {
+          background: #f3f4f6;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+          background: white;
+          outline: none;
+          box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2);
+        }
+
+        .form-input.has-error:focus,
+        .form-textarea.has-error:focus {
+          box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.4);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+          color: #9ca3af;
+        }
+
+        .form-textarea {
+          flex: 1;
+          resize: none;
+          min-height: 120px;
+        }
+
+        .form-error {
+          margin-top: 0.25rem;
+          font-size: 0.75rem;
+          color: #ef4444;
+        }
+
+        .form-submit {
+          margin-top: 0.5rem;
+        }
+
+        .submit-button {
+          position: relative;
+          width: 100%;
+          height: 3.5rem;
+          padding: 0 2rem;
+          border: none;
+          border-radius: 0.75rem;
+          font-weight: 600;
+          font-size: 1rem;
+          color: white;
+          background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #06b6d4 100%);
+          cursor: pointer;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.625rem;
+        }
+
+        .submit-button:hover {
+          transform: scale(1.02);
+        }
+
+        .submit-button:active {
+          transform: scale(1);
+        }
+
+        .submit-button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .button-shine {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+          transform: translateX(-200%);
+          transition: transform 0.7s ease-in-out;
+        }
+
+        .submit-button:hover .button-shine {
+          transform: translateX(200%);
+        }
+
+        .button-content {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.625rem;
+        }
+
+        .spinner {
+          width: 1.25rem;
+          height: 1.25rem;
+          border: 2px solid rgba(255,255,255,0.3);
+          border-top-color: white;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
+    </section>
+  )
+}
+
+export default observer(ContactSection)

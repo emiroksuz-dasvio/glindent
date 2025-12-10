@@ -1,0 +1,429 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 6rem 1.5rem 1.5rem;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .hero {
+    padding: 7rem 2rem 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    padding: 8rem 5rem 3rem;
+  }
+}
+
+.container {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  flex: 1;
+  padding-top: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+}
+
+/* Text Content */
+.textContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 48rem;
+  order: 2;
+}
+
+@media (min-width: 1024px) {
+  .textContent {
+    order: 1;
+  }
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  padding: 0.375rem 1rem;
+  margin-bottom: 1rem;
+  width: fit-content;
+  animation: fadeSlideIn 0.3s ease forwards;
+}
+
+.badge span {
+  font-size: 0.75rem;
+  color: white;
+  line-height: 1;
+}
+
+@media (min-width: 640px) {
+  .badge span {
+    font-size: 0.875rem;
+  }
+}
+
+.title {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1.875rem, 5vw, 4.5rem);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: white;
+  margin: 0 0 1rem 0;
+  text-wrap: balance;
+  animation: fadeSlideIn 0.35s ease 0.1s forwards;
+  opacity: 0;
+}
+
+.description {
+  max-width: 36rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 1.5rem 0;
+  text-wrap: pretty;
+  animation: fadeSlideIn 0.35s ease 0.15s forwards;
+  opacity: 0;
+}
+
+@media (min-width: 640px) {
+  .description {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .description {
+    font-size: 1.125rem;
+  }
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+  animation: fadeSlideIn 0.35s ease 0.2s forwards;
+  opacity: 0;
+}
+
+@media (min-width: 640px) {
+  .buttons {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
+.primaryBtn,
+.secondaryBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.primaryBtn {
+  background: rgba(255, 255, 255, 0.95);
+  color: #007A72;
+}
+
+.primaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  background: white;
+}
+
+.secondaryBtn {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.secondaryBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Image Slider */
+.sliderContainer {
+  position: relative;
+  order: 1;
+  align-self: center;
+  height: 280px;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .sliderContainer {
+    height: 350px;
+  }
+}
+
+@media (min-width: 768px) {
+  .sliderContainer {
+    height: 450px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sliderContainer {
+    order: 2;
+    height: 550px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .sliderContainer {
+    height: 600px;
+  }
+}
+
+.slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  transform-origin: center center;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+  pointer-events: none;
+  user-select: none;
+}
+
+.imageCard {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), 
+              0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 640px) {
+  .imageCard {
+    border-radius: 1.5rem;
+  }
+}
+
+.slideImage {
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.3) 0%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+}
+
+.imageGlow {
+  position: absolute;
+  inset: -1.5rem;
+  background: linear-gradient(
+    to bottom right,
+    rgba(58, 204, 255, 0.2) 0%,
+    rgba(0, 168, 154, 0.15) 50%,
+    rgba(0, 196, 180, 0.2) 100%
+  );
+  border-radius: 1.5rem;
+  filter: blur(3rem);
+  z-index: -1;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+/* Indicators */
+.indicators {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+.indicator {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  pointer-events: auto;
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.indicatorActive {
+  background: white;
+  height: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Scroll Indicator */
+.scrollIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: auto;
+  margin-bottom: 1rem;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  align-self: flex-start;
+}
+
+.scrollIndicator:hover {
+  transform: scale(1.05);
+}
+
+.scrollIndicator span {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.scrollIndicator svg {
+  animation: scrollBounce 1.5s ease-in-out infinite;
+}
+
+/* Slide Counter */
+.slideCounter {
+  position: absolute;
+  bottom: 2rem;
+  right: 1.5rem;
+  z-index: 20;
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  font-family: monospace;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@media (min-width: 768px) {
+  .slideCounter {
+    right: 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .slideCounter {
+    right: 5rem;
+  }
+}
+
+.currentSlide {
+  font-size: 1.5rem;
+  font-weight: 300;
+}
+
+@media (min-width: 640px) {
+  .currentSlide {
+    font-size: 1.875rem;
+  }
+}
+
+.separator,
+.totalSlides {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Animations */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cardFloat {
+  0%, 100% {
+    transform: rotateY(0deg) rotateX(0deg);
+  }
+  25% {
+    transform: rotateY(1.5deg) rotateX(-2deg);
+  }
+  50% {
+    transform: rotateY(-1.5deg) rotateX(2deg);
+  }
+  75% {
+    transform: rotateY(1.5deg) rotateX(-2deg);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes scrollBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
