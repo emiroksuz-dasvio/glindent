@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "@ikas/storefront";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigation } from "../horizontal-layout";
 
@@ -102,6 +103,7 @@ const Header: React.FC = () => {
   const store = useStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
   // Use navigation context for horizontal slider
   const { currentSection, scrollToSection: navigateToSection } = useNavigation();
@@ -110,15 +112,17 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     setIsLoaded(true);
+    setMounted(true);
   }, []);
 
   // Navigation links with section indices
+  // Order based on ikas component rendering: Hero(0), About(1), Contact(2), FAQ(3), Products(4)
   const navLinks = [
     { label: "Home", index: 0 },
     { label: "About Us", index: 1 },
-    { label: "Products", index: 2 },
+    { label: "Products", index: 4 },
     { label: "FAQ", index: 3 },
-    { label: "Contact", index: 4 },
+    { label: "Contact", index: 2 },
   ];
 
   const handleNavClick = (index: number) => {
@@ -126,7 +130,7 @@ const Header: React.FC = () => {
     setMobileMenuOpen(false);
   };
 
-  return (
+  const headerContent = (
     <>
       <style jsx global>{`
         .header-nav {
@@ -663,6 +667,15 @@ const Header: React.FC = () => {
       `}</style>
     </>
   );
+
+  // Use portal to render header outside of any transform containers
+  // This prevents the fixed header from being affected by parent transforms
+  if (mounted && typeof document !== "undefined") {
+    return createPortal(headerContent, document.body);
+  }
+  
+  // SSR fallback - render normally
+  return headerContent;
 };
 
 Header.displayName = "Header";

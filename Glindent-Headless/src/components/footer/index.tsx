@@ -50,13 +50,14 @@ const Footer: React.FC = () => {
   const isInView = useInView(footerRef, { once: true, margin: "-50px" })
   const { scrollToSection } = useNavigation()
 
+  // Order based on ikas component rendering: Hero(0), About(1), Contact(2), FAQ(3), Products(4)
   const navLinks = [
     { label: "Home", index: 0 },
     { label: "About", index: 1 },
-    { label: "Products", index: 2 },
+    { label: "Products", index: 4 },
     { label: "FAQ", index: 3 },
-    { label: "Contact", index: 4 },
-  ]
+    { label: "Contact", index: 2 },
+  ];
 
   const socialLinks = [
     { icon: <TwitterIcon />, href: "#", label: "Twitter" },

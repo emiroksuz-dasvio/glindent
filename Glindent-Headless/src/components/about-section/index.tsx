@@ -399,10 +399,10 @@ const AboutSection: React.FC = () => {
             gap: "0.75rem",
           }}
         >
-          <button onClick={() => scrollToSection(2)} className="about-btn about-btn-primary">
+          <button onClick={() => scrollToSection(4)} className="about-btn about-btn-primary">
             Shop Products
           </button>
-          <button onClick={() => scrollToSection(4)} className="about-btn about-btn-secondary">
+          <button onClick={() => scrollToSection(2)} className="about-btn about-btn-secondary">
             Contact Us
           </button>
         </motion.div>

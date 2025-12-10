@@ -92,11 +92,11 @@ const HeroBanner: React.FC = () => {
   }, [handleKeyDown]);
 
   const scrollToProducts = () => {
-    scrollToSection(2); // Products is index 2
+    scrollToSection(4); // Products is index 4 (ikas order)
   };
 
   const scrollToContact = () => {
-    scrollToSection(4); // Contact is index 4
+    scrollToSection(2); // Contact is index 2 (ikas order)
   };
 
   return (

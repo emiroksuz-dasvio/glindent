@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, createContext, useContext, ReactNode } from "react";
+import React, { useRef, useEffect, useState, createContext, useContext, ReactNode, useCallback } from "react";
 import { motion, useMotionValue, useSpring, animate } from "framer-motion";
 
 // Context for sharing navigation state
@@ -6,22 +6,24 @@ interface NavigationContextType {
   currentSection: number;
   scrollToSection: (index: number) => void;
   totalSections: number;
+  isInsideProvider: boolean; // Flag to indicate we're inside the provider
 }
 
 const NavigationContext = createContext<NavigationContextType>({
   currentSection: 0,
   scrollToSection: () => {},
   totalSections: 5,
+  isInsideProvider: false,
 });
 
 export const useNavigation = () => useContext(NavigationContext);
 
-interface HorizontalLayoutProps {
+// Standalone NavigationProvider for use in _app.tsx
+interface NavigationProviderProps {
   children: ReactNode;
-  header?: ReactNode;
 }
 
-export function HorizontalLayout({ children, header }: HorizontalLayoutProps) {
+export function NavigationProvider({ children }: NavigationProviderProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [currentSection, setCurrentSection] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -43,7 +45,7 @@ export function HorizontalLayout({ children, header }: HorizontalLayoutProps) {
     setIsLoaded(true);
   }, []);
 
-  const scrollToSection = (index: number) => {
+  const scrollToSection = useCallback((index: number) => {
     if (index < 0 || index >= totalSections || isAnimating.current) return;
 
     isAnimating.current = true;
@@ -60,7 +62,7 @@ export function HorizontalLayout({ children, header }: HorizontalLayoutProps) {
         isAnimating.current = false;
       },
     });
-  };
+  }, [x, totalSections]);
 
   // Touch gesture navigation
   useEffect(() => {
@@ -97,7 +99,7 @@ export function HorizontalLayout({ children, header }: HorizontalLayoutProps) {
         container.removeEventListener("touchend", handleTouchEnd);
       }
     };
-  }, [currentSection]);
+  }, [currentSection, scrollToSection]);
 
   // Wheel navigation with smooth transitions
   useEffect(() => {
@@ -105,7 +107,16 @@ export function HorizontalLayout({ children, header }: HorizontalLayoutProps) {
     let accumulatedDelta = 0;
 
     const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
+      // Don't prevent default for hero section's internal slider
+      const target = e.target as HTMLElement;
+      const isInsideHeroSlider = target.closest('.hero-swiper') !== null;
+      
+      if (!isInsideHeroSlider) {
+        e.preventDefault();
+      } else {
+        // Let hero slider handle vertical scroll
+        return;
+      }
 
       // Ignore wheel events during animation
       if (isAnimating.current) return;
@@ -145,7 +156,7 @@ export function HorizontalLayout({ children, header }: HorizontalLayoutProps) {
         clearTimeout(wheelTimeout);
       }
     };
-  }, [currentSection]);
+  }, [currentSection, scrollToSection]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -173,14 +184,11 @@ export function HorizontalLayout({ children, header }: HorizontalLayoutProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentSection]);
+  }, [currentSection, scrollToSection]);
 
   return (
-    <NavigationContext.Provider value={{ currentSection, scrollToSection, totalSections }}>
+    <NavigationContext.Provider value={{ currentSection, scrollToSection, totalSections, isInsideProvider: true }}>
       <main className="horizontal-main">
-        {/* Fixed Header - outside scroll container */}
-        {header}
-
         {/* Horizontal Scroll Container */}
         <motion.div
           ref={scrollContainerRef}
@@ -211,6 +219,7 @@ export function HorizontalLayout({ children, header }: HorizontalLayoutProps) {
             position: relative;
             z-index: 10;
             display: flex;
+            flex-direction: row !important;
             height: 100vh;
             opacity: 0;
             transition: opacity 0.7s ease;
@@ -220,9 +229,17 @@ export function HorizontalLayout({ children, header }: HorizontalLayoutProps) {
             opacity: 1;
           }
 
+          /* Target the ikas wrapper and make it a horizontal flex container */
+          .horizontal-container > div,
+          .horizontal-container > div > div {
+            display: flex !important;
+            flex-direction: row !important;
+            height: 100vh;
+            min-height: 100vh;
+          }
+
           /* Each section should be full viewport width */
-          .horizontal-container > section,
-          .horizontal-container > div > section {
+          .horizontal-section {
             min-width: 100vw;
             width: 100vw;
             min-height: 100vh;
@@ -246,4 +263,6 @@ export function HorizontalLayout({ children, header }: HorizontalLayoutProps) {
   );
 }
 
-export default HorizontalLayout;
+// Keep backward compatibility
+export const HorizontalLayout = NavigationProvider;
+export default NavigationProvider;

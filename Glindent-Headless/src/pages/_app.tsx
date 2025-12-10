@@ -1,8 +1,10 @@
 import * as React from "react";
 import { AppProps } from "next/app";
 import { IkasStorefrontConfig } from "@ikas/storefront-config";
+import { useRouter } from "next/router";
 
 import Config from "config.json";
+import { NavigationProvider } from "src/components/horizontal-layout";
 
 // Import global styles
 import "src/styles/global.css";
@@ -16,6 +18,10 @@ IkasStorefrontConfig.init({
 
 const IkasThemeApp: React.FC<AppProps> = (props) => {
   const { Component, pageProps } = props;
+  const router = useRouter();
+  
+  // Only use navigation provider on home page
+  const isHomePage = router.pathname === "/" || router.pathname === "/index";
 
   return (
     <>
@@ -31,7 +37,13 @@ const IkasThemeApp: React.FC<AppProps> = (props) => {
       <div className="grain-overlay" />
       
       {/* Main Content */}
-      <Component {...pageProps} />
+      {isHomePage ? (
+        <NavigationProvider>
+          <Component {...pageProps} />
+        </NavigationProvider>
+      ) : (
+        <Component {...pageProps} />
+      )}
     </>
   );
 };
