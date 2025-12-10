@@ -3,6 +3,7 @@
 import { observer } from "mobx-react-lite"
 import { motion, useInView } from "framer-motion"
 import { useRef } from "react"
+import { useNavigation } from "../horizontal-layout"
 
 
 // SVG Icons
@@ -47,13 +48,14 @@ const GlindentLogo = () => (
 const Footer: React.FC = () => {
   const footerRef = useRef<HTMLElement>(null)
   const isInView = useInView(footerRef, { once: true, margin: "-50px" })
+  const { scrollToSection } = useNavigation()
 
   const navLinks = [
-    { label: "Home", href: "#" },
-    { label: "About", href: "#about" },
-    { label: "Products", href: "#products" },
-    { label: "FAQ", href: "#faq" },
-    { label: "Contact", href: "#contact" },
+    { label: "Home", index: 0 },
+    { label: "About", index: 1 },
+    { label: "Products", index: 2 },
+    { label: "FAQ", index: 3 },
+    { label: "Contact", index: 4 },
   ]
 
   const socialLinks = [
@@ -85,16 +87,16 @@ const Footer: React.FC = () => {
             <h4 className="footer-nav-title">Quick Links</h4>
             <nav className="footer-nav-links">
               {navLinks.map((link, index) => (
-                <motion.a
+                <motion.button
                   key={link.label}
-                  href={link.href}
+                  onClick={() => scrollToSection(link.index)}
                   className="footer-nav-link"
                   initial={{ opacity: 0, y: 10 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.3, delay: 0.1 * index }}
                 >
                   {link.label}
-                </motion.a>
+                </motion.button>
               ))}
             </nav>
           </div>
@@ -213,6 +215,11 @@ const Footer: React.FC = () => {
           color: #d1d5db;
           text-decoration: none;
           transition: color 0.2s;
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          text-align: left;
         }
 
         .footer-nav-link:hover {

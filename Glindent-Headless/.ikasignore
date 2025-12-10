@@ -1,0 +1,42 @@
+# Build outputs
+.next
+out
+build
+dist
+
+# Dependencies (will be installed by ikas)
+node_modules
+
+# Development files
+.git
+.gitignore
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files (sensitive)
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+__tests__
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+coverage
+
+# Lock files (optional - ikas will regenerate)
+package-lock.json
+yarn.lock

@@ -414,7 +414,7 @@ const HeroBanner: React.FC = () => {
                         alt={slide.imageAlt}
                         layout="fill"
                         objectFit="cover"
-                        priority={index === 0}
+                        priority
                         style={{
                           transform: activeIndex === index ? "scale(1)" : "scale(1.05)",
                           transition: "transform 0.7s ease",
