@@ -2,7 +2,25 @@ import { observer } from "mobx-react-lite";
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
-const faqs = [
+// ========================
+// IKAS PROPS INTERFACE
+// ========================
+interface FaqSectionProps {
+  // Title
+  sectionTitle?: string;
+  // FAQ Items
+  faq1Question?: string;
+  faq1Answer?: string;
+  faq2Question?: string;
+  faq2Answer?: string;
+  faq3Question?: string;
+  faq3Answer?: string;
+  faq4Question?: string;
+  faq4Answer?: string;
+}
+
+// Default FAQ items
+const defaultFaqs = [
   {
     number: "1",
     question: "How to place an order?",
@@ -29,7 +47,43 @@ const faqs = [
   },
 ];
 
-const FaqSection: React.FC = () => {
+const FaqSection: React.FC<FaqSectionProps> = (props) => {
+  const {
+    sectionTitle = "FAQ",
+    faq1Question,
+    faq1Answer,
+    faq2Question,
+    faq2Answer,
+    faq3Question,
+    faq3Answer,
+    faq4Question,
+    faq4Answer,
+  } = props;
+
+  // Build FAQs from props or use defaults
+  const faqs = [
+    {
+      number: "1",
+      question: faq1Question || defaultFaqs[0].question,
+      answer: faq1Answer || defaultFaqs[0].answer,
+    },
+    {
+      number: "2",
+      question: faq2Question || defaultFaqs[1].question,
+      answer: faq2Answer || defaultFaqs[1].answer,
+    },
+    {
+      number: "3",
+      question: faq3Question || defaultFaqs[2].question,
+      answer: faq3Answer || defaultFaqs[2].answer,
+    },
+    {
+      number: "4",
+      question: faq4Question || defaultFaqs[3].question,
+      answer: faq4Answer || defaultFaqs[3].answer,
+    },
+  ];
+
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-30%" });
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -253,7 +307,7 @@ const FaqSection: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
           transition={{ duration: 1, ease: "easeOut" }}
         >
-          FAQ
+          {sectionTitle}
         </motion.h2>
 
         {/* FAQ List */}

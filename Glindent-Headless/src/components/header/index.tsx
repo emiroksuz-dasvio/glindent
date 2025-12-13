@@ -1,10 +1,19 @@
 import { observer } from "mobx-react-lite";
-import { useStore } from "@ikas/storefront";
+import { useStore, IkasImage, IkasNavigationLink } from "@ikas/storefront";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import Image from "next/image";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigation } from "../horizontal-layout";
+
+// ========================
+// IKAS PROPS INTERFACE
+// ========================
+interface HeaderProps {
+  logo?: IkasImage;
+  navigationLinks?: IkasNavigationLink[];
+}
 
 // GlindentLogo Component (inline SVG as in original)
 const GlindentLogo = ({ className = "" }: { className?: string }) => {
@@ -99,8 +108,586 @@ const ShoppingBagIcon = ({ className = "" }: { className?: string }) => (
   </svg>
 );
 
-const Header: React.FC = () => {
+// Trash Icon
+const TrashIcon = ({ className = "" }: { className?: string }) => (
+  <svg
+    className={className}
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="3 6 5 6 21 6" />
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+  </svg>
+);
+
+// Plus Icon
+const PlusIcon = ({ className = "" }: { className?: string }) => (
+  <svg
+    className={className}
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </svg>
+);
+
+// Minus Icon
+const MinusIcon = ({ className = "" }: { className?: string }) => (
+  <svg
+    className={className}
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </svg>
+);
+
+// ========================
+// CART DROPDOWN COMPONENT
+// ========================
+const CartDropdown = observer(() => {
   const store = useStore();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  
+  const cart = store.cartStore.cart;
+  const items = cart?.orderLineItems || [];
+  const totalItems = cart?.itemQuantity || 0;
+  const totalPrice = cart?.formattedTotalFinalPrice || "£0.00";
+
+  // Close on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
+
+  // Close on ESC
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    if (isOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
+
+  const handleUpdateQuantity = useCallback(async (item: any, newQuantity: number) => {
+    if (newQuantity <= 0) {
+      setIsUpdating(item.id);
+      await store.cartStore.removeItem(item);
+      setIsUpdating(null);
+    } else {
+      setIsUpdating(item.id);
+      await store.cartStore.changeItemQuantity(item, newQuantity);
+      setIsUpdating(null);
+    }
+  }, [store.cartStore]);
+
+  const handleRemoveItem = useCallback(async (item: any) => {
+    setIsUpdating(item.id);
+    await store.cartStore.removeItem(item);
+    setIsUpdating(null);
+  }, [store.cartStore]);
+
+  return (
+    <div className="cart-dropdown-wrapper" ref={menuRef}>
+      {/* Cart Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="cart-button"
+        aria-label="Open cart"
+        aria-expanded={isOpen}
+      >
+        <ShoppingBagIcon />
+        {totalItems > 0 && (
+          <span className="cart-badge">
+            {totalItems > 9 ? "9+" : totalItems}
+          </span>
+        )}
+      </button>
+
+      {/* Dropdown Menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="cart-dropdown"
+            initial={{ opacity: 0, scale: 0.95, y: -4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -4 }}
+            transition={{ duration: 0.15 }}
+          >
+            {/* Header */}
+            <div className="cart-dropdown-header">
+              <div className="cart-dropdown-title">
+                <ShoppingBagIcon className="cart-title-icon" />
+                <span>Your Cart</span>
+                <span className="cart-count">({items.length} items)</span>
+              </div>
+              <button onClick={() => setIsOpen(false)} className="cart-close-btn">
+                <XIcon className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Items */}
+            <div className="cart-dropdown-items">
+              {items.length === 0 ? (
+                <div className="cart-empty">
+                  <ShoppingBagIcon className="cart-empty-icon" />
+                  <p className="cart-empty-title">Your cart is empty</p>
+                  <p className="cart-empty-subtitle">Add items from the products section</p>
+                </div>
+              ) : (
+                <div className="cart-items-list">
+                  {items.map((item: any) => (
+                    <div key={item.id} className="cart-item">
+                      <div className="cart-item-image">
+                        <Image
+                          src={item.variant?.mainImage?.src || "/placeholder.svg"}
+                          alt={item.variant?.name || "Product"}
+                          layout="fill"
+                          objectFit="cover"
+                          unoptimized
+                        />
+                      </div>
+                      <div className="cart-item-details">
+                        <div className="cart-item-top">
+                          <h3 className="cart-item-name">{item.variant?.name || "Product"}</h3>
+                          <button
+                            onClick={() => handleRemoveItem(item)}
+                            disabled={isUpdating === item.id}
+                            className="cart-item-remove"
+                          >
+                            <TrashIcon />
+                          </button>
+                        </div>
+                        {item.options && item.options.length > 0 && (
+                          <p className="cart-item-variant">
+                            {item.options.map((opt: any) => opt.values?.map((v: any) => v.name).join(", ")).join(", ")}
+                          </p>
+                        )}
+                        <div className="cart-item-bottom">
+                          <p className="cart-item-price">
+                            {item.formattedFinalPriceWithQuantity || item.formattedPriceWithQuantity}
+                          </p>
+                          <div className="cart-item-quantity">
+                            <button
+                              onClick={() => handleUpdateQuantity(item, item.quantity - 1)}
+                              disabled={isUpdating === item.id}
+                              className="quantity-btn"
+                            >
+                              <MinusIcon />
+                            </button>
+                            <span className="quantity-value">
+                              {isUpdating === item.id ? "..." : item.quantity}
+                            </span>
+                            <button
+                              onClick={() => handleUpdateQuantity(item, item.quantity + 1)}
+                              disabled={isUpdating === item.id}
+                              className="quantity-btn"
+                            >
+                              <PlusIcon />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            {items.length > 0 && (
+              <div className="cart-dropdown-footer">
+                <div className="cart-subtotal">
+                  <span>Subtotal</span>
+                  <span className="cart-total-price">{totalPrice}</span>
+                </div>
+                <Link href="/checkout">
+                  <a className="cart-checkout-btn" onClick={() => setIsOpen(false)}>
+                    Checkout
+                  </a>
+                </Link>
+                <Link href="/cart">
+                  <a className="cart-view-btn" onClick={() => setIsOpen(false)}>
+                    View Cart
+                  </a>
+                </Link>
+                <button
+                  onClick={async () => {
+                    for (const item of items) {
+                      await store.cartStore.removeItem(item);
+                    }
+                  }}
+                  className="cart-clear-btn"
+                >
+                  Clear cart
+                </button>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Cart Dropdown Styles */}
+      <style jsx global>{`
+        .cart-dropdown-wrapper {
+          position: relative;
+        }
+
+        .cart-dropdown {
+          position: absolute;
+          right: 0;
+          top: calc(100% + 0.5rem);
+          width: 20rem;
+          border-radius: 1rem;
+          background: white;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          overflow: hidden;
+          z-index: 100;
+        }
+        @media (min-width: 640px) {
+          .cart-dropdown {
+            width: 24rem;
+          }
+        }
+
+        .cart-dropdown-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 1rem;
+          border-bottom: 1px solid #f3f4f6;
+        }
+
+        .cart-dropdown-title {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .cart-title-icon {
+          width: 1rem;
+          height: 1rem;
+          color: #111827;
+        }
+
+        .cart-dropdown-title span {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: #111827;
+        }
+
+        .cart-count {
+          color: #6b7280 !important;
+          font-weight: 400 !important;
+        }
+
+        .cart-close-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 1.75rem;
+          height: 1.75rem;
+          border-radius: 9999px;
+          border: none;
+          background: transparent;
+          color: #9ca3af;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+        .cart-close-btn:hover {
+          background: #f3f4f6;
+          color: #111827;
+        }
+
+        .cart-dropdown-items {
+          max-height: 20rem;
+          overflow-y: auto;
+          padding: 1rem;
+          scrollbar-width: thin;
+        }
+
+        .cart-empty {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 2rem 1rem;
+          text-align: center;
+        }
+
+        .cart-empty-icon {
+          width: 3rem;
+          height: 3rem;
+          color: #e5e7eb;
+          margin-bottom: 0.75rem;
+        }
+
+        .cart-empty-title {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: #111827;
+          margin: 0;
+        }
+
+        .cart-empty-subtitle {
+          font-size: 0.75rem;
+          color: #6b7280;
+          margin: 0.25rem 0 0 0;
+        }
+
+        .cart-items-list {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .cart-item {
+          display: flex;
+          gap: 1rem;
+          padding: 0.75rem;
+          border-radius: 1rem;
+          background: white;
+          border: 1px solid #f3f4f6;
+          transition: all 0.2s ease;
+        }
+        .cart-item:hover {
+          border-color: #e5e7eb;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .cart-item-image {
+          position: relative;
+          width: 5rem;
+          height: 5rem;
+          border-radius: 0.75rem;
+          overflow: hidden;
+          background: #f9fafb;
+          flex-shrink: 0;
+        }
+
+        .cart-item-details {
+          flex: 1;
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 0.125rem 0;
+        }
+
+        .cart-item-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+
+        .cart-item-name {
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: #111827;
+          margin: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .cart-item-remove {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          border: none;
+          background: transparent;
+          color: #d1d5db;
+          cursor: pointer;
+          transition: color 0.15s ease;
+        }
+        .cart-item-remove:hover:not(:disabled) {
+          color: #ef4444;
+        }
+        .cart-item-remove:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .cart-item-variant {
+          font-size: 0.75rem;
+          color: #6b7280;
+          margin: 0.125rem 0 0 0;
+        }
+
+        .cart-item-bottom {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: 0.5rem;
+        }
+
+        .cart-item-price {
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #111827;
+          margin: 0;
+        }
+
+        .cart-item-quantity {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: #f9fafb;
+          border-radius: 9999px;
+          padding: 0.25rem 0.5rem;
+          border: 1px solid #f3f4f6;
+        }
+
+        .cart-item-quantity .quantity-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.25rem;
+          border: none;
+          background: transparent;
+          color: #9ca3af;
+          cursor: pointer;
+          transition: color 0.15s ease;
+        }
+        .cart-item-quantity .quantity-btn:hover:not(:disabled) {
+          color: #111827;
+        }
+        .cart-item-quantity .quantity-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .cart-item-quantity .quantity-value {
+          font-size: 0.75rem;
+          font-weight: 500;
+          color: #111827;
+          min-width: 1rem;
+          text-align: center;
+        }
+
+        .cart-dropdown-footer {
+          padding: 1.5rem;
+          border-top: 1px solid #f3f4f6;
+          background: white;
+        }
+
+        .cart-subtotal {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          margin-bottom: 1.5rem;
+        }
+
+        .cart-subtotal span:first-child {
+          font-size: 0.875rem;
+          color: #6b7280;
+        }
+
+        .cart-total-price {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #111827;
+          letter-spacing: -0.025em;
+        }
+
+        .cart-checkout-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 3rem;
+          border-radius: 0.75rem;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: white;
+          background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #06b6d4 100%);
+          text-decoration: none;
+          position: relative;
+          overflow: hidden;
+          transition: transform 0.2s ease;
+        }
+        .cart-checkout-btn:hover {
+          transform: scale(1.02);
+        }
+        .cart-checkout-btn:active {
+          transform: scale(1);
+        }
+
+        .cart-view-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 2.75rem;
+          margin-top: 0.5rem;
+          border-radius: 0.75rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: #6b7280;
+          background: #f3f4f6;
+          text-decoration: none;
+          transition: all 0.2s ease;
+        }
+        .cart-view-btn:hover {
+          background: #e5e7eb;
+          color: #374151;
+        }
+
+        .cart-clear-btn {
+          display: block;
+          width: 100%;
+          margin-top: 0.75rem;
+          padding: 0.5rem;
+          font-size: 0.75rem;
+          color: #9ca3af;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          transition: color 0.15s ease;
+        }
+        .cart-clear-btn:hover {
+          color: #6b7280;
+        }
+      `}</style>
+    </div>
+  );
+});
+
+const Header: React.FC<HeaderProps> = (props) => {
+  const { logo, navigationLinks } = props;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -108,22 +695,29 @@ const Header: React.FC = () => {
   // Use navigation context for horizontal slider
   const { currentSection, scrollToSection: navigateToSection } = useNavigation();
 
-  const cartQuantity = store.cartStore.cart?.itemQuantity ?? 0;
-
   useEffect(() => {
     setIsLoaded(true);
     setMounted(true);
   }, []);
 
-  // Navigation links with section indices
-  // Order based on ikas component rendering: Hero(0), About(1), Contact(2), FAQ(3), Products(4)
-  const navLinks = [
+  // Default navigation links (fallback if not provided from IKAS)
+  // Order based on ikas component rendering: Hero(0), About(1), Products(2), FAQ(3), Contact(4)
+  const defaultNavLinks = [
     { label: "Home", index: 0 },
     { label: "About Us", index: 1 },
-    { label: "Products", index: 4 },
+    { label: "Products", index: 2 },
     { label: "FAQ", index: 3 },
-    { label: "Contact", index: 2 },
+    { label: "Contact", index: 4 },
   ];
+
+  // Use IKAS navigation links if provided, otherwise use defaults
+  const navLinks = navigationLinks && navigationLinks.length > 0
+    ? navigationLinks.map((link, index) => ({
+        label: link.label || `Link ${index + 1}`,
+        href: link.href || "#",
+        index,
+      }))
+    : defaultNavLinks;
 
   const handleNavClick = (index: number) => {
     navigateToSection(index);
@@ -322,7 +916,18 @@ const Header: React.FC = () => {
             transition: "transform 0.2s ease",
           }}
         >
-          <GlindentLogo className="h-7 sm:h-8 md:h-9 w-auto" />
+          {logo?.src ? (
+            <Image
+              src={logo.src}
+              alt="Glindent Logo"
+              width={140}
+              height={36}
+              objectFit="contain"
+              unoptimized
+            />
+          ) : (
+            <GlindentLogo className="h-7 sm:h-8 md:h-9 w-auto" />
+          )}
         </button>
 
         {/* Desktop Navigation */}
@@ -379,16 +984,7 @@ const Header: React.FC = () => {
           >
             Shop Now
           </button>
-          <Link href="/cart">
-            <a className="cart-button">
-              <ShoppingBagIcon />
-              {cartQuantity > 0 && (
-                <span className="cart-badge">
-                  {cartQuantity > 9 ? "9+" : cartQuantity}
-                </span>
-              )}
-            </a>
-          </Link>
+          <CartDropdown />
         </div>
 
         {/* Mobile Right Side */}
@@ -400,16 +996,7 @@ const Header: React.FC = () => {
             gap: "0.5rem",
           }}
         >
-          <Link href="/cart">
-            <a className="cart-button">
-              <ShoppingBagIcon />
-              {cartQuantity > 0 && (
-                <span className="cart-badge">
-                  {cartQuantity > 9 ? "9+" : cartQuantity}
-                </span>
-              )}
-            </a>
-          </Link>
+          <CartDropdown />
           <button
             onClick={() => setMobileMenuOpen(true)}
             className="mobile-menu-btn"

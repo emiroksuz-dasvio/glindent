@@ -16,7 +16,47 @@ const NavigationContext = createContext<NavigationContextType>({
   isInsideProvider: false,
 });
 
-export const useNavigation = () => useContext(NavigationContext);
+// Global navigation state (fallback for when context doesn't work in ikas)
+let globalCurrentSection = 0;
+let globalScrollToSection: ((index: number) => void) | null = null;
+
+// Custom event for cross-component communication
+const NAVIGATION_EVENT = "glindent-navigation";
+
+export const useNavigation = () => {
+  const context = useContext(NavigationContext);
+  const [localSection, setLocalSection] = useState(globalCurrentSection);
+
+  // Listen for navigation events (fallback)
+  useEffect(() => {
+    const handleNavigationEvent = (e: CustomEvent) => {
+      setLocalSection(e.detail.section);
+    };
+
+    window.addEventListener(NAVIGATION_EVENT as any, handleNavigationEvent);
+    return () => window.removeEventListener(NAVIGATION_EVENT as any, handleNavigationEvent);
+  }, []);
+
+  // If inside provider, use context; otherwise use global fallback
+  if (context.isInsideProvider) {
+    return context;
+  }
+
+  // Fallback: use global state
+  return {
+    currentSection: localSection,
+    scrollToSection: (index: number) => {
+      if (globalScrollToSection) {
+        globalScrollToSection(index);
+      } else {
+        // Dispatch event as last resort
+        window.dispatchEvent(new CustomEvent(NAVIGATION_EVENT, { detail: { section: index, action: "scrollTo" } }));
+      }
+    },
+    totalSections: 5,
+    isInsideProvider: false,
+  };
+};
 
 // Standalone NavigationProvider for use in _app.tsx
 interface NavigationProviderProps {
@@ -50,6 +90,10 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
 
     isAnimating.current = true;
     setCurrentSection(index);
+    globalCurrentSection = index;
+
+    // Dispatch event for other components
+    window.dispatchEvent(new CustomEvent(NAVIGATION_EVENT, { detail: { section: index } }));
 
     const targetX = -index * (typeof window !== "undefined" ? window.innerWidth : 0);
 
@@ -63,6 +107,25 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
       },
     });
   }, [x, totalSections]);
+
+  // Set global reference for fallback navigation
+  useEffect(() => {
+    globalScrollToSection = scrollToSection;
+    return () => {
+      globalScrollToSection = null;
+    };
+  }, [scrollToSection]);
+
+  // Listen for navigation events from other components
+  useEffect(() => {
+    const handleNavigationRequest = (e: CustomEvent) => {
+      if (e.detail.action === "scrollTo" && typeof e.detail.section === "number") {
+        scrollToSection(e.detail.section);
+      }
+    };
+    window.addEventListener(NAVIGATION_EVENT as any, handleNavigationRequest);
+    return () => window.removeEventListener(NAVIGATION_EVENT as any, handleNavigationRequest);
+  }, [scrollToSection]);
 
   // Touch gesture navigation
   useEffect(() => {

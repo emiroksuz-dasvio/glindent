@@ -14,7 +14,7 @@
       "componentJson": null,
       "props": [
         {
-          "id": "8f9440cf-8c6e-49c3-b146-11414aff1b21",
+          "id": "a7f78416-224f-40fc-bd78-ec6b868aacc2",
           "name": "logo",
           "displayName": "",
           "description": "",
@@ -28,7 +28,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "5da86664-8034-439d-b666-06c3ead57fa9",
+          "id": "119d4bd8-05a2-496a-9c02-847e5255e0c1",
           "name": "showTax",
           "displayName": "",
           "description": "",
@@ -42,7 +42,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "23f56ff6-2993-43a6-8562-255302b39dcd",
+          "id": "0607bcbf-cd16-4262-ace4-32bb4523342e",
           "name": "showCampaignOffersDesign",
           "displayName": "",
           "description": "",
@@ -56,7 +56,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "8f387673-0fec-4b14-bc3a-81f974c4695c",
+          "id": "e67502da-959b-4b73-9902-07341155ce32",
           "name": "campaignOfferIsSmallDesign",
           "displayName": "",
           "description": "",
@@ -70,7 +70,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "5f72d287-bb85-45a1-9398-29c2335aadf4",
+          "id": "599a5d70-8aff-41ce-97c4-fbd92902023f",
           "name": "showCampaignIsBiggerImage",
           "displayName": "",
           "description": "",
@@ -84,7 +84,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "3007de4a-1a67-4e0b-a514-993c4cf93b4f",
+          "id": "87b4e777-9efd-4b64-8dd4-7665933abcb6",
           "name": "campaignOffersTitleColor",
           "displayName": "",
           "description": "",
@@ -98,7 +98,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "2be2a727-f7f9-403b-80ca-f7664cc9b438",
+          "id": "cfe0e988-026a-4492-a44d-52536970ed3c",
           "name": "campaignOffersDescriptionColor",
           "displayName": "",
           "description": "",
@@ -112,7 +112,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "f91d5b29-93e8-41d3-8a25-9bd36bf38981",
+          "id": "02cdb21e-ad54-4767-8096-6fb536054b16",
           "name": "campaignOffersContainerBgColor",
           "displayName": "",
           "description": "",
@@ -126,7 +126,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "be4a0bad-0ac4-4fb4-a32d-b4a3a44933b6",
+          "id": "3ea8e036-fc34-45b1-a6a9-f91e416e961b",
           "name": "showCampaignShowDiscountSettings",
           "displayName": "",
           "description": "",
@@ -140,7 +140,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "830b4960-594c-4062-a08d-480ed4fad406",
+          "id": "8f1d799c-b9c7-49a8-aedd-38b62556ef52",
           "name": "showCampaignHideDiscountBadge",
           "displayName": "",
           "description": "",
@@ -154,7 +154,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "47a2d6ae-b4c8-47a5-978e-c8a48649840d",
+          "id": "31127af3-43fb-4e9e-8b1b-c1425c2c5c54",
           "name": "campaignOffersDiscountPercentageColor",
           "displayName": "",
           "description": "",
@@ -168,7 +168,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "84a603d2-3cdf-4e05-8f3c-adb3fd6914e9",
+          "id": "d661b8b2-1c09-4c7e-bf23-c01afdbf4a3a",
           "name": "campaignOffersDiscountPercentageBgColor",
           "displayName": "",
           "description": "",
@@ -182,7 +182,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "d89d4011-b46f-4557-a785-d0d90c93111b",
+          "id": "8bec2741-b6ba-4ca7-8a5f-1c42702c19d6",
           "name": "showCampaignShowCountdownSettings",
           "displayName": "",
           "description": "",
@@ -196,7 +196,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "3a445bae-fce3-492a-9a43-4174f820c18d",
+          "id": "6760dfe1-376f-41a6-a337-4a20309fc850",
           "name": "campaignOfferCountdownStyleIsLine",
           "displayName": "",
           "description": "",
@@ -210,7 +210,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "2c9d8a8f-5538-4231-9547-39662bee2b7e",
+          "id": "a42fba08-10c2-488f-9ae7-049e7eb172fa",
           "name": "campaignOffersCountdownTextColor",
           "displayName": "",
           "description": "",
@@ -224,7 +224,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "79c75ef3-aa05-4e5a-b5ec-eb1bfffadef4",
+          "id": "0486ca32-90ed-4e0a-8283-007d2aa4fe2a",
           "name": "campaignOffersCountdownTimeColor",
           "displayName": "",
           "description": "",
@@ -238,7 +238,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "46bdb129-81d0-425c-bd07-207ac35d37c3",
+          "id": "64d2ba39-ab28-45d5-b11c-0d56b0281df0",
           "name": "campaignOffersCountdownBgColor",
           "displayName": "",
           "description": "",
@@ -252,7 +252,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "729f561c-bd36-4b86-80cd-e189b4a4d8c1",
+          "id": "bf667c41-8e80-4f05-9f9e-0a0eb4866a3b",
           "name": "campaignOffersEnableMiddlePhase",
           "displayName": "",
           "description": "",
@@ -266,7 +266,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "0fd672d4-fc48-443e-ac06-2182d9ddc6ff",
+          "id": "3d5cbee4-c100-4730-a43f-29173feae801",
           "name": "campaignOffersMiddlePhaseOverlayColor",
           "displayName": "",
           "description": "",
@@ -280,7 +280,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "173b10c5-34bd-41b9-9fc5-27518ebc9e9b",
+          "id": "3c2828e0-56ef-4596-96e6-10ca18667f9f",
           "name": "campaignOfferCountdownStyleIsLineSuccessPage",
           "displayName": "",
           "description": "",
@@ -294,7 +294,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "81f541ee-87aa-4625-b5f1-bf8c3807acc4",
+          "id": "80f2b60e-3d6a-4927-97d9-98dba36bab78",
           "name": "buttonBgColor",
           "displayName": "",
           "description": "",
@@ -308,7 +308,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "da9829f7-6c20-4ca6-b757-fd54969aa829",
+          "id": "35466d4c-5cf3-4b28-86ce-e18affb95da8",
           "name": "buttonTextColor",
           "displayName": "",
           "description": "",
@@ -322,7 +322,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "6e8d4310-b87f-4b65-8609-df0452ac7c25",
+          "id": "dbb8c696-a342-4229-ab5e-b35fe3a0750d",
           "name": "buttonDisabledBgColor",
           "displayName": "",
           "description": "",
@@ -336,7 +336,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "7066015c-8e60-4b45-9b54-4d55cbb7c84b",
+          "id": "10eac44b-773e-4ff4-87cf-1e382f40ee13",
           "name": "buttonDisabledTextColor",
           "displayName": "",
           "description": "",
@@ -350,7 +350,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "bae80719-a281-4b24-8572-b1951d5d889d",
+          "id": "3ca2d19b-d14c-4ab0-a479-49a67e74b27c",
           "name": "primaryTextColor",
           "displayName": "",
           "description": "",
@@ -364,7 +364,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "275bf358-8578-4537-8e1c-dd1a35ef29c9",
+          "id": "dd35d9d6-2dd2-45b8-b2ae-546da533572f",
           "name": "secondaryTextColor",
           "displayName": "",
           "description": "",
@@ -378,7 +378,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "0e68b7b4-696b-4591-ba74-18d12b028425",
+          "id": "7313ae0b-f607-4eec-81dc-c4e818d93b70",
           "name": "primaryBgColor",
           "displayName": "",
           "description": "",
@@ -392,7 +392,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "e98e6db6-628b-4a17-ac8c-f88746275753",
+          "id": "f05ea629-2194-4541-8e8b-128e4402c968",
           "name": "secondaryBgColor",
           "displayName": "",
           "description": "",
@@ -406,7 +406,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "d2cb43f1-7258-43c8-a2a1-5cd5fb303e7b",
+          "id": "294c2465-4765-458b-af2e-d78068ef5bc7",
           "name": "borderColor",
           "displayName": "",
           "description": "",
@@ -420,7 +420,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "23ae92a0-592a-440d-8d60-5fd2d27304bb",
+          "id": "fe951342-3daa-4b87-b49e-23e76422f9aa",
           "name": "cardBgColor",
           "displayName": "",
           "description": "",
@@ -434,7 +434,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "d3a628ff-0d65-4b50-b584-4c808dd2b922",
+          "id": "d11f2de0-9246-4baa-84f7-f65f291b6247",
           "name": "errorColor",
           "displayName": "",
           "description": "",
@@ -448,7 +448,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "fa1808bf-69d7-4d25-8efb-9708a6985074",
+          "id": "303c9f5b-f9db-444e-8366-66b1b43b59c4",
           "name": "errorLightColor",
           "displayName": "",
           "description": "",
@@ -462,7 +462,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "962ed37a-71ba-4276-918a-92fe5bc6a2be",
+          "id": "187e6087-0235-448a-a03f-79a453a4684d",
           "name": "warningColor",
           "displayName": "",
           "description": "",
@@ -476,7 +476,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "9f5edb94-e194-42bd-9f07-6959f6e513ce",
+          "id": "ccb91e65-5d38-43ee-9d75-9269d4f2b086",
           "name": "warningLightColor",
           "displayName": "",
           "description": "",
@@ -490,7 +490,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "aeaaf84b-d380-45f4-81d8-80a9aee793ad",
+          "id": "aa74fa51-1fc7-48e3-84b9-f516c0c29383",
           "name": "successColor",
           "displayName": "",
           "description": "",
@@ -504,7 +504,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "ec647716-8dd1-4452-914a-e9ab31959746",
+          "id": "dc614611-19a7-477f-9b67-03350cddae40",
           "name": "successLightColor",
           "displayName": "",
           "description": "",
@@ -518,7 +518,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "fde0a902-b09a-4f23-937a-a09b37f9cde4",
+          "id": "5fefa8f2-9b30-4ee8-934f-87483b5966fa",
           "name": "secondaryButtonBgColor",
           "displayName": "",
           "description": "",
@@ -532,7 +532,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "ff00d253-4275-40e7-8b8b-53a264495363",
+          "id": "7a83d68c-2e8f-4bb1-a89b-2ae2395e81ae",
           "name": "secondaryButtonTextColor",
           "displayName": "",
           "description": "",
@@ -546,7 +546,7 @@
           "isFacetListNotSent": false
         },
         {
-          "id": "33f88a6d-3c56-4894-8535-77e6085beb97",
+          "id": "a67a1797-cb3a-4c8c-95ae-55271f473f68",
           "name": "secondaryButtonBorderColor",
           "displayName": "",
           "description": "",
@@ -564,7 +564,47 @@
       "isFooter": false,
       "translations": {},
       "defaultPropValuesTranslations": {},
-      "defaultPropValues": null,
+      "defaultPropValues": {
+        "logo": null,
+        "showTax": null,
+        "showCampaignOffersDesign": null,
+        "campaignOfferIsSmallDesign": null,
+        "showCampaignIsBiggerImage": null,
+        "campaignOffersTitleColor": null,
+        "campaignOffersDescriptionColor": null,
+        "campaignOffersContainerBgColor": null,
+        "showCampaignShowDiscountSettings": null,
+        "showCampaignHideDiscountBadge": null,
+        "campaignOffersDiscountPercentageColor": null,
+        "campaignOffersDiscountPercentageBgColor": null,
+        "showCampaignShowCountdownSettings": null,
+        "campaignOfferCountdownStyleIsLine": null,
+        "campaignOffersCountdownTextColor": null,
+        "campaignOffersCountdownTimeColor": null,
+        "campaignOffersCountdownBgColor": null,
+        "campaignOffersEnableMiddlePhase": null,
+        "campaignOffersMiddlePhaseOverlayColor": null,
+        "campaignOfferCountdownStyleIsLineSuccessPage": null,
+        "buttonBgColor": null,
+        "buttonTextColor": null,
+        "buttonDisabledBgColor": null,
+        "buttonDisabledTextColor": null,
+        "primaryTextColor": null,
+        "secondaryTextColor": null,
+        "primaryBgColor": null,
+        "secondaryBgColor": null,
+        "borderColor": null,
+        "cardBgColor": null,
+        "errorColor": null,
+        "errorLightColor": null,
+        "warningColor": null,
+        "warningLightColor": null,
+        "successColor": null,
+        "successLightColor": null,
+        "secondaryButtonBgColor": null,
+        "secondaryButtonTextColor": null,
+        "secondaryButtonBorderColor": null
+      },
       "commonPropValues": null
     },
     {
@@ -579,7 +619,7 @@
       "isFooter": false,
       "translations": {},
       "defaultPropValuesTranslations": {},
-      "defaultPropValues": null,
+      "defaultPropValues": {},
       "commonPropValues": null
     },
     {
@@ -589,12 +629,185 @@
       "description": "Anasayfa Hero Bölümü",
       "type": "COMPONENT",
       "componentJson": null,
-      "props": [],
+      "props": [
+        {
+          "id": "482cbfe1-b753-4924-8099-3b19ec376ad7",
+          "name": "slide1Badge",
+          "displayName": "slide1Badge",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "ea86e8fe-0d73-4028-b7e7-8ad44f592bb1",
+          "name": "slide1Title",
+          "displayName": "slide1Title",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "8d4382b4-03d2-48f1-8e58-99c1c757614b",
+          "name": "slide1Description",
+          "displayName": "slide1Description",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "989cafe8-87a3-4e66-a835-0f9c1f5015b9",
+          "name": "slide1Image",
+          "displayName": "slide1Image",
+          "description": "",
+          "type": "IMAGE",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "64a8bd5e-5e17-4a9b-895b-d58309e4b0c3",
+          "name": "slide2Badge",
+          "displayName": "slide2Badge",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "6347286a-13a5-4ed6-ac23-0f8dc09db98a",
+          "name": "slide2Title",
+          "displayName": "slide2Title",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "efa0e680-9418-4c9b-92f0-56caed011852",
+          "name": "slide2Description",
+          "displayName": "slide2Description",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "f1a0db9d-a7d7-43e2-aeb7-408b14961efa",
+          "name": "slide2Image",
+          "displayName": "slide2Image",
+          "description": "",
+          "type": "IMAGE",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "e21a42be-b3dd-40a2-93df-6b9546fde7c7",
+          "name": "slide3Badge",
+          "displayName": "slide3Badge",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "24bf0ee1-5101-4bf6-ba2f-852197f5e888",
+          "name": "slide3Title",
+          "displayName": "slide3Title",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "456b7328-ba41-420e-9fe1-221b32dc5f45",
+          "name": "slide3Description",
+          "displayName": "slide3Description",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "2452258f-6000-4b3f-a9ba-a77b6fb47690",
+          "name": "slide3Image",
+          "displayName": "slide3Image",
+          "description": "",
+          "type": "IMAGE",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        }
+      ],
       "isHeader": false,
       "isFooter": false,
       "translations": {},
       "defaultPropValuesTranslations": {},
-      "defaultPropValues": null,
+      "defaultPropValues": {
+        "slide1Badge": "High-Quality Dental Supplies",
+        "slide1Title": "Where quality meets care",
+        "slide1Description": "We believe dental professionals deserve materials they can trust. That's why Glindent delivers world-class products, supported by responsive service and a commitment to helping you achieve the best results for your patients."
+      },
       "commonPropValues": null
     },
     {
@@ -604,12 +817,41 @@
       "description": "",
       "type": "COMPONENT",
       "componentJson": null,
-      "props": [],
+      "props": [
+        {
+          "id": "afb7533e-ca9b-47c6-96e0-2b9d292af231",
+          "name": "logo",
+          "displayName": "Logo",
+          "description": "",
+          "type": "IMAGE",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "b132f265-58a3-444a-bf7e-abab1f9cacae",
+          "name": "navigationLinks",
+          "displayName": "Navigasyon Linkleri",
+          "description": "",
+          "type": "LIST_OF_LINK",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        }
+      ],
       "isHeader": true,
       "isFooter": false,
       "translations": {},
       "defaultPropValuesTranslations": {},
-      "defaultPropValues": null,
+      "defaultPropValues": {},
       "commonPropValues": null
     },
     {
@@ -619,12 +861,223 @@
       "description": "",
       "type": "COMPONENT",
       "componentJson": null,
-      "props": [],
+      "props": [
+        {
+          "id": "a3f8cc54-f353-4c21-8525-46e635d8c4b9",
+          "name": "sectionTitle",
+          "displayName": "Bölüm Başlığı",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "d8e67147-3682-477f-9ba1-112639806523",
+          "name": "aboutImage",
+          "displayName": "Hakkımızda Görseli",
+          "description": "",
+          "type": "IMAGE",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "b381beae-dfdf-4f02-b4db-85c52f263ad3",
+          "name": "description1",
+          "displayName": "Açıklama 1",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "88f245fe-04a0-4483-aa84-948a720a790d",
+          "name": "description2",
+          "displayName": "Açıklama 2",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "9cb88a48-55f0-4a79-b7b7-6681e7907429",
+          "name": "stat1Number",
+          "displayName": "İstatistik 1 Sayı",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "a4ad05a8-3fc8-4810-bcb9-822ca4d950a6",
+          "name": "stat1Label",
+          "displayName": "İstatistik 1 Etiket",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "48137403-c576-47f0-b962-f30e066d1bac",
+          "name": "stat1Sublabel",
+          "displayName": "İstatistik 1 Alt Etiket",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "c9839e67-9487-4127-84b8-736c114a7530",
+          "name": "stat2Number",
+          "displayName": "İstatistik 2 Sayı",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "2c318117-33fc-4d04-b227-32b725969c5c",
+          "name": "stat2Label",
+          "displayName": "İstatistik 2 Etiket",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "290dc7bd-bfa5-427a-87de-c27e164e1a76",
+          "name": "stat2Sublabel",
+          "displayName": "İstatistik 2 Alt Etiket",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "f7ce615b-a376-451f-862e-413734ebd13b",
+          "name": "stat3Number",
+          "displayName": "İstatistik 3 Sayı",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "aea3ab46-c342-4c30-ab54-d92b448b2246",
+          "name": "stat3Label",
+          "displayName": "İstatistik 3 Etiket",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "94785a75-11b2-4d71-841c-293f02f16754",
+          "name": "stat3Sublabel",
+          "displayName": "İstatistik 3 Alt Etiket",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "a912ab51-1ad7-4b98-9586-52c11ffea82b",
+          "name": "primaryButtonText",
+          "displayName": "Ana Buton Metni",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "54b4c26b-4e81-4a02-8c8b-bf40b25c1914",
+          "name": "secondaryButtonText",
+          "displayName": "İkincil Buton Metni",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        }
+      ],
       "isHeader": false,
       "isFooter": false,
       "translations": {},
       "defaultPropValuesTranslations": {},
-      "defaultPropValues": null,
+      "defaultPropValues": {},
       "commonPropValues": null
     },
     {
@@ -634,12 +1087,209 @@
       "description": "",
       "type": "COMPONENT",
       "componentJson": null,
-      "props": [],
+      "props": [
+        {
+          "id": "878c49c3-bd8f-44d9-a335-ca106dc997e8",
+          "name": "sectionTitle",
+          "displayName": "Bölüm Başlığı",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "65d03b18-5e82-461a-8d29-c317f41a7138",
+          "name": "sectionSubtitle",
+          "displayName": "Alt Başlık",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "df9e7ced-521d-4bb7-9c1b-f0fc9ec565bd",
+          "name": "email",
+          "displayName": "E-posta",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "f1e780d1-7560-4c34-9189-b9a3da0362b6",
+          "name": "phone1",
+          "displayName": "Telefon 1",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "4dcb2aad-5d46-4a9b-a924-1630663c7fea",
+          "name": "phone2",
+          "displayName": "Telefon 2",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "df214d7d-98b8-4549-a8f9-70e2a6d3c751",
+          "name": "addressLine1",
+          "displayName": "Adres Satır 1",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "656e75b7-7be1-48df-a8fa-9f76ed91cd94",
+          "name": "addressLine2",
+          "displayName": "Adres Satır 2",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "9d28982e-3683-457b-8cc5-8d64c6a8abe7",
+          "name": "contactCardTitle",
+          "displayName": "İletişim Kart Başlığı",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "d6608c64-6c58-43ef-aa9f-2073a637b402",
+          "name": "formCardTitle",
+          "displayName": "Form Kart Başlığı",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "d9980ff7-de23-49e9-95be-cfb987169e4d",
+          "name": "submitButtonText",
+          "displayName": "Gönder Butonu Metni",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "f53566aa-1032-4adb-abaf-577c27b6098c",
+          "name": "twitterUrl",
+          "displayName": "Twitter URL",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "50b82953-8bf5-43cf-aa43-e773ea7c84e0",
+          "name": "instagramUrl",
+          "displayName": "Instagram Url",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "715fc91d-fd9a-44df-b8b0-6fade2c47328",
+          "name": "linkedinUrl",
+          "displayName": "Linkedin Url",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "54484f6d-110a-44aa-a31c-19f1b845a1d0",
+          "name": "dribbbleUrl",
+          "displayName": "Dribbble Url",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        }
+      ],
       "isHeader": false,
       "isFooter": false,
       "translations": {},
       "defaultPropValuesTranslations": {},
-      "defaultPropValues": null,
+      "defaultPropValues": {},
       "commonPropValues": null
     },
     {
@@ -649,18 +1299,190 @@
       "description": "",
       "type": "COMPONENT",
       "componentJson": null,
-      "props": [],
+      "props": [
+        {
+          "id": "d31c9774-21a7-4e21-875d-63cbf5d06ec2",
+          "name": "sectionTitle",
+          "displayName": "Bölüm Başlığı",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "dde05023-f90d-412c-9c33-2d4dfed0ec25",
+          "name": "faq1Question",
+          "displayName": "Soru 1",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "de2dc5dc-9a8d-42aa-912b-70f7792de4e6",
+          "name": "faq1Answer",
+          "displayName": "Cevap 1",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "b6b79618-0af9-413e-b575-a03c6fa6c800",
+          "name": "faq2Question",
+          "displayName": "Soru 2",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "2dc55a33-2f42-48d6-b133-50d720d43d98",
+          "name": "faq2Answer",
+          "displayName": "Cevap 2",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "350340bd-4cd9-4ec5-9267-541f334b509f",
+          "name": "faq3Question",
+          "displayName": "Soru 3",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "0cfc56d0-d31d-4084-8db4-17b1e127a7bb",
+          "name": "faq3Answer",
+          "displayName": "Cevap 3",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "a891b9c5-c673-4799-b990-053ee9d68f61",
+          "name": "faq4Question",
+          "displayName": "Soru 4",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        },
+        {
+          "id": "38e8944f-c382-42ab-8f2e-69a7dae12ba6",
+          "name": "faq4Answer",
+          "displayName": "Cevap 4",
+          "description": "",
+          "type": "TEXT",
+          "isRequired": false,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        }
+      ],
       "isHeader": false,
       "isFooter": false,
       "translations": {},
       "defaultPropValuesTranslations": {},
-      "defaultPropValues": null,
+      "defaultPropValues": {},
       "commonPropValues": null
     },
     {
       "id": "b58c2009-a8a0-4762-bff7-af019055108f",
       "dir": "products-section",
       "displayName": "Products-Section",
+      "description": "Ürün Listeleme Kısmı",
+      "type": "COMPONENT",
+      "componentJson": null,
+      "props": [
+        {
+          "id": "976217a7-17c4-47c8-9879-3ca94aec81e5",
+          "name": "productList",
+          "displayName": "Product List",
+          "description": "ürün listeleme",
+          "type": "PRODUCT_LIST",
+          "isRequired": true,
+          "sliderData": {},
+          "translations": {},
+          "groupId": "",
+          "excludedFields": [],
+          "excludedFieldsCategory": [],
+          "isFacetListNotSent": false
+        }
+      ],
+      "isHeader": false,
+      "isFooter": false,
+      "translations": {},
+      "defaultPropValuesTranslations": {},
+      "defaultPropValues": {
+        "productList": {
+          "id": "c92ab31b-46d7-4af0-af2f-760f8da2f9ae",
+          "productListType": "ALL",
+          "initialSort": "FIRST_ADDED",
+          "initialLimit": 12,
+          "productCount": null,
+          "productIds": null,
+          "category": null,
+          "usePageFilter": false,
+          "relatedProductsType": null,
+          "recommendedProductsType": {
+            "recommendedProductType": "CATEGORY"
+          }
+        }
+      },
+      "commonPropValues": null
+    },
+    {
+      "id": "e46909d9-52ad-47ec-ab8d-5397c2b7896c",
+      "dir": "cart-items",
+      "displayName": "Cart Items",
       "description": "",
       "type": "COMPONENT",
       "componentJson": null,
@@ -673,15 +1495,15 @@
       "commonPropValues": null
     },
     {
-      "id": "75916526-d981-4d8c-ac33-b9dc8f9ef047",
-      "dir": "footer",
-      "displayName": "footer",
+      "id": "a67b00a5-0b32-408a-983d-02862e86a70d",
+      "dir": "cart-summary",
+      "displayName": "Cart Summary",
       "description": "",
       "type": "COMPONENT",
       "componentJson": null,
       "props": [],
       "isHeader": false,
-      "isFooter": true,
+      "isFooter": false,
       "translations": {},
       "defaultPropValuesTranslations": {},
       "defaultPropValues": null,
@@ -712,7 +1534,22 @@
         {
           "id": "a6b6c542-ef5c-496e-af1f-cab044ccec91",
           "componentId": "b58c2009-a8a0-4762-bff7-af019055108f",
-          "propValues": {}
+          "propValues": {
+            "productList": {
+              "id": "66097d95-cb04-43de-952c-4a39bf2d5c8c",
+              "productListType": "ALL",
+              "initialSort": "LAST_ADDED",
+              "initialLimit": 20,
+              "productCount": null,
+              "productIds": null,
+              "category": null,
+              "usePageFilter": null,
+              "relatedProductsType": null,
+              "recommendedProductsType": {
+                "recommendedProductType": "CATEGORY"
+              }
+            }
+          }
         },
         {
           "id": "46ce5b51-076f-4ac3-a383-577786f53b60",
@@ -722,11 +1559,6 @@
         {
           "id": "2fc82a59-d6aa-4b64-ad93-57ced405bd7b",
           "componentId": "eac50981-e3ef-4272-b9dd-69aad05bc054",
-          "propValues": {}
-        },
-        {
-          "id": "caae4fd9-822d-476b-8630-682385d1800e",
-          "componentId": "75916526-d981-4d8c-ac33-b9dc8f9ef047",
           "propValues": {}
         }
       ],
@@ -750,6 +1582,26 @@
           "id": "67673ce6-f309-4e2b-8d42-9eff9afa8029",
           "componentId": "checkout",
           "propValues": {
+            "logo": null,
+            "showTax": true,
+            "showCampaignOffersDesign": false,
+            "campaignOfferIsSmallDesign": false,
+            "showCampaignIsBiggerImage": false,
+            "campaignOffersTitleColor": null,
+            "campaignOffersDescriptionColor": null,
+            "campaignOffersContainerBgColor": null,
+            "showCampaignShowDiscountSettings": false,
+            "showCampaignHideDiscountBadge": false,
+            "campaignOffersDiscountPercentageColor": null,
+            "campaignOffersDiscountPercentageBgColor": null,
+            "showCampaignShowCountdownSettings": false,
+            "campaignOfferCountdownStyleIsLine": false,
+            "campaignOffersCountdownTextColor": null,
+            "campaignOffersCountdownTimeColor": null,
+            "campaignOffersCountdownBgColor": null,
+            "campaignOffersEnableMiddlePhase": false,
+            "campaignOffersMiddlePhaseOverlayColor": null,
+            "campaignOfferCountdownStyleIsLineSuccessPage": false,
             "buttonBgColor": "#272727",
             "buttonTextColor": "#FFFFFF",
             "buttonDisabledBgColor": "#F7F7F9",
@@ -766,18 +1618,34 @@
             "warningLightColor": "#FFFAEE",
             "successColor": "#2DCA73",
             "successLightColor": "#F6FFED",
-            "logo": null,
-            "showTax": true,
-            "showCampaignOffersDesign": false,
-            "campaignOfferIsSmallDesign": false,
-            "showCampaignIsBiggerImage": false,
-            "showCampaignShowDiscountSettings": false,
-            "showCampaignHideDiscountBadge": false,
-            "showCampaignShowCountdownSettings": false,
-            "campaignOfferCountdownStyleIsLine": false,
-            "campaignOfferCountdownStyleIsLineSuccessPage": false,
-            "campaignOffersEnableMiddlePhase": false
+            "secondaryButtonBgColor": null,
+            "secondaryButtonTextColor": null,
+            "secondaryButtonBorderColor": null
           }
+        }
+      ],
+      "specifications": [],
+      "disableIndex": false
+    },
+    {
+      "id": "99cd314c-6723-4d04-946c-dc8be9c6fa8e",
+      "name": "",
+      "type": "CART",
+      "components": [
+        {
+          "id": "9a9cfc01-2173-44c4-837c-b6bed4bebdf4",
+          "componentId": "ce31f1cc-8f36-4169-865b-ffe3b9cd0fed",
+          "propValues": {}
+        },
+        {
+          "id": "18e20f41-e42b-48d7-861f-9f2e0f9f8209",
+          "componentId": "e46909d9-52ad-47ec-ab8d-5397c2b7896c",
+          "propValues": {}
+        },
+        {
+          "id": "3a66d202-61dc-4fe8-957b-3cae477b63ff",
+          "componentId": "a67b00a5-0b32-408a-983d-02862e86a70d",
+          "propValues": {}
         }
       ],
       "specifications": [],

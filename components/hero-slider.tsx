@@ -182,24 +182,22 @@ export function HeroSlider({ scrollToSection, onSlideEnd }: HeroSliderProps) {
                           : "0 10px 30px -10px rgba(0, 0, 0, 0.2)",
                       }}
                     >
-                      {/* Glass background */}
-                      <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
-                      
                       <Image
                         src={slide.image}
                         alt={slide.imageAlt}
                         fill
-                        className="object-cover transition-transform duration-700"
+                        className="object-cover transition-transform duration-700 z-0"
                         style={{
                           transform: activeIndex === index ? "scale(1)" : "scale(1.05)",
                         }}
                         priority={index === 0}
                         sizes="(max-width: 1024px) 100vw, 50vw"
+                        unoptimized
                       />
                       
                       {/* Gradient overlays for depth */}
-                      <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-white/5" />
-                      <div className="absolute inset-0 bg-linear-to-br from-transparent via-transparent to-black/20" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-white/5 z-10" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/20 z-10" />
                       
                       {/* Inner border glow */}
                       <div className="absolute inset-0 rounded-2xl sm:rounded-3xl ring-1 ring-inset ring-white/20" />
@@ -217,7 +215,7 @@ export function HeroSlider({ scrollToSection, onSlideEnd }: HeroSliderProps) {
                         ease: "easeInOut",
                         repeat: Infinity,
                       }}
-                      className="absolute -inset-6 bg-linear-to-br from-cyan-500/20 via-teal-500/15 to-emerald-500/20 rounded-3xl blur-3xl -z-10"
+                      className="absolute -inset-6 bg-gradient-to-br from-cyan-500/20 via-teal-500/15 to-emerald-500/20 rounded-3xl blur-3xl -z-10"
                     />
                   </div>
                 </SwiperSlide>

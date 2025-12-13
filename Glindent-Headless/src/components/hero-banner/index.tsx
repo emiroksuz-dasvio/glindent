@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+import { IkasImage } from "@ikas/storefront";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCards, Mousewheel, Keyboard } from "swiper";
@@ -7,8 +8,33 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigation } from "../horizontal-layout";
 
-// @ts-ignore - Import Swiper bundle CSS
-import "swiper/swiper-bundle.css";
+// Import Swiper CSS - using core CSS for better ikas compatibility
+import "swiper/css";
+import "swiper/css/effect-cards";
+
+// ========================
+// IKAS PROPS INTERFACE
+// ========================
+interface HeroBannerProps {
+  // Slide 1
+  slide1Badge?: string;
+  slide1Title?: string;
+  slide1Description?: string;
+  slide1Image?: IkasImage;
+  // Slide 2
+  slide2Badge?: string;
+  slide2Title?: string;
+  slide2Description?: string;
+  slide2Image?: IkasImage;
+  // Slide 3
+  slide3Badge?: string;
+  slide3Title?: string;
+  slide3Description?: string;
+  slide3Image?: IkasImage;
+  // Button texts
+  primaryButtonText?: string;
+  secondaryButtonText?: string;
+}
 
 interface HeroSlide {
   id: number;
@@ -19,14 +45,15 @@ interface HeroSlide {
   imageAlt: string;
 }
 
-const heroSlides: HeroSlide[] = [
+// Default slides (fallback if not provided from IKAS)
+const defaultSlides: HeroSlide[] = [
   {
     id: 1,
     badge: "High-Quality Dental Supplies",
     title: ["Where quality", "meets care"],
     description:
       "We believe dental professionals deserve materials they can trust. That's why Glindent delivers world-class products, supported by responsive service and a commitment to helping you achieve the best results for your patients.",
-    image: "/hero-dental.jpg",
+    image: "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&h=600&fit=crop&q=80",
     imageAlt: "Professional dental care - Patient receiving quality dental treatment",
   },
   {
@@ -35,7 +62,7 @@ const heroSlides: HeroSlide[] = [
     title: ["Precision", "crafted for you"],
     description:
       "Our zirconia discs offer exceptional translucency and strength, designed for dental professionals who demand the highest quality materials for their restorations.",
-    image: "/dental-zirconia-discs-white-ceramic-material.jpg",
+    image: "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=800&h=600&fit=crop&q=80",
     imageAlt: "Premium zirconia dental discs for professional restorations",
   },
   {
@@ -44,12 +71,57 @@ const heroSlides: HeroSlide[] = [
     title: ["40+ years of", "excellence"],
     description:
       "Backed by Gülsa Medical's four decades of expertise, Glindent brings world-renowned dental materials to the UK market with unmatched quality and service.",
-    image: "/modern-dental-laboratory-with-advanced-equipment.jpg",
+    image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&h=600&fit=crop&q=80",
     imageAlt: "Modern dental laboratory with advanced equipment",
   },
 ];
 
-const HeroBanner: React.FC = () => {
+const HeroBanner: React.FC<HeroBannerProps> = (props) => {
+  const {
+    slide1Badge,
+    slide1Title,
+    slide1Description,
+    slide1Image,
+    slide2Badge,
+    slide2Title,
+    slide2Description,
+    slide2Image,
+    slide3Badge,
+    slide3Title,
+    slide3Description,
+    slide3Image,
+    primaryButtonText = "Shop Now",
+    secondaryButtonText = "Contact Us",
+  } = props;
+
+  // Build slides from IKAS props or use defaults
+  const heroSlides: HeroSlide[] = [
+    {
+      id: 1,
+      badge: slide1Badge || defaultSlides[0].badge,
+      title: slide1Title ? slide1Title.split("\n") : defaultSlides[0].title,
+      description: slide1Description || defaultSlides[0].description,
+      image: slide1Image?.src || defaultSlides[0].image,
+      imageAlt: defaultSlides[0].imageAlt,
+    },
+    {
+      id: 2,
+      badge: slide2Badge || defaultSlides[1].badge,
+      title: slide2Title ? slide2Title.split("\n") : defaultSlides[1].title,
+      description: slide2Description || defaultSlides[1].description,
+      image: slide2Image?.src || defaultSlides[1].image,
+      imageAlt: defaultSlides[1].imageAlt,
+    },
+    {
+      id: 3,
+      badge: slide3Badge || defaultSlides[2].badge,
+      title: slide3Title ? slide3Title.split("\n") : defaultSlides[2].title,
+      description: slide3Description || defaultSlides[2].description,
+      image: slide3Image?.src || defaultSlides[2].image,
+      imageAlt: defaultSlides[2].imageAlt,
+    },
+  ];
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -415,6 +487,7 @@ const HeroBanner: React.FC = () => {
                         layout="fill"
                         objectFit="cover"
                         priority
+                        unoptimized
                         style={{
                           transform: activeIndex === index ? "scale(1)" : "scale(1.05)",
                           transition: "transform 0.7s ease",
@@ -549,10 +622,10 @@ const HeroBanner: React.FC = () => {
                 >
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
                     <button onClick={scrollToProducts} className="btn-primary">
-                      Shop Now
+                      {primaryButtonText}
                     </button>
                     <button onClick={scrollToContact} className="btn-secondary">
-                      Contact Us
+                      {secondaryButtonText}
                     </button>
                   </div>
                 </motion.div>

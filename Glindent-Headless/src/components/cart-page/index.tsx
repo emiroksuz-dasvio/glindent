@@ -135,6 +135,7 @@ const CartItem = observer(({ item, onRemove, onUpdateQuantity }: {
           alt={item.variant?.name || "Product"}
           layout="fill"
           objectFit="cover"
+          unoptimized
         />
       </div>
       
@@ -1011,17 +1012,11 @@ const CartPage: React.FC = () => {
                   </div>
 
                   {/* Checkout Button */}
-                  {store.cartStore.checkoutUrl ? (
-                    <a href={store.cartStore.checkoutUrl} className="checkout-btn">
+                  <Link href="/checkout">
+                    <a className="checkout-btn">
                       Proceed to Checkout
                     </a>
-                  ) : (
-                    <Link href="/checkout">
-                      <a className="checkout-btn">
-                        Proceed to Checkout
-                      </a>
-                    </Link>
-                  )}
+                  </Link>
                 </div>
               </div>
 

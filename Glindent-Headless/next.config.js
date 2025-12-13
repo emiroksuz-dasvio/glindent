@@ -19,6 +19,8 @@ const config = {
   basePath: process.env.NEXTJS_BASE_PATH || "",
 
   images: {
+    unoptimized: true,
+    domains: ["images.unsplash.com", "cdn.myikas.com", "res.cloudinary.com"],
     deviceSizes: [
       180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 1950, 2560, 3840,
     ],

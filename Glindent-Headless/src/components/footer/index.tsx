@@ -1,10 +1,34 @@
 "use client"
 
 import { observer } from "mobx-react-lite"
+import { IkasImage } from "@ikas/storefront"
 import { motion, useInView } from "framer-motion"
 import { useRef } from "react"
 import { useNavigation } from "../horizontal-layout"
 
+// ========================
+// IKAS PROPS INTERFACE
+// ========================
+interface FooterProps {
+  // Logo
+  logo?: IkasImage;
+  // Brand text
+  tagline?: string;
+  description?: string;
+  // Quick links title
+  quickLinksTitle?: string;
+  // Social links title
+  socialLinksTitle?: string;
+  // Social URLs
+  twitterUrl?: string;
+  instagramUrl?: string;
+  linkedinUrl?: string;
+  // Legal links
+  privacyPolicyUrl?: string;
+  termsOfServiceUrl?: string;
+  // Copyright
+  copyrightText?: string;
+}
 
 // SVG Icons
 const TwitterIcon = () => (
@@ -45,7 +69,21 @@ const GlindentLogo = () => (
   </svg>
 )
 
-const Footer: React.FC = () => {
+const Footer: React.FC<FooterProps> = (props) => {
+  const {
+    logo,
+    tagline = "Way to Dentistry",
+    description = "Premium dental supplies backed by 40+ years of Gülsa Medical expertise.",
+    quickLinksTitle = "Quick Links",
+    socialLinksTitle = "Follow Us",
+    twitterUrl = "#",
+    instagramUrl = "#",
+    linkedinUrl = "#",
+    privacyPolicyUrl = "/privacy",
+    termsOfServiceUrl = "/terms",
+    copyrightText,
+  } = props;
+
   const footerRef = useRef<HTMLElement>(null)
   const isInView = useInView(footerRef, { once: true, margin: "-50px" })
   const { scrollToSection } = useNavigation()
@@ -60,10 +98,13 @@ const Footer: React.FC = () => {
   ];
 
   const socialLinks = [
-    { icon: <TwitterIcon />, href: "#", label: "Twitter" },
-    { icon: <InstagramIcon />, href: "#", label: "Instagram" },
-    { icon: <LinkedInIcon />, href: "#", label: "LinkedIn" },
-  ]
+    { icon: <TwitterIcon />, href: twitterUrl, label: "Twitter" },
+    { icon: <InstagramIcon />, href: instagramUrl, label: "Instagram" },
+    { icon: <LinkedInIcon />, href: linkedinUrl, label: "LinkedIn" },
+  ].filter(link => link.href);
+
+  // Default copyright text
+  const finalCopyrightText = copyrightText || `© ${new Date().getFullYear()} Glindent. All rights reserved.`;
 
   return (
     <footer ref={footerRef} className="footer">
@@ -76,16 +117,20 @@ const Footer: React.FC = () => {
         >
           {/* Logo & Description */}
           <div className="footer-brand">
-            <GlindentLogo />
-            <p className="footer-tagline">Way to Dentistry</p>
+            {logo?.src ? (
+              <img src={logo.src} alt="Glindent Logo" className="footer-logo-img" />
+            ) : (
+              <GlindentLogo />
+            )}
+            <p className="footer-tagline">{tagline}</p>
             <p className="footer-description">
-              Premium dental supplies backed by 40+ years of Gülsa Medical expertise.
+              {description}
             </p>
           </div>
 
           {/* Navigation Links */}
           <div className="footer-nav">
-            <h4 className="footer-nav-title">Quick Links</h4>
+            <h4 className="footer-nav-title">{quickLinksTitle}</h4>
             <nav className="footer-nav-links">
               {navLinks.map((link, index) => (
                 <motion.button
@@ -104,7 +149,7 @@ const Footer: React.FC = () => {
 
           {/* Social Links */}
           <div className="footer-social">
-            <h4 className="footer-social-title">Follow Us</h4>
+            <h4 className="footer-social-title">{socialLinksTitle}</h4>
             <div className="footer-social-links">
               {socialLinks.map((link, index) => (
                 <motion.a
@@ -131,12 +176,12 @@ const Footer: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
         >
           <p className="footer-copyright">
-            © {new Date().getFullYear()} Glindent. All rights reserved.
+            {finalCopyrightText}
           </p>
           <div className="footer-legal">
-            <a href="/privacy" className="footer-legal-link">Privacy Policy</a>
+            <a href={privacyPolicyUrl} className="footer-legal-link">Privacy Policy</a>
             <span className="footer-divider">•</span>
-            <a href="/terms" className="footer-legal-link">Terms of Service</a>
+            <a href={termsOfServiceUrl} className="footer-legal-link">Terms of Service</a>
           </div>
         </motion.div>
       </div>

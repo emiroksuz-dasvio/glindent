@@ -1,10 +1,77 @@
 import { observer } from "mobx-react-lite";
+import { IkasImage } from "@ikas/storefront";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { useNavigation } from "../horizontal-layout";
 
-const AboutSection: React.FC = () => {
+// ========================
+// IKAS PROPS INTERFACE
+// ========================
+interface AboutSectionProps {
+  // Title
+  sectionTitle?: string;
+  // Image
+  aboutImage?: IkasImage;
+  // Description paragraphs
+  description1?: string;
+  description2?: string;
+  // Stats
+  stat1Number?: string;
+  stat1Label?: string;
+  stat1Sublabel?: string;
+  stat2Number?: string;
+  stat2Label?: string;
+  stat2Sublabel?: string;
+  stat3Number?: string;
+  stat3Label?: string;
+  stat3Sublabel?: string;
+  // Button texts
+  primaryButtonText?: string;
+  secondaryButtonText?: string;
+}
+
+// Default values
+const defaultStats = [
+  { number: "40+", label: "Years", sublabel: "Supporting dental professionals", direction: "right" },
+  { number: "1000+", label: "Products", sublabel: "Premium dental supplies", direction: "left" },
+  { number: "Global", label: "Reach", sublabel: "Serving worldwide", direction: "right" },
+];
+
+const defaultDescription1 = "Our journey started in Izmir, Turkey, where Gülsa Medical Devices and Materials has been supporting dentists and labs for more than four decades. Built on a commitment to quality and trust, Gülsa grew into one of Turkey's most respected names in dental care, now serving professionals across the world.";
+
+const defaultDescription2 = "Glindent was created to bring that same dedication closer to the UK. We know how important it is for dental professionals to have reliable materials at hand, that's why we make Gülsa's products, from world-class zirconia discs to restorative and CAD/CAM solutions, available with faster delivery and local service you can count on.";
+
+const AboutSection: React.FC<AboutSectionProps> = (props) => {
+  const {
+    sectionTitle = "Our Story",
+    aboutImage,
+    description1 = defaultDescription1,
+    description2 = defaultDescription2,
+    stat1Number = defaultStats[0].number,
+    stat1Label = defaultStats[0].label,
+    stat1Sublabel = defaultStats[0].sublabel,
+    stat2Number = defaultStats[1].number,
+    stat2Label = defaultStats[1].label,
+    stat2Sublabel = defaultStats[1].sublabel,
+    stat3Number = defaultStats[2].number,
+    stat3Label = defaultStats[2].label,
+    stat3Sublabel = defaultStats[2].sublabel,
+    primaryButtonText = "Explore Products",
+    secondaryButtonText = "Get in Touch",
+  } = props;
+
+  // Build stats from props
+  const stats = [
+    { number: stat1Number, label: stat1Label, sublabel: stat1Sublabel, direction: "right" },
+    { number: stat2Number, label: stat2Label, sublabel: stat2Sublabel, direction: "left" },
+    { number: stat3Number, label: stat3Label, sublabel: stat3Sublabel, direction: "right" },
+  ];
+
+  // Default image URL
+  const imageUrl = aboutImage?.src || "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&h=600&fit=crop&q=80";
+  const imageAlt = "Modern dental laboratory with advanced equipment - Glindent";
+
   const sectionRef = useRef<HTMLElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showGradient, setShowGradient] = useState(true);
@@ -33,12 +100,6 @@ const AboutSection: React.FC = () => {
       }
     };
   }, []);
-
-  const stats = [
-    { number: "40+", label: "Years", sublabel: "Supporting dental professionals", direction: "right" },
-    { number: "1000+", label: "Products", sublabel: "Premium dental supplies", direction: "left" },
-    { number: "Global", label: "Reach", sublabel: "Serving worldwide", direction: "right" },
-  ];
 
   return (
     <section
@@ -269,7 +330,7 @@ const AboutSection: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
           transition={{ duration: 1, ease: "easeOut" }}
         >
-          Our Story
+          {sectionTitle}
         </motion.h2>
 
         {/* Scrollable Content Area */}
@@ -294,11 +355,12 @@ const AboutSection: React.FC = () => {
                   transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
                 >
                   <Image
-                    src="/modern-dental-laboratory-with-advanced-equipment.jpg"
-                    alt="Modern dental laboratory with advanced equipment - Glindent"
+                    src={imageUrl}
+                    alt={imageAlt}
                     layout="fill"
                     objectFit="cover"
                     priority
+                    unoptimized
                   />
                   <div
                     style={{
@@ -317,9 +379,7 @@ const AboutSection: React.FC = () => {
                     animate={isInView ? { opacity: 1, x: 0, filter: "blur(0px)" } : {}}
                     transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
                   >
-                    Our journey started in Izmir, Turkey, where Gülsa Medical Devices and Materials has been supporting
-                    dentists and labs for more than four decades. Built on a commitment to quality and trust, Gülsa grew
-                    into one of Turkey's most respected names in dental care, now serving professionals across the world.
+                    {description1}
                   </motion.p>
                   <motion.p
                     className="about-description"
@@ -327,10 +387,7 @@ const AboutSection: React.FC = () => {
                     animate={isInView ? { opacity: 1, x: 0, filter: "blur(0px)" } : {}}
                     transition={{ duration: 0.7, ease: "easeOut", delay: 0.5 }}
                   >
-                    Glindent was created to bring that same dedication closer to the UK. We know how important it is for
-                    dental professionals to have reliable materials at hand, that's why we make Gülsa's products, from
-                    world-class zirconia discs to restorative and CAD/CAM solutions, available with faster delivery and
-                    local service you can count on.
+                    {description2}
                   </motion.p>
                 </div>
               </div>

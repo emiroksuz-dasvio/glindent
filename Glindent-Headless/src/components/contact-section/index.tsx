@@ -2,6 +2,32 @@
 
 import { useState, useRef, useEffect } from "react"
 import { observer } from "mobx-react-lite"
+import { IkasNavigationLink } from "@ikas/storefront"
+
+// ========================
+// IKAS PROPS INTERFACE
+// ========================
+interface ContactSectionProps {
+  // Section titles
+  sectionTitle?: string;
+  sectionSubtitle?: string;
+  // Contact info
+  email?: string;
+  phone1?: string;
+  phone2?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  // Card texts
+  contactCardTitle?: string;
+  contactCardDescription?: string;
+  formCardTitle?: string;
+  submitButtonText?: string;
+  // Social media links
+  twitterUrl?: string;
+  instagramUrl?: string;
+  linkedinUrl?: string;
+  dribbbleUrl?: string;
+}
 
 // SVG Icons
 const MailIcon = () => (
@@ -74,7 +100,25 @@ interface FormErrors {
   message?: string
 }
 
-const ContactSection: React.FC = () => {
+const ContactSection: React.FC<ContactSectionProps> = (props) => {
+  const {
+    sectionTitle = "Let's talk",
+    sectionSubtitle = "/ Get in touch",
+    email = "info@glindent.co.uk",
+    phone1 = "01202 402675",
+    phone2 = "07717 886717",
+    addressLine1 = "Bourne House, 23 Hinton Road",
+    addressLine2 = "Bournemouth, BH1 2EF",
+    contactCardTitle = "Contact Information",
+    contactCardDescription = "Fill up the form and our Team will get back to you within 24 hours.",
+    formCardTitle = "Send a Message",
+    submitButtonText = "Send Message",
+    twitterUrl = "#",
+    instagramUrl = "#",
+    linkedinUrl = "#",
+    dribbbleUrl = "#",
+  } = props;
+
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
@@ -159,8 +203,8 @@ const ContactSection: React.FC = () => {
       <div className="contact-container">
         {/* Title */}
         <div className={`section-header ${isVisible ? 'visible' : ''}`}>
-          <h2 className="section-title">Let&apos;s talk</h2>
-          <p className="section-subtitle">/ Get in touch</p>
+          <h2 className="section-title">{sectionTitle}</h2>
+          <p className="section-subtitle">{sectionSubtitle}</p>
         </div>
 
         {/* Main Content Grid */}
@@ -171,18 +215,18 @@ const ContactSection: React.FC = () => {
             style={{ transitionDelay: '100ms' }}
           >
             <div>
-              <h3 className="card-title">Contact Information</h3>
-              <p className="card-description">Fill up the form and our Team will get back to you within 24 hours.</p>
+              <h3 className="card-title">{contactCardTitle}</h3>
+              <p className="card-description">{contactCardDescription}</p>
               
               <div className="contact-items">
                 {/* Email */}
-                <a href="mailto:info@glindent.co.uk" className="contact-item">
+                <a href={`mailto:${email}`} className="contact-item">
                   <div className="contact-icon">
                     <MailIcon />
                   </div>
                   <div className="contact-text">
                     <span className="contact-label">Email</span>
-                    <span className="contact-value">info@glindent.co.uk</span>
+                    <span className="contact-value">{email}</span>
                   </div>
                 </a>
 
@@ -194,9 +238,13 @@ const ContactSection: React.FC = () => {
                   <div className="contact-text">
                     <span className="contact-label">Phone</span>
                     <div className="phone-numbers">
-                      <a href="tel:01202402675" className="phone-link">01202 402675</a>
-                      <span className="phone-divider">|</span>
-                      <a href="tel:07717886717" className="phone-link">07717 886717</a>
+                      <a href={`tel:${phone1?.replace(/\s/g, '') || ''}`} className="phone-link">{phone1}</a>
+                      {phone2 && (
+                        <>
+                          <span className="phone-divider">|</span>
+                          <a href={`tel:${phone2?.replace(/\s/g, '') || ''}`} className="phone-link">{phone2}</a>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -209,8 +257,8 @@ const ContactSection: React.FC = () => {
                   <div className="contact-text">
                     <span className="contact-label">Address</span>
                     <p className="address-text">
-                      Bourne House, 23 Hinton Road<br />
-                      Bournemouth, BH1 2EF
+                      {addressLine1}<br />
+                      {addressLine2}
                     </p>
                   </div>
                 </div>
@@ -221,18 +269,26 @@ const ContactSection: React.FC = () => {
             <div className="social-section">
               <span className="social-label">Follow Us</span>
               <div className="social-links">
-                <a href="#" className="social-link twitter" aria-label="Twitter">
-                  <TwitterIcon />
-                </a>
-                <a href="#" className="social-link instagram" aria-label="Instagram">
-                  <InstagramIcon />
-                </a>
-                <a href="#" className="social-link linkedin" aria-label="LinkedIn">
-                  <LinkedInIcon />
-                </a>
-                <a href="#" className="social-link dribbble" aria-label="Dribbble">
-                  <DribbbleIcon />
-                </a>
+                {twitterUrl && (
+                  <a href={twitterUrl} className="social-link twitter" aria-label="Twitter">
+                    <TwitterIcon />
+                  </a>
+                )}
+                {instagramUrl && (
+                  <a href={instagramUrl} className="social-link instagram" aria-label="Instagram">
+                    <InstagramIcon />
+                  </a>
+                )}
+                {linkedinUrl && (
+                  <a href={linkedinUrl} className="social-link linkedin" aria-label="LinkedIn">
+                    <LinkedInIcon />
+                  </a>
+                )}
+                {dribbbleUrl && (
+                  <a href={dribbbleUrl} className="social-link dribbble" aria-label="Dribbble">
+                    <DribbbleIcon />
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -242,7 +298,7 @@ const ContactSection: React.FC = () => {
             className={`contact-form-card ${isVisible ? 'visible' : ''}`}
             style={{ transitionDelay: '200ms' }}
           >
-            <h3 className="card-title">Send a Message</h3>
+            <h3 className="card-title">{formCardTitle}</h3>
             
             <form onSubmit={handleSubmit} className="contact-form">
               <div className="form-row">
@@ -313,7 +369,7 @@ const ContactSection: React.FC = () => {
                     ) : (
                       <>
                         <SendIcon />
-                        <span>Send Message</span>
+                        <span>{submitButtonText}</span>
                       </>
                     )}
                   </span>

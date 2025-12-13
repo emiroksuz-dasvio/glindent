@@ -52,7 +52,7 @@ html {
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: var(--bg-dark);
+  background-color: red !important;
   color: var(--text-primary);
   line-height: 1.6;
   overflow-x: hidden;
@@ -480,5 +480,69 @@ html, body {
 * {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ===== SWIPER STYLES (Inline to ensure loading in ikas) ===== */
+.swiper {
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  overflow: hidden;
+  list-style: none;
+  padding: 0;
+  z-index: 1;
+}
+
+.swiper-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: flex;
+  transition-property: transform;
+  box-sizing: content-box;
+}
+
+.swiper-slide {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition-property: transform;
+}
+
+/* Swiper Cards Effect */
+.swiper-cards {
+  overflow: visible;
+}
+
+.swiper-cards .swiper-slide {
+  transform-origin: center bottom;
+  backface-visibility: hidden;
+}
+
+/* Hero Swiper Custom Styles */
+.hero-swiper {
+  overflow: visible !important;
+  height: 100%;
+  width: 100%;
+}
+
+.hero-swiper .swiper-wrapper {
+  overflow: visible !important;
+}
+
+.hero-swiper .swiper-slide {
+  border-radius: 1rem;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 640px) {
+  .hero-swiper .swiper-slide {
+    border-radius: 1.5rem;
+  }
 }
 
