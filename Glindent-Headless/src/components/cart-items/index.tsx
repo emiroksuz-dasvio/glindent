@@ -118,17 +118,24 @@ const styles: { [key: string]: CSSProperties } = {
     display: "inline-flex",
     alignItems: "center",
     gap: "8px",
-    color: "rgba(255, 255, 255, 0.8)",
+    color: "rgba(255, 255, 255, 0.9)",
     fontSize: "14px",
     fontWeight: 500,
     textDecoration: "none",
     marginBottom: "24px",
+    transition: "all 0.2s ease",
+  },
+  backLinkHover: {
+    color: "white",
+    gap: "12px",
   },
   header: {
     display: "flex",
     alignItems: "baseline",
     gap: "12px",
-    marginBottom: "24px",
+    marginBottom: "32px",
+    paddingBottom: "20px",
+    borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
   },
   title: {
     fontSize: "32px",
@@ -139,10 +146,11 @@ const styles: { [key: string]: CSSProperties } = {
   },
   itemCount: {
     fontSize: "14px",
-    color: "rgba(255, 255, 255, 0.7)",
-    background: "rgba(255, 255, 255, 0.15)",
+    color: "rgba(255, 255, 255, 0.9)",
+    background: "rgba(255, 255, 255, 0.2)",
     padding: "6px 14px",
     borderRadius: "20px",
+    fontWeight: 600,
   },
   list: {
     display: "flex",
@@ -400,11 +408,20 @@ const CartItems: React.FC<CartItemsProps> = (props) => {
     );
   }
 
+  const [isBackHovered, setIsBackHovered] = useState(false);
+
   return (
     <section style={styles.section}>
       {/* Back Link */}
       <Link href="/">
-        <a style={styles.backLink}>
+        <a 
+          style={{
+            ...styles.backLink,
+            ...(isBackHovered ? styles.backLinkHover : {})
+          }}
+          onMouseEnter={() => setIsBackHovered(true)}
+          onMouseLeave={() => setIsBackHovered(false)}
+        >
           <ArrowLeftIcon />
           <span>{continueShoppingText}</span>
         </a>

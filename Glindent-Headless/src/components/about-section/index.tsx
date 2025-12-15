@@ -427,21 +427,7 @@ const AboutSection: React.FC<AboutSectionProps> = (props) => {
             </div>
           </div>
 
-          {/* Gradient Overlay */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: "8rem",
-              pointerEvents: "none",
-              transition: "opacity 0.3s ease",
-              opacity: showGradient ? 1 : 0,
-              background:
-                "linear-gradient(to top, rgba(0, 122, 114, 1) 0%, rgba(0, 122, 114, 0.9) 20%, rgba(0, 122, 114, 0.7) 40%, rgba(0, 122, 114, 0.4) 60%, rgba(0, 122, 114, 0.1) 80%, transparent 100%)",
-            }}
-          />
+
         </div>
 
         {/* Buttons */}

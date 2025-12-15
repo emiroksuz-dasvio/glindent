@@ -332,11 +332,13 @@ const CartDropdown = observer(() => {
                   <span>Subtotal</span>
                   <span className="cart-total-price">{totalPrice}</span>
                 </div>
-                <Link href="/checkout">
-                  <a className="cart-checkout-btn" onClick={() => setIsOpen(false)}>
-                    Checkout
-                  </a>
-                </Link>
+                <a 
+                  href={store.cartStore.checkoutUrl || "/checkout"} 
+                  className="cart-checkout-btn" 
+                  onClick={() => setIsOpen(false)}
+                >
+                  Checkout
+                </a>
                 <Link href="/cart">
                   <a className="cart-view-btn" onClick={() => setIsOpen(false)}>
                     View Cart
@@ -691,6 +693,7 @@ const Header: React.FC<HeaderProps> = (props) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   
   // Use navigation context for horizontal slider
   const { currentSection, scrollToSection: navigateToSection } = useNavigation();
@@ -698,6 +701,15 @@ const Header: React.FC<HeaderProps> = (props) => {
   useEffect(() => {
     setIsLoaded(true);
     setMounted(true);
+
+    // Scroll event listener for mobile background
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      setIsScrolled(scrollTop > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Default navigation links (fallback if not provided from IKAS)
@@ -739,7 +751,14 @@ const Header: React.FC<HeaderProps> = (props) => {
           padding: 1rem 1.5rem;
           background: transparent;
           border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-          transition: opacity 0.7s ease;
+          transition: all 0.3s ease;
+        }
+        .header-nav.scrolled {
+          background: rgba(13, 148, 136, 0.85);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         @media (min-width: 640px) {
           .header-nav {
@@ -899,7 +918,7 @@ const Header: React.FC<HeaderProps> = (props) => {
       `}</style>
 
       <nav
-        className="header-nav"
+        className={`header-nav ${isScrolled ? 'scrolled' : ''}`}
         style={{ opacity: isLoaded ? 1 : 0 }}
       >
         {/* Logo */}
@@ -939,24 +958,27 @@ const Header: React.FC<HeaderProps> = (props) => {
           }}
           className="desktop-nav"
         >
-          {navLinks.map((link, index) => (
-            <button
-              key={link.label}
-              onClick={() => handleNavClick(index)}
-              className="nav-link-btn"
-              style={{
-                color: currentSection === index ? "white" : "rgba(255, 255, 255, 0.8)",
-              }}
-            >
-              {link.label}
-              <span
-                className="underline-indicator"
+          {navLinks.map((link, index) => {
+            const isActive = currentSection === index;
+            return (
+              <button
+                key={link.label}
+                onClick={() => handleNavClick(index)}
+                className="nav-link-btn"
                 style={{
-                  width: currentSection === index ? "100%" : "0",
+                  color: isActive ? "white" : "rgba(255, 255, 255, 0.8)",
                 }}
-              />
-            </button>
-          ))}
+              >
+                {link.label}
+                <span
+                  className="underline-indicator"
+                  style={{
+                    width: isActive ? "100%" : "0",
+                  }}
+                />
+              </button>
+            );
+          })}
         </div>
 
         {/* Desktop Right Side */}

@@ -386,39 +386,46 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
           z-index: 20;
           display: flex;
           min-height: 100vh;
-          height: 100vh;
           min-width: 100vw;
           width: 100vw;
           flex-shrink: 0;
           flex-direction: column;
-          padding: 6rem 1.5rem 1.5rem;
-          overflow: hidden;
+          padding: 6rem 1.5rem 3rem;
+          overflow-y: auto;
+          overflow-x: hidden;
         }
 
         @media (min-width: 640px) {
           .contact-section {
-            padding: 7rem 2rem 2rem;
+            padding: 7rem 2rem 3rem;
           }
         }
 
         @media (min-width: 768px) {
           .contact-section {
-            padding: 10rem 4rem 3rem;
+            padding: 10rem 4rem 4rem;
           }
         }
 
         @media (min-width: 1024px) {
           .contact-section {
+            height: 100vh;
             padding: 10rem 5rem 3rem;
+            overflow: hidden;
           }
         }
 
         .contact-container {
-          height: 100%;
           display: flex;
           flex-direction: column;
           width: 100%;
-          justify-content: center;
+        }
+
+        @media (min-width: 1024px) {
+          .contact-container {
+            height: 100%;
+            justify-content: center;
+          }
         }
 
         .section-header {
@@ -482,17 +489,17 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
         }
 
         .contact-grid {
-          flex: 1;
           display: grid;
           grid-template-columns: 1fr;
           gap: 1.5rem;
-          align-items: stretch;
         }
 
         @media (min-width: 1024px) {
           .contact-grid {
+            flex: 1;
             grid-template-columns: 1fr 1fr;
             gap: 2.5rem;
+            align-items: stretch;
           }
         }
 

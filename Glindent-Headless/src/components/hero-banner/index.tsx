@@ -510,15 +510,7 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
                         }}
                       />
 
-                      {/* Inner border glow */}
-                      <div
-                        style={{
-                          position: "absolute",
-                          inset: 0,
-                          borderRadius: "inherit",
-                          boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.2)",
-                        }}
-                      />
+
                     </motion.div>
 
                     {/* Decorative glow */}

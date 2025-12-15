@@ -66,9 +66,6 @@ const XIcon = () => (
 const styles: { [key: string]: CSSProperties } = {
   section: {
     width: "100%",
-    position: "sticky" as const,
-    top: "100px",
-    alignSelf: "start",
   },
   card: {
     background: "white",
@@ -315,6 +312,7 @@ const CartSummary: React.FC<CartSummaryProps> = (props) => {
   const itemCount = cart?.itemQuantity || 0;
   const totalPrice = cart?.totalFinalPrice || 0;
   const formattedSubtotal = cart?.formattedTotalFinalPrice || "£0.00";
+  const checkoutUrl = store.cartStore.checkoutUrl || "/checkout";
   
   // Calculate shipping
   const isFreeShipping = totalPrice >= freeShippingThreshold;
@@ -431,18 +429,17 @@ const CartSummary: React.FC<CartSummaryProps> = (props) => {
         </div>
 
         {/* Checkout Button */}
-        <Link href="/checkout">
-          <a 
-            style={{
-              ...styles.checkoutBtn,
-              ...(isCheckoutHovered ? { transform: "translateY(-2px)", boxShadow: "0 8px 24px rgba(13, 148, 136, 0.35)" } : {}),
-            }}
-            onMouseEnter={() => setIsCheckoutHovered(true)}
-            onMouseLeave={() => setIsCheckoutHovered(false)}
-          >
-            {checkoutButtonText}
-          </a>
-        </Link>
+        <a 
+          href={checkoutUrl}
+          style={{
+            ...styles.checkoutBtn,
+            ...(isCheckoutHovered ? { transform: "translateY(-2px)", boxShadow: "0 8px 24px rgba(13, 148, 136, 0.35)" } : {}),
+          }}
+          onMouseEnter={() => setIsCheckoutHovered(true)}
+          onMouseLeave={() => setIsCheckoutHovered(false)}
+        >
+          {checkoutButtonText}
+        </a>
 
         {/* Trust Badges */}
         <div style={styles.trustBadges}>

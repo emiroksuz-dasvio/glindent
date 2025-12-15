@@ -263,8 +263,11 @@ const CartPage: React.FC = () => {
           align-items: center;
           justify-content: space-between;
           padding: 1rem 1.5rem;
-          background: transparent;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          background: rgba(13, 148, 136, 0.95);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
           transition: opacity 0.7s ease;
         }
         
