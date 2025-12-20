@@ -16,9 +16,17 @@ class MyDocument extends Document {
     return { ...initialProps };
   }
   render() {
-    const favicon = IkasStorefrontConfig.getFavicon();
+    // Make SDK calls safe during build time
+    let favicon = null;
+    let locale = "en";
+    try {
+      favicon = IkasStorefrontConfig.getFavicon?.() ?? null;
+      locale = IkasStorefrontConfig.getCurrentLocale?.() ?? "en";
+    } catch (e) {
+      // SDK not ready during build
+    }
     return (
-      <Html lang={IkasStorefrontConfig.getCurrentLocale()}>
+      <Html lang={locale}>
         <Head>
           {favicon?.id && (
             <link

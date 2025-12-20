@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 
 import Config from "config.json";
 import { NavigationProvider } from "src/components/horizontal-layout";
+import { ToothParticles } from "src/components/tooth-particles";
 
 // Import global styles
 import "src/styles/global.css";
@@ -35,6 +36,9 @@ const IkasThemeApp: React.FC<AppProps> = (props) => {
       
       {/* Grain Overlay */}
       <div className="grain-overlay" />
+      
+      {/* Tooth Particles Effect */}
+      <ToothParticles />
       
       {/* Main Content */}
       {isHomePage ? (

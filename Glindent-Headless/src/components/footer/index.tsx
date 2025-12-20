@@ -53,18 +53,50 @@ const LinkedInIcon = () => (
   </svg>
 )
 
-// GlindentLogo SVG
+// GlindentLogo - SVG matching original design, all white
 const GlindentLogo = () => (
-  <svg viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="footer-logo">
-    <defs>
-      <linearGradient id="footerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#0d9488"/>
-        <stop offset="50%" stopColor="#0891b2"/>
-        <stop offset="100%" stopColor="#06b6d4"/>
-      </linearGradient>
-    </defs>
-    <text x="0" y="30" fill="url(#footerGradient)" fontSize="28" fontWeight="700" fontFamily="system-ui, -apple-system, sans-serif">
-      Glindent
+  <svg
+    viewBox="0 0 280 80"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="footer-logo"
+    style={{ height: '45px', width: 'auto' }}
+  >
+    {/* "glindent" - bold italic style */}
+    <text
+      x="5"
+      y="52"
+      fill="white"
+      fontFamily="'Poppins', 'Arial Black', sans-serif"
+      fontSize="52"
+      fontWeight="900"
+      fontStyle="italic"
+      letterSpacing="-2px"
+    >
+      glindent
+    </text>
+    
+    {/* Sparkle/Star on the dot of 'e' - 4-pointed star */}
+    <g transform="translate(168, 28)">
+      {/* Vertical line */}
+      <line x1="0" y1="-12" x2="0" y2="12" stroke="white" strokeWidth="2" />
+      {/* Horizontal line */}
+      <line x1="-12" y1="0" x2="12" y2="0" stroke="white" strokeWidth="2" />
+      {/* Center glow */}
+      <circle cx="0" cy="0" r="2" fill="white" />
+    </g>
+    
+    {/* "WAY TO DENTISTRY" subtitle */}
+    <text
+      x="138"
+      y="72"
+      fill="rgba(255,255,255,0.8)"
+      fontFamily="'Poppins', Arial, sans-serif"
+      fontSize="11"
+      fontWeight="400"
+      letterSpacing="3px"
+    >
+      WAY TO DENTISTRY
     </text>
   </svg>
 )

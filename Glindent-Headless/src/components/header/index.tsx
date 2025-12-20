@@ -15,36 +15,49 @@ interface HeaderProps {
   navigationLinks?: IkasNavigationLink[];
 }
 
-// GlindentLogo Component (inline SVG as in original)
+// GlindentLogo Component - SVG matching original design, all white
 const GlindentLogo = ({ className = "" }: { className?: string }) => {
   return (
     <svg
-      width="180"
-      height="36"
-      viewBox="0 0 180 36"
+      viewBox="0 0 280 80"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
+      style={{ height: '40px', width: 'auto' }}
     >
+      {/* "glindent" - bold italic style */}
       <text
-        x="0"
-        y="24"
+        x="5"
+        y="52"
         fill="white"
-        fontFamily="system-ui, -apple-system, sans-serif"
-        fontSize="28"
-        fontWeight="700"
-        letterSpacing="-0.02em"
+        fontFamily="'Poppins', 'Arial Black', sans-serif"
+        fontSize="52"
+        fontWeight="900"
+        fontStyle="italic"
+        letterSpacing="-2px"
       >
         glindent
       </text>
+      
+      {/* Sparkle/Star on the dot of 'e' - 4-pointed star */}
+      <g transform="translate(168, 28)">
+        {/* Vertical line */}
+        <line x1="0" y1="-12" x2="0" y2="12" stroke="white" strokeWidth="2" />
+        {/* Horizontal line */}
+        <line x1="-12" y1="0" x2="12" y2="0" stroke="white" strokeWidth="2" />
+        {/* Center glow */}
+        <circle cx="0" cy="0" r="2" fill="white" />
+      </g>
+      
+      {/* "WAY TO DENTISTRY" subtitle */}
       <text
-        x="0"
-        y="34"
-        fill="rgba(255,255,255,0.7)"
-        fontFamily="system-ui, -apple-system, sans-serif"
-        fontSize="8"
+        x="138"
+        y="72"
+        fill="rgba(255,255,255,0.8)"
+        fontFamily="'Poppins', Arial, sans-serif"
+        fontSize="11"
         fontWeight="400"
-        letterSpacing="0.15em"
+        letterSpacing="3px"
       >
         WAY TO DENTISTRY
       </text>
