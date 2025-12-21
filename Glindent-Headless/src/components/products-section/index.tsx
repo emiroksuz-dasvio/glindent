@@ -233,6 +233,7 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
   const modalRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'description' | 'details'>('description');
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
   
   // Variant selection state - store selected values for each variant type
   const [selectedVariantValues, setSelectedVariantValues] = useState<Record<string, string>>({});
@@ -241,9 +242,27 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
     setMounted(true);
   }, []);
 
+  // Reset image errors when product changes
+  useEffect(() => {
+    if (product && isOpen) {
+      setImageErrors(new Set());
+    }
+  }, [product, isOpen]);
+
   // Initialize selected variant values when product changes
   useEffect(() => {
     if (product && isOpen) {
+      // Debug: Log variant data in detail
+      console.log('Product name:', product.name);
+      console.log('Product variants count:', product.variants?.length);
+      console.log('Product variantTypes:', JSON.stringify(product.variantTypes, null, 2));
+      if (product.variants?.[0]) {
+        console.log('First variant sample:', JSON.stringify({
+          sku: product.variants[0].sku,
+          variantValues: product.variants[0].variantValues
+        }, null, 2));
+      }
+      
       // Get current selected variant's values as initial selection
       const initialSelection: Record<string, string> = {};
       const currentVariant = product.selectedVariant;
@@ -284,17 +303,15 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
     if (e.target === e.currentTarget) onClose();
   };
 
-  if (!product || !mounted) return null;
-
   // Find the matching variant based on selected variant values
-  const findMatchingVariant = () => {
-    if (!product.variants || product.variants.length === 0) {
-      return product.selectedVariant;
+  const findMatchingVariant = useCallback(() => {
+    if (!product?.variants || product.variants.length === 0) {
+      return product?.selectedVariant;
     }
     
     const selectedValueIds = Object.values(selectedVariantValues);
     if (selectedValueIds.length === 0) {
-      return product.selectedVariant;
+      return product?.selectedVariant;
     }
 
     // Find variant that matches all selected values
@@ -304,26 +321,29 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
       return selectedValueIds.every(id => variantValueIds.includes(id));
     });
 
-    return matchingVariant || product.selectedVariant;
-  };
+    return matchingVariant || product?.selectedVariant;
+  }, [product, selectedVariantValues]);
 
   const variant = findMatchingVariant();
   
   // Handle variant value selection
-  const handleVariantValueSelect = (variantTypeId: string, variantValueId: string) => {
+  const handleVariantValueSelect = useCallback((variantTypeId: string, variantValueId: string) => {
     setSelectedVariantValues(prev => ({
       ...prev,
       [variantTypeId]: variantValueId
     }));
     // Reset image to first when variant changes
     setSelectedImageIndex(0);
-  };
+  }, []);
 
   // Get variant types with their available values
   const variantTypesWithValues = useMemo(() => {
-    if (!product.variantTypes || !product.variants) return [];
+    if (!product?.variantTypes || !product?.variants) {
+      console.log('No variantTypes or variants available');
+      return [];
+    }
     
-    return product.variantTypes.map((vt: any) => {
+    const result = product.variantTypes.map((vt: any) => {
       // Get all unique values for this variant type from all variants
       const valuesMap = new Map();
       product.variants.forEach((v: any) => {
@@ -345,10 +365,27 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
         values: Array.from(valuesMap.values())
       };
     }).filter((vt: any) => vt.values.length > 0);
-  }, [product.variantTypes, product.variants, selectedVariantValues]);
+    
+    console.log('Computed variantTypesWithValues:', JSON.stringify(result.map((v: any) => ({
+      id: v.id,
+      name: v.name,
+      valuesCount: v.values.length,
+      values: v.values.map((val: any) => val.name)
+    })), null, 2));
+    
+    return result;
+  }, [product?.variantTypes, product?.variants, selectedVariantValues]);
+  
+  // Get fallback images from Cloudinary
+  const fallbackImages: string[] = useMemo(() => {
+    if (!product) return [];
+    return getProductGalleryImages([], variant?.sku, product.name);
+  }, [variant?.sku, product]);
   
   // Get all images from variant or product with fallback to Cloudinary
   const allImages: string[] = useMemo(() => {
+    if (!product) return [];
+    
     const ikasImages: string[] = [];
     
     // Collect images from ikas
@@ -366,15 +403,37 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
       ikasImages.push((product as any).mainImage.image.src);
     }
     
-    // Use fallback if no valid images
-    return getProductGalleryImages(ikasImages, variant?.sku, product.name);
-  }, [variant, product]);
+    // If we have ikas images, return them (we'll handle errors with onError)
+    if (ikasImages.length > 0) {
+      return ikasImages;
+    }
+    
+    // Use fallback if no ikas images
+    return fallbackImages;
+  }, [variant, product, fallbackImages]);
 
-  const currentImage = allImages[selectedImageIndex] || getProductMainImage(null, variant?.sku, product.name);
+  // Handle image error - get fallback for that index
+  const handleImageError = useCallback((index: number) => {
+    setImageErrors(prev => new Set(prev).add(index));
+  }, []);
 
-  const priceDisplay = variant?.price?.formattedBuyPrice || 
-    variant?.price?.formattedSellPrice || 
-    "Contact for price";
+  // Get actual image to display (considering errors)
+  const getDisplayImage = useCallback((index: number): string => {
+    if (imageErrors.has(index) && fallbackImages.length > 0) {
+      return fallbackImages[Math.min(index, fallbackImages.length - 1)];
+    }
+    return allImages[index] || fallbackImages[0] || '/placeholder.svg';
+  }, [allImages, fallbackImages, imageErrors]);
+
+  const currentImage = useMemo(() => {
+    return getDisplayImage(selectedImageIndex);
+  }, [getDisplayImage, selectedImageIndex]);
+
+  const priceDisplay = useMemo(() => {
+    return variant?.price?.formattedBuyPrice || 
+      variant?.price?.formattedSellPrice || 
+      "Contact for price";
+  }, [variant?.price]);
 
   const originalPrice = variant?.price?.formattedSellPrice;
   const hasDiscount = variant?.price?.discountPrice && 
@@ -384,14 +443,14 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
   const customer = store.customerStore.customer;
   const isLoggedIn = !!customer;
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = useCallback(async () => {
     // Check if user is logged in
     if (!isLoggedIn) {
       onShowToast?.("You must log in first to add items to cart", "warning");
       return;
     }
     
-    if (!variant || !product.isAddToCartEnabled) return;
+    if (!variant || !product?.isAddToCartEnabled) return;
     
     setIsAdding(true);
     try {
@@ -402,19 +461,26 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
       console.error("Failed to add to cart:", error);
     }
     setIsAdding(false);
-  };
+  }, [isLoggedIn, variant, product, quantity, store.cartStore, onShowToast]);
 
   // Related products
-  const relatedProducts = allProducts
-    .filter(p => {
-      if (p.id === product.id) return false;
-      const productCats = (product as any).categories || [];
-      const pCats = (p as any).categories || [];
-      return pCats.some((pc: any) => 
-        productCats.some((c: any) => c.id === pc.id)
-      );
-    })
-    .slice(0, 4);
+  const relatedProducts = useMemo(() => {
+    if (!product) return [];
+    
+    return allProducts
+      .filter(p => {
+        if (p.id === product.id) return false;
+        const productCats = (product as any).categories || [];
+        const pCats = (p as any).categories || [];
+        return pCats.some((pc: any) => 
+          productCats.some((c: any) => c.id === pc.id)
+        );
+      })
+      .slice(0, 4);
+  }, [allProducts, product]);
+
+  // Early return AFTER all hooks
+  if (!product || !mounted) return null;
 
   const modalContent = (
     <div 
@@ -443,6 +509,7 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
                 objectFit="contain"
                 unoptimized
                 priority
+                onError={() => handleImageError(selectedImageIndex)}
               />
             </div>
             
@@ -455,12 +522,13 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
                     onClick={() => setSelectedImageIndex(idx)}
                   >
                     <Image
-                      src={src}
+                      src={getDisplayImage(idx)}
                       alt={`${product.name} ${idx + 1}`}
                       width={64}
                       height={64}
                       objectFit="cover"
                       unoptimized
+                      onError={() => handleImageError(idx)}
                     />
                   </button>
                 ))}
@@ -714,12 +782,14 @@ const ProductCard = observer(({ product, index, onOpenModal, onShowToast }: Prod
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const variant = product.selectedVariant;
   
   // Get image with fallback to Cloudinary
   const ikasImageUrl = variant?.mainImage?.image?.src || (product as any).mainImage?.image?.src;
-  const imageUrl = getProductMainImage(ikasImageUrl, variant?.sku, product.name);
+  const fallbackImage = getProductMainImage(null, variant?.sku, product.name);
+  const imageUrl = imageError ? fallbackImage : (ikasImageUrl || fallbackImage);
 
   const priceDisplay = variant?.price?.formattedBuyPrice || 
     variant?.price?.formattedSellPrice ||
@@ -776,6 +846,7 @@ const ProductCard = observer(({ product, index, onOpenModal, onShowToast }: Prod
             objectFit="cover"
             className="product-image"
             unoptimized
+            onError={() => setImageError(true)}
           />
           {!product.hasStock && (
             <div className="out-of-stock-badge">Out of Stock</div>

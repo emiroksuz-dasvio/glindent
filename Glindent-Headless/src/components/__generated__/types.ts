@@ -72,7 +72,7 @@ export type FaqSectionProps = {
 };
 
 export type ProductsSectionProps = {
-	productList: IkasProductList;
+	productList?: IkasProductList;
 };
 
 export type NotFoundProps = {
