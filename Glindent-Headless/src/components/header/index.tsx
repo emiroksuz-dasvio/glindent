@@ -6,6 +6,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigation } from "../horizontal-layout";
+import { useRouter } from "next/router";
 
 // ========================
 // IKAS PROPS INTERFACE
@@ -701,15 +702,35 @@ const CartDropdown = observer(() => {
   );
 });
 
-const Header: React.FC<HeaderProps> = (props) => {
+const Header: React.FC<HeaderProps> = observer((props) => {
   const { logo, navigationLinks } = props;
+  const store = useStore();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  
+  // Customer authentication state
+  const customer = store.customerStore.customer;
+  const isLoggedIn = !!customer;
   
   // Use navigation context for horizontal slider
   const { currentSection, scrollToSection: navigateToSection } = useNavigation();
+
+  // Logout handler
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await store.customerStore.logout();
+      router.push("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   useEffect(() => {
     setIsLoaded(true);
@@ -1003,23 +1024,76 @@ const Header: React.FC<HeaderProps> = (props) => {
             gap: "1rem",
           }}
         >
-          <button
-            onClick={() => handleNavClick(2)}
-            style={{
-              fontSize: "0.875rem",
-              fontWeight: 500,
-              color: "rgba(255, 255, 255, 0.8)",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              minHeight: "2.75rem",
-              padding: "0 1rem",
-              transition: "color 0.2s ease",
-            }}
-          >
-            Shop Now
-          </button>
-          <CartDropdown />
+          {isLoggedIn ? (
+            <>
+              <Link href="/account">
+                <a
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: 500,
+                    color: "rgba(255, 255, 255, 0.8)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    minHeight: "2.75rem",
+                    padding: "0 1rem",
+                    transition: "color 0.2s ease",
+                    textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  My Account
+                </a>
+              </Link>
+              <CartDropdown />
+            </>
+          ) : (
+            <>
+              <Link href="/account/login">
+                <a
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: 500,
+                    color: "rgba(255, 255, 255, 0.8)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    minHeight: "2.75rem",
+                    padding: "0 1rem",
+                    transition: "color 0.2s ease",
+                    textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  Login
+                </a>
+              </Link>
+              <Link href="/account/register">
+                <a
+                  style={{
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
+                    color: "#0d9488",
+                    background: "white",
+                    border: "none",
+                    borderRadius: "0.5rem",
+                    cursor: "pointer",
+                    minHeight: "2.5rem",
+                    padding: "0 1.25rem",
+                    transition: "all 0.2s ease",
+                    textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
+                  }}
+                >
+                  Register
+                </a>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Right Side */}
@@ -1031,7 +1105,7 @@ const Header: React.FC<HeaderProps> = (props) => {
             gap: "0.5rem",
           }}
         >
-          <CartDropdown />
+          {isLoggedIn && <CartDropdown />}
           <button
             onClick={() => setMobileMenuOpen(true)}
             className="mobile-menu-btn"
@@ -1213,12 +1287,49 @@ const Header: React.FC<HeaderProps> = (props) => {
 
                 {/* Bottom section */}
                 <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  <button
-                    onClick={() => handleNavClick(2)}
-                    className="shop-now-btn"
-                  >
-                    Shop Now
-                  </button>
+                  {isLoggedIn ? (
+                    <Link href="/account">
+                      <a
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="shop-now-btn"
+                        style={{ display: "block", textDecoration: "none" }}
+                      >
+                        My Account
+                      </a>
+                    </Link>
+                  ) : (
+                    <>
+                      <Link href="/account/login">
+                        <a
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="shop-now-btn"
+                          style={{ display: "block", textDecoration: "none" }}
+                        >
+                          Login
+                        </a>
+                      </Link>
+                      <Link href="/account/register">
+                        <a
+                          onClick={() => setMobileMenuOpen(false)}
+                          style={{
+                            display: "block",
+                            width: "100%",
+                            padding: "1rem",
+                            background: "rgba(255, 255, 255, 0.15)",
+                            color: "white",
+                            borderRadius: "1rem",
+                            fontWeight: 600,
+                            textAlign: "center",
+                            border: "1px solid rgba(255, 255, 255, 0.3)",
+                            textDecoration: "none",
+                            transition: "all 0.2s ease",
+                          }}
+                        >
+                          Register
+                        </a>
+                      </Link>
+                    </>
+                  )}
                   <p
                     style={{
                       textAlign: "center",
@@ -1226,7 +1337,7 @@ const Header: React.FC<HeaderProps> = (props) => {
                       color: "rgba(255, 255, 255, 0.4)",
                     }}
                   >
-                    Scroll to navigate sections
+                    {isLoggedIn ? `Welcome, ${customer?.firstName || "User"}` : "Scroll to navigate sections"}
                   </p>
                 </div>
               </div>
@@ -1298,8 +1409,8 @@ const Header: React.FC<HeaderProps> = (props) => {
   
   // SSR fallback - render normally
   return headerContent;
-};
+});
 
 Header.displayName = "Header";
 
-export default observer(Header);
+export default Header;

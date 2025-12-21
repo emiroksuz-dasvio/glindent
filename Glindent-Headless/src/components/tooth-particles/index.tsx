@@ -11,7 +11,6 @@ interface Particle {
   opacity: number
 }
 
-// ToothParticles - Floating tooth icon overlay effect
 export function ToothParticles() {
   const containerRef = useRef<HTMLDivElement>(null)
   const particlesRef = useRef<Particle[]>([])
@@ -19,48 +18,42 @@ export function ToothParticles() {
 
   useEffect(() => {
     const container = containerRef.current
-    if (!container || typeof window === 'undefined') return
+    if (!container) return
 
-    // Initialize particles - gentle floating effect
-    const particleCount = 25
+    // Initialize particles (30 for gentle presence)
+    const particleCount = 30
     particlesRef.current = Array.from({ length: particleCount }, () => ({
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
       // Gentle drift
-      vx: (Math.random() - 0.5) * 0.25,
-      vy: (Math.random() - 0.5) * 0.25,
-      // Varied sizes
-      size: Math.random() * 24 + 12,
+      vx: (Math.random() - 0.5) * 0.28,
+      vy: (Math.random() - 0.5) * 0.28,
+      // Slightly larger sizes for better visibility
+      size: Math.random() * 22 + 14,
       rotation: Math.random() * 360,
-      rotationSpeed: (Math.random() - 0.5) * 0.5,
-      // Low opacity for subtle effect
-      opacity: Math.random() * 0.045 + 0.015
+      rotationSpeed: (Math.random() - 0.5) * 0.6,
+      // Increased opacity for better visibility
+      opacity: Math.random() * 0.08 + 0.04
     }))
 
     // Create particle elements
     particlesRef.current.forEach((particle, index) => {
       const img = document.createElement("img")
       img.src = "/tooth-icon.png"
-      img.style.cssText = `
-        position: absolute;
-        width: ${particle.size}px;
-        height: ${particle.size}px;
-        opacity: ${particle.opacity};
-        pointer-events: none;
-        left: ${particle.x}px;
-        top: ${particle.y}px;
-        transform: translate(-50%, -50%) rotate(${particle.rotation}deg);
-        will-change: transform, left, top;
-      `
+      img.style.position = "absolute"
+      img.style.width = `${particle.size}px`
+      img.style.height = `${particle.size}px`
+      img.style.opacity = String(particle.opacity)
+      img.style.pointerEvents = "none"
+      img.style.left = `${particle.x}px`
+      img.style.top = `${particle.y}px`
+      img.style.transform = `translate(-50%, -50%) rotate(${particle.rotation}deg)`
       img.dataset.index = String(index)
       container.appendChild(img)
     })
 
     // Animation loop
     const animate = () => {
-      const width = window.innerWidth
-      const height = window.innerHeight
-
       particlesRef.current.forEach((particle, index) => {
         // Update position
         particle.x += particle.vx
@@ -68,10 +61,10 @@ export function ToothParticles() {
         particle.rotation += particle.rotationSpeed
 
         // Wrap around edges
-        if (particle.x < -100) particle.x = width + 100
-        if (particle.x > width + 100) particle.x = -100
-        if (particle.y < -100) particle.y = height + 100
-        if (particle.y > height + 100) particle.y = -100
+        if (particle.x < -100) particle.x = window.innerWidth + 100
+        if (particle.x > window.innerWidth + 100) particle.x = -100
+        if (particle.y < -100) particle.y = window.innerHeight + 100
+        if (particle.y > window.innerHeight + 100) particle.y = -100
 
         // Update DOM element
         const img = container.querySelector(`[data-index="${index}"]`) as HTMLElement
@@ -102,59 +95,30 @@ export function ToothParticles() {
         cancelAnimationFrame(animationRef.current)
       }
       window.removeEventListener('resize', handleResize)
-      // Clean up particle elements
-      while (container.firstChild) {
-        container.removeChild(container.firstChild)
-      }
-    }
-  }, [])
-
-  // Add scroll-based interaction
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    let lastScrollY = window.scrollY
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      const direction = currentScrollY > lastScrollY ? 1 : -1
-      lastScrollY = currentScrollY
-
-      // Add temporary velocity boost to particles based on scroll
-      particlesRef.current.forEach((particle) => {
-        particle.vy += direction * (Math.random() * 0.3 + 0.1)
-        particle.vx += (Math.random() - 0.5) * 0.2
-      })
-
-      // Gradually slow down particles
-      setTimeout(() => {
-        particlesRef.current.forEach((particle) => {
-          particle.vx *= 0.95
-          particle.vy *= 0.95
-          if (Math.abs(particle.vx) < 0.15) particle.vx = (Math.random() - 0.5) * 0.25
-          if (Math.abs(particle.vy) < 0.15) particle.vy = (Math.random() - 0.5) * 0.25
-        })
-      }, 300)
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
+      // Cleanup particle elements
+      container.innerHTML = ''
     }
   }, [])
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 5,
-        pointerEvents: 'none',
-        overflow: 'hidden'
-      }}
-    />
+    <>
+      <div
+        ref={containerRef}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 5,
+          pointerEvents: 'none',
+          overflow: 'hidden'
+        }}
+      />
+      <style jsx global>{`
+        .tooth-particles-container img {
+          will-change: transform, left, top;
+          backface-visibility: hidden;
+        }
+      `}</style>
+    </>
   )
 }
 

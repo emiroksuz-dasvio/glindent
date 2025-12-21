@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useProductsWithFilters, Category } from "src/hooks/use-all-products";
+import { getProductMainImage, getProductGalleryImages } from "src/lib/product-images";
 
 // ============================================
 // ICONS
@@ -112,6 +113,106 @@ const LoadingSpinner = () => (
 );
 
 // ============================================
+// TOAST NOTIFICATION
+// ============================================
+
+interface ToastState {
+  show: boolean;
+  message: string;
+  type: 'error' | 'success' | 'warning';
+}
+
+const Toast = ({ toast, onClose }: { toast: ToastState; onClose: () => void }) => {
+  useEffect(() => {
+    if (toast.show) {
+      const timer = setTimeout(onClose, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast.show, onClose]);
+
+  if (!toast.show) return null;
+
+  const bgColor = toast.type === 'error' ? '#ef4444' : 
+                  toast.type === 'warning' ? '#f59e0b' : '#10b981';
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: '100px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      zIndex: 10000,
+      animation: 'slideDown 0.3s ease-out',
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
+        padding: '16px 24px',
+        background: bgColor,
+        color: 'white',
+        borderRadius: '12px',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+        fontWeight: 500,
+        fontSize: '14px',
+      }}>
+        {toast.type === 'error' && (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+        )}
+        {toast.type === 'warning' && (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        )}
+        {toast.type === 'success' && (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        )}
+        <span>{toast.message}</span>
+        <button 
+          onClick={onClose}
+          style={{
+            background: 'rgba(255,255,255,0.2)',
+            border: 'none',
+            borderRadius: '50%',
+            width: '24px',
+            height: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: 'white',
+            marginLeft: '8px',
+          }}
+        >
+          <XIcon />
+        </button>
+      </div>
+      <style jsx global>{`
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+// ============================================
 // PRODUCT DETAIL MODAL
 // ============================================
 
@@ -120,9 +221,10 @@ interface ProductDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   allProducts?: IkasProduct[];
+  onShowToast?: (message: string, type: 'error' | 'success' | 'warning') => void;
 }
 
-const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [] }: ProductDetailModalProps) => {
+const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [], onShowToast }: ProductDetailModalProps) => {
   const store = useStore();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -130,10 +232,31 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
   const [addedToCart, setAddedToCart] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+  const [activeTab, setActiveTab] = useState<'description' | 'details'>('description');
+  
+  // Variant selection state - store selected values for each variant type
+  const [selectedVariantValues, setSelectedVariantValues] = useState<Record<string, string>>({});
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Initialize selected variant values when product changes
+  useEffect(() => {
+    if (product && isOpen) {
+      // Get current selected variant's values as initial selection
+      const initialSelection: Record<string, string> = {};
+      const currentVariant = product.selectedVariant;
+      if (currentVariant?.variantValues) {
+        currentVariant.variantValues.forEach((vv: any) => {
+          if (vv.variantTypeId) {
+            initialSelection[vv.variantTypeId] = vv.id;
+          }
+        });
+      }
+      setSelectedVariantValues(initialSelection);
+    }
+  }, [product, isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -163,25 +286,91 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
 
   if (!product || !mounted) return null;
 
-  const variant = product.selectedVariant;
-  
-  // Get all images from variant or product
-  const allImages: string[] = [];
-  if (variant?.mainImage?.image?.src) {
-    allImages.push(variant.mainImage.image.src);
-  }
-  if (variant?.images?.length) {
-    variant.images.forEach((img: any) => {
-      if (img?.image?.src && !allImages.includes(img.image.src)) {
-        allImages.push(img.image.src);
-      }
-    });
-  }
-  if ((product as any).mainImage?.image?.src && !allImages.includes((product as any).mainImage.image.src)) {
-    allImages.push((product as any).mainImage.image.src);
-  }
+  // Find the matching variant based on selected variant values
+  const findMatchingVariant = () => {
+    if (!product.variants || product.variants.length === 0) {
+      return product.selectedVariant;
+    }
+    
+    const selectedValueIds = Object.values(selectedVariantValues);
+    if (selectedValueIds.length === 0) {
+      return product.selectedVariant;
+    }
 
-  const currentImage = allImages[selectedImageIndex] || "/placeholder.svg";
+    // Find variant that matches all selected values
+    const matchingVariant = product.variants.find((v: any) => {
+      if (!v.variantValues) return false;
+      const variantValueIds = v.variantValues.map((vv: any) => vv.id);
+      return selectedValueIds.every(id => variantValueIds.includes(id));
+    });
+
+    return matchingVariant || product.selectedVariant;
+  };
+
+  const variant = findMatchingVariant();
+  
+  // Handle variant value selection
+  const handleVariantValueSelect = (variantTypeId: string, variantValueId: string) => {
+    setSelectedVariantValues(prev => ({
+      ...prev,
+      [variantTypeId]: variantValueId
+    }));
+    // Reset image to first when variant changes
+    setSelectedImageIndex(0);
+  };
+
+  // Get variant types with their available values
+  const variantTypesWithValues = useMemo(() => {
+    if (!product.variantTypes || !product.variants) return [];
+    
+    return product.variantTypes.map((vt: any) => {
+      // Get all unique values for this variant type from all variants
+      const valuesMap = new Map();
+      product.variants.forEach((v: any) => {
+        if (v.variantValues) {
+          v.variantValues.forEach((vv: any) => {
+            if (vv.variantTypeId === vt.id && !valuesMap.has(vv.id)) {
+              valuesMap.set(vv.id, {
+                ...vv,
+                hasStock: v.stock > 0,
+                isSelected: selectedVariantValues[vt.id] === vv.id
+              });
+            }
+          });
+        }
+      });
+      
+      return {
+        ...vt,
+        values: Array.from(valuesMap.values())
+      };
+    }).filter((vt: any) => vt.values.length > 0);
+  }, [product.variantTypes, product.variants, selectedVariantValues]);
+  
+  // Get all images from variant or product with fallback to Cloudinary
+  const allImages: string[] = useMemo(() => {
+    const ikasImages: string[] = [];
+    
+    // Collect images from ikas
+    if (variant?.mainImage?.image?.src) {
+      ikasImages.push(variant.mainImage.image.src);
+    }
+    if (variant?.images?.length) {
+      variant.images.forEach((img: any) => {
+        if (img?.image?.src && !ikasImages.includes(img.image.src)) {
+          ikasImages.push(img.image.src);
+        }
+      });
+    }
+    if ((product as any).mainImage?.image?.src && !ikasImages.includes((product as any).mainImage.image.src)) {
+      ikasImages.push((product as any).mainImage.image.src);
+    }
+    
+    // Use fallback if no valid images
+    return getProductGalleryImages(ikasImages, variant?.sku, product.name);
+  }, [variant, product]);
+
+  const currentImage = allImages[selectedImageIndex] || getProductMainImage(null, variant?.sku, product.name);
 
   const priceDisplay = variant?.price?.formattedBuyPrice || 
     variant?.price?.formattedSellPrice || 
@@ -191,7 +380,17 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
   const hasDiscount = variant?.price?.discountPrice && 
     variant.price.discountPrice < (variant.price.buyPrice || variant.price.sellPrice || 0);
 
+  // Check if user is logged in
+  const customer = store.customerStore.customer;
+  const isLoggedIn = !!customer;
+
   const handleAddToCart = async () => {
+    // Check if user is logged in
+    if (!isLoggedIn) {
+      onShowToast?.("You must log in first to add items to cart", "warning");
+      return;
+    }
+    
     if (!variant || !product.isAddToCartEnabled) return;
     
     setIsAdding(true);
@@ -287,6 +486,28 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
               )}
             </div>
 
+            {/* Variant Selection */}
+            {variantTypesWithValues.length > 0 && (
+              <div className="product-modal-variants">
+                {variantTypesWithValues.map((variantType) => (
+                  <div key={variantType.id} className="variant-type-row">
+                    <span className="variant-type-label">{variantType.name}:</span>
+                    <div className="variant-values">
+                      {variantType.values.map((value: { id: string; name: string }) => (
+                        <button
+                          key={value.id}
+                          className={`variant-value-btn ${selectedVariantValues[variantType.id] === value.id ? 'selected' : ''}`}
+                          onClick={() => handleVariantValueSelect(variantType.id, value.id)}
+                        >
+                          {value.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* Description */}
             {product.shortDescription && (
               <p className="product-modal-desc">{product.shortDescription}</p>
@@ -367,15 +588,85 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
           </div>
         </div>
 
+        {/* Product Description Tabs */}
+        {((product as any).description || product.shortDescription) && (
+          <div className="product-modal-tabs">
+            <div className="tabs-header">
+              <button 
+                className={`tab-btn ${activeTab === 'description' ? 'active' : ''}`}
+                onClick={() => setActiveTab('description')}
+              >
+                Description
+              </button>
+              {variant?.sku && (
+                <button 
+                  className={`tab-btn ${activeTab === 'details' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('details')}
+                >
+                  Details
+                </button>
+              )}
+            </div>
+            <div className="tabs-content">
+              {activeTab === 'description' && (
+                <div className="tab-panel description-panel">
+                  {(product as any).description ? (
+                    <div 
+                      className="product-full-description"
+                      dangerouslySetInnerHTML={{ __html: (product as any).description }}
+                    />
+                  ) : product.shortDescription ? (
+                    <p className="product-short-description">{product.shortDescription}</p>
+                  ) : null}
+                </div>
+              )}
+              {activeTab === 'details' && (
+                <div className="tab-panel details-panel">
+                  <table className="details-table">
+                    <tbody>
+                      {variant?.sku && (
+                        <tr>
+                          <td className="detail-label">SKU</td>
+                          <td className="detail-value">{variant.sku}</td>
+                        </tr>
+                      )}
+                      {product.brand && (
+                        <tr>
+                          <td className="detail-label">Brand</td>
+                          <td className="detail-value">{product.brand.name}</td>
+                        </tr>
+                      )}
+                      {(product as any).categories?.length > 0 && (
+                        <tr>
+                          <td className="detail-label">Category</td>
+                          <td className="detail-value">
+                            {(product as any).categories.map((c: any) => c.name).join(", ")}
+                          </td>
+                        </tr>
+                      )}
+                      <tr>
+                        <td className="detail-label">Availability</td>
+                        <td className="detail-value">
+                          {product.hasStock ? 'In Stock' : 'Out of Stock'}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <div className="product-modal-related">
             <h3 className="related-heading">Related Products</h3>
             <div className="related-products-grid">
               {relatedProducts.map(p => {
-                const pImage = p.selectedVariant?.mainImage?.image?.src || 
-                  (p as any).mainImage?.image?.src || 
-                  "/placeholder.svg";
+                const ikasImage = p.selectedVariant?.mainImage?.image?.src || 
+                  (p as any).mainImage?.image?.src;
+                const pImage = getProductMainImage(ikasImage, p.selectedVariant?.sku, p.name);
                 const pPrice = p.selectedVariant?.price?.formattedBuyPrice || 
                   p.selectedVariant?.price?.formattedSellPrice || "";
                 
@@ -415,9 +706,10 @@ interface ProductCardProps {
   product: IkasProduct;
   index: number;
   onOpenModal: (product: IkasProduct) => void;
+  onShowToast?: (message: string, type: 'error' | 'success' | 'warning') => void;
 }
 
-const ProductCard = observer(({ product, index, onOpenModal }: ProductCardProps) => {
+const ProductCard = observer(({ product, index, onOpenModal, onShowToast }: ProductCardProps) => {
   const store = useStore();
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
@@ -425,14 +717,17 @@ const ProductCard = observer(({ product, index, onOpenModal }: ProductCardProps)
 
   const variant = product.selectedVariant;
   
-  const imageUrl = 
-    variant?.mainImage?.image?.src || 
-    (product as any).mainImage?.image?.src || 
-    "/placeholder.svg";
+  // Get image with fallback to Cloudinary
+  const ikasImageUrl = variant?.mainImage?.image?.src || (product as any).mainImage?.image?.src;
+  const imageUrl = getProductMainImage(ikasImageUrl, variant?.sku, product.name);
 
   const priceDisplay = variant?.price?.formattedBuyPrice || 
     variant?.price?.formattedSellPrice ||
     "Contact for price";
+
+  // Check if user is logged in
+  const customer = store.customerStore.customer;
+  const isLoggedIn = !!customer;
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), Math.min(index * 30, 200));
@@ -442,6 +737,12 @@ const ProductCard = observer(({ product, index, onOpenModal }: ProductCardProps)
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Check if user is logged in
+    if (!isLoggedIn) {
+      onShowToast?.("You must log in first to add items to cart", "warning");
+      return;
+    }
     
     if (!variant || !product.isAddToCartEnabled) return;
     
@@ -597,6 +898,17 @@ const ProductsSection: React.FC<ProductsSectionProps> = observer((props) => {
   // Modal state
   const [selectedProduct, setSelectedProduct] = useState<IkasProduct | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Toast state
+  const [toast, setToast] = useState<ToastState>({ show: false, message: '', type: 'error' });
+  
+  const showToast = useCallback((message: string, type: 'error' | 'success' | 'warning') => {
+    setToast({ show: true, message, type });
+  }, []);
+  
+  const hideToast = useCallback(() => {
+    setToast(prev => ({ ...prev, show: false }));
+  }, []);
 
   // Use our custom hook - pass initial productList from ikas
   const {
@@ -932,6 +1244,7 @@ const ProductsSection: React.FC<ProductsSectionProps> = observer((props) => {
                     product={product} 
                     index={index} 
                     onOpenModal={handleOpenModal}
+                    onShowToast={showToast}
                   />
                 ))}
               </div>
@@ -958,7 +1271,11 @@ const ProductsSection: React.FC<ProductsSectionProps> = observer((props) => {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         allProducts={allProducts}
+        onShowToast={showToast}
       />
+      
+      {/* Toast Notification */}
+      <Toast toast={toast} onClose={hideToast} />
     </section>
   );
 });

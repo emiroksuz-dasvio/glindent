@@ -75,3 +75,13 @@ export type ProductsSectionProps = {
 	productList: IkasProductList;
 };
 
+export type NotFoundProps = {
+	title?: string;
+	description?: string;
+	showSearch?: boolean;
+	showSuggestions?: boolean;
+	homeButtonText?: string;
+	backButtonText?: string;
+	searchPlaceholder?: string;
+};
+

@@ -2108,3 +2108,372 @@ html, body {
   color: #0d9488;
 }
 
+/* Product Modal Tabs */
+.product-modal-tabs {
+  margin: 0 2rem 2rem 2rem;
+  padding-top: 0;
+  border-top: none;
+  background: #f8fafc;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.tabs-header {
+  display: flex;
+  gap: 0;
+  background: #f1f5f9;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  margin: 1rem 1rem 0 1rem;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s ease;
+  border-radius: 0.5rem;
+}
+
+.tab-btn:hover {
+  color: #0d9488;
+}
+
+.tab-btn.active {
+  background: white;
+  color: #0d9488;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tab-btn.active::after {
+  display: none;
+}
+
+.tabs-content {
+  padding: 1.25rem;
+  min-height: 80px;
+}
+
+.tab-panel {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.description-panel {
+  padding: 0;
+}
+
+.product-full-description {
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: #475569;
+}
+
+.product-full-description p {
+  margin: 0 0 1rem 0;
+}
+
+.product-full-description p:last-child {
+  margin-bottom: 0;
+}
+
+.product-full-description ul,
+.product-full-description ol {
+  margin: 0.75rem 0 1rem 1.25rem;
+  padding: 0;
+}
+
+.product-full-description li {
+  margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
+}
+
+.product-full-description strong,
+.product-full-description b {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.product-full-description h1,
+.product-full-description h2,
+.product-full-description h3,
+.product-full-description h4,
+.product-full-description h5,
+.product-full-description h6 {
+  font-weight: 600;
+  color: #111827;
+  margin: 1.5rem 0 0.75rem 0;
+}
+
+.product-full-description h1:first-child,
+.product-full-description h2:first-child,
+.product-full-description h3:first-child {
+  margin-top: 0;
+}
+
+.product-short-description {
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: #475569;
+  margin: 0;
+}
+
+.details-panel {
+  padding: 0;
+}
+
+.details-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.details-table tr {
+  border-bottom: none;
+}
+
+.details-table tr:not(:last-child) td {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.details-table td {
+  padding: 1rem 0;
+  font-size: 0.9375rem;
+  vertical-align: middle;
+}
+
+.details-table .detail-label {
+  width: 35%;
+  color: #64748b;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.details-table .detail-value {
+  color: #1e293b;
+  font-weight: 500;
+}
+
+/* Responsive improvements for modal */
+@media (max-width: 768px) {
+  .product-modal-container {
+    max-height: 95vh;
+    border-radius: 1.25rem 1.25rem 0 0;
+    margin-top: auto;
+  }
+  
+  .product-modal-content {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+  
+  .product-modal-tabs {
+    margin: 0 1.5rem 1.5rem 1.5rem;
+  }
+  
+  .product-modal-related {
+    margin: 0 1.5rem 1.5rem 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .product-modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+  
+  .product-modal-container {
+    max-height: 92vh;
+    border-radius: 1.5rem 1.5rem 0 0;
+  }
+  
+  .product-modal-content {
+    padding: 1.25rem;
+    gap: 1.25rem;
+  }
+  
+  .product-modal-close {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+  
+  .product-modal-title {
+    font-size: 1.25rem;
+  }
+  
+  .product-modal-price {
+    font-size: 1.25rem;
+  }
+  
+  .product-modal-tabs {
+    margin: 0 1.25rem 1.25rem 1.25rem;
+    border-radius: 0.75rem;
+  }
+  
+  .tabs-header {
+    margin: 0.75rem 0.75rem 0 0.75rem;
+    padding: 0.375rem;
+  }
+  
+  .tab-btn {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+  
+  .tabs-content {
+    padding: 1rem;
+  }
+  
+  .details-table .detail-label {
+    width: 40%;
+    font-size: 0.6875rem;
+  }
+  
+  .details-table td {
+    padding: 0.75rem 0;
+    font-size: 0.875rem;
+  }
+  
+  .product-modal-related {
+    margin: 0 1.25rem 1.25rem 1.25rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+  }
+  
+  .related-heading {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .related-products-grid {
+    gap: 0.75rem;
+  }
+  
+  .related-product-info {
+    padding: 0.5rem;
+  }
+  
+  .related-product-name {
+    font-size: 0.75rem;
+  }
+  
+  .related-product-price {
+    font-size: 0.8125rem;
+  }
+  
+  /* Stock and meta responsive */
+  .product-modal-stock {
+    padding: 0.625rem 0.875rem;
+  }
+  
+  .product-modal-meta {
+    font-size: 0.8125rem;
+    flex-wrap: wrap;
+  }
+  
+  /* Actions responsive */
+  .product-modal-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .product-modal-quantity {
+    justify-content: center;
+  }
+  
+  .product-modal-cart-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ==========================================
+   Variant Selection Styles
+   ========================================== */
+
+.product-modal-variants {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  margin: 0.5rem 0;
+}
+
+.variant-type-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.variant-type-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  text-transform: capitalize;
+}
+
+.variant-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.variant-value-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #4b5563;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 60px;
+  text-align: center;
+}
+
+.variant-value-btn:hover {
+  background: #f3f4f6;
+  border-color: #0d9488;
+  color: #0d9488;
+}
+
+.variant-value-btn.selected {
+  background: #0d9488;
+  border-color: #0d9488;
+  color: white;
+}
+
+.variant-value-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mobile responsive for variants */
+@media (max-width: 480px) {
+  .variant-value-btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.75rem;
+    min-width: 50px;
+  }
+  
+  .variant-type-label {
+    font-size: 0.8125rem;
+  }
+}

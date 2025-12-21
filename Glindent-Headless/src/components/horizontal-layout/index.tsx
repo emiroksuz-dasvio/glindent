@@ -83,6 +83,39 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
 
   useEffect(() => {
     setIsLoaded(true);
+    
+    // Check URL hash for section navigation (e.g., /#section-2 or /#products)
+    const checkHashNavigation = () => {
+      const hash = window.location.hash;
+      if (hash) {
+        // Map hash to section index
+        const hashMap: { [key: string]: number } = {
+          '#home': 0,
+          '#section-0': 0,
+          '#about': 1,
+          '#about-us': 1,
+          '#section-1': 1,
+          '#products': 2,
+          '#section-2': 2,
+          '#faq': 3,
+          '#section-3': 3,
+          '#contact': 4,
+          '#section-4': 4,
+        };
+        
+        const sectionIndex = hashMap[hash.toLowerCase()];
+        if (typeof sectionIndex === 'number') {
+          // Small delay to ensure layout is ready
+          setTimeout(() => {
+            scrollToSection(sectionIndex);
+            // Clear hash after navigation
+            window.history.replaceState(null, '', window.location.pathname);
+          }, 100);
+        }
+      }
+    };
+    
+    checkHashNavigation();
   }, []);
 
   const scrollToSection = useCallback((index: number) => {
