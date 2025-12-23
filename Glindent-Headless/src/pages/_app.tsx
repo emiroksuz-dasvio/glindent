@@ -7,6 +7,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import Config from "config.json";
 import { NavigationProvider } from "src/components/horizontal-layout";
 import { ToothParticles } from "src/components/tooth-particles";
+import MainLayout from "src/layouts/MainLayout";
+import DefaultLayout from "src/layouts/DefaultLayout";
 
 // Import global styles
 import "src/styles/global.css";
@@ -18,7 +20,7 @@ IkasStorefrontConfig.init({
   cdnUrl: process.env.NEXT_PUBLIC_CDN_URL,
 });
 
-// Page transition variants
+// Page transition variants for non-homepage pages
 const pageVariants = {
   initial: {
     opacity: 0,
@@ -42,16 +44,28 @@ const pageVariants = {
   },
 };
 
+/**
+ * Main App Component
+ * 
+ * Layout Logic:
+ * - Homepage (/) → MainLayout + NavigationProvider (horizontal scroll)
+ * - All other pages → DefaultLayout (standard vertical scroll)
+ * 
+ * Background elements (animated background, grain, tooth particles) are shown on all pages
+ */
 const IkasThemeApp: React.FC<AppProps> = (props) => {
   const { Component, pageProps } = props;
   const router = useRouter();
   
-  // Only use navigation provider on home page
+  // Determine if we're on homepage
   const isHomePage = router.pathname === "/" || router.pathname === "/index";
+  
+  // Determine if we're on checkout (ikas default, minimal decoration)
+  const isCheckoutPage = router.pathname.startsWith("/checkout");
 
   return (
     <>
-      {/* Animated Background */}
+      {/* Background Elements - Shown on all pages */}
       <div className="animated-background">
         <div className="orb orb-1" />
         <div className="orb orb-2" />
@@ -62,26 +76,32 @@ const IkasThemeApp: React.FC<AppProps> = (props) => {
       {/* Grain Overlay */}
       <div className="grain-overlay" />
       
-      {/* Tooth Particles Overlay */}
-      <ToothParticles />
+      {/* Tooth Particles Overlay - Hide on checkout for cleaner look */}
+      {!isCheckoutPage && <ToothParticles />}
       
-      {/* Main Content with Page Transitions */}
-      <AnimatePresence exitBeforeEnter initial={false}>
+      {/* Main Content - Different layouts for different pages */}
+      <AnimatePresence mode="wait" initial={false}>
         {isHomePage ? (
-          <NavigationProvider key="home">
-            <Component {...pageProps} />
-          </NavigationProvider>
+          // HOMEPAGE: Horizontal scroll layout with navigation
+          <MainLayout key="home-layout">
+            <NavigationProvider>
+              <Component {...pageProps} />
+            </NavigationProvider>
+          </MainLayout>
         ) : (
-          <motion.div
-            key={router.asPath}
-            initial="initial"
-            animate="enter"
-            exit="exit"
-            variants={pageVariants}
-            style={{ minHeight: "100vh" }}
-          >
-            <Component {...pageProps} />
-          </motion.div>
+          // OTHER PAGES: Standard vertical scroll layout
+          <DefaultLayout key="default-layout">
+            <motion.div
+              key={router.asPath}
+              initial="initial"
+              animate="enter"
+              exit="exit"
+              variants={pageVariants}
+              style={{ width: "100%", minHeight: "100vh" }}
+            >
+              <Component {...pageProps} />
+            </motion.div>
+          </DefaultLayout>
         )}
       </AnimatePresence>
     </>

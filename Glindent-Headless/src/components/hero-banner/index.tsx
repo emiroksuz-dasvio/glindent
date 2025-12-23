@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { IkasImage } from "@ikas/storefront";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCards, Mousewheel, Keyboard } from "swiper";
+import { EffectCards, Mousewheel, Keyboard } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -136,7 +136,7 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleSlideChange = (swiper: SwiperType) => {
+  const handleSlideChange = (swiper: any) => {
     setIsAnimating(true);
     setActiveIndex(swiper.realIndex);
     setTimeout(() => setIsAnimating(false), 500);
@@ -424,7 +424,7 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
           {/* Image Slider - First on mobile, second on desktop */}
           <div className="slider-container">
             <Swiper
-              onSwiper={(swiper) => (swiperRef.current = swiper)}
+              onSwiper={(swiper: any) => (swiperRef.current = swiper)}
               direction="vertical"
               effect="cards"
               cardsEffect={{
@@ -442,7 +442,7 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
               loop={false}
               grabCursor={true}
               modules={[EffectCards, Mousewheel, Keyboard]}
-              onSlideChange={handleSlideChange}
+              onSlideChange={(swiper: any) => handleSlideChange(swiper)}
               className="hero-swiper"
             >
               {heroSlides.map((slide, index) => (

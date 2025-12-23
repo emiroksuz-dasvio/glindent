@@ -48,6 +48,7 @@
 
 html {
   scroll-behavior: smooth;
+  /* Let layout components handle overflow */
 }
 
 body {
@@ -55,7 +56,11 @@ body {
   background: linear-gradient(165deg, #0d9488 0%, #0891b2 50%, #06b6d4 100%);
   color: var(--text-primary);
   line-height: 1.6;
+  /* Let layout components handle height and overflow */
 }
+
+/* Layout Specific Overrides */
+/* These are managed by MainLayout and DefaultLayout components */
 
 a {
   text-decoration: none;
@@ -95,17 +100,18 @@ img {
   border-radius: 16px;
 }
 
-/* Scrollbar */
+/* Scrollbar - Default Pages Only (Hidden on homepage by MainLayout) */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-dark);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-medium);
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 4px;
 }
 
@@ -2477,3 +2483,88 @@ html, body {
     font-size: 0.8125rem;
   }
 }
+
+/* ==========================================
+   PAGE LAYOUT FIXES - Cart & Checkout
+   ========================================== */
+
+/* Fix for DefaultLayout pages - proper spacing and positioning */
+.default-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.default-layout-content {
+  flex: 1;
+  width: 100%;
+}
+
+/* Cart & Checkout Page Container */
+.cart-page,
+.checkout-page {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  padding-bottom: 3rem;
+}
+
+/* Fix for ikas checkout form positioning */
+.ikas-checkout-container {
+  min-height: 100vh;
+  padding-top: 100px !important;
+  padding-bottom: 60px !important;
+}
+
+@media (max-width: 768px) {
+  .ikas-checkout-container {
+    padding-top: 80px !important;
+    padding-bottom: 40px !important;
+  }
+}
+
+/* Ensure content doesn't get cut off */
+.cart-content,
+.checkout-content {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+/* Fix sticky footer issues */
+.site-footer {
+  position: relative;
+  width: 100%;
+  margin-top: auto;
+  z-index: 10;
+}
+
+/* Fix for forms not showing properly */
+.ikas-form-container,
+.checkout-form-wrapper {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 640px) {
+  .ikas-form-container,
+  .checkout-form-wrapper {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+}
+
+/* Ensure buttons are clickable and visible */
+.checkout-button,
+.continue-button,
+.place-order-button {
+  position: relative;
+  z-index: 20;
+  pointer-events: all;
+}
+

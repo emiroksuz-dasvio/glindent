@@ -291,18 +291,61 @@ Checkout sayfasına yönlendirme:
 
 ## 📄 Page Layouts & Routing
 
+### 🏗️ Layout System Architecture
+
+Glindent ikas teması **iki farklı layout** sistemi kullanır:
+
+#### 1. MainLayout - Homepage (Horizontal Scroll)
+```tsx
+// src/layouts/MainLayout.tsx
+// Ana sayfa için horizontal scroll layout
+// - overflow: hidden
+// - 5 full-width sections
+// - Touch/wheel/keyboard navigation
+```
+
+#### 2. DefaultLayout - Other Pages (Vertical Scroll)
+```tsx
+// src/layouts/DefaultLayout.tsx
+// Cart, checkout ve diğer sayfalar için
+// - Standard vertical scroll
+// - Fixed header with padding
+// - Visible scrollbars
+```
+
+**Layout Routing (_app.tsx):**
+```tsx
+const isHomePage = router.pathname === "/" || router.pathname === "/index";
+
+{isHomePage ? (
+  <MainLayout>
+    <NavigationProvider>
+      <Component {...pageProps} />
+    </NavigationProvider>
+  </MainLayout>
+) : (
+  <DefaultLayout>
+    <Component {...pageProps} />
+  </DefaultLayout>
+)}
+```
+
+**📚 Detaylı Dokümantasyon:** `LAYOUT_SYSTEM.md`
+
+---
+
 ### Homepage (index.tsx)
-ikas'ın horizontal layout sistemi kullanılıyor:
+Horizontal layout sistemi kullanılıyor:
 - Header (fixed, z-index: 50)
-- Hero Banner
-- About Section
-- Products Section
-- FAQ Section
-- Contact Section
+- Hero Banner (Section 0)
+- About Section (Section 1)
+- Products Section (Section 2)
+- FAQ Section (Section 3)
+- Contact Section (Section 4)
 
 ### Cart Page (cart.tsx)
 
-**Yapı:** ikas CartPage + Custom Wrapper
+**Yapı:** DefaultLayout + ikas CartPage
 
 ```tsx
 // pages/cart.tsx
