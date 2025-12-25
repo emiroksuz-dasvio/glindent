@@ -30,8 +30,39 @@ class MyDocument extends Document {
         <Head>
           {/* Charset & Viewport */}
           <meta charSet="utf-8" />
+          <meta 
+            name="viewport" 
+            content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover, interactive-widget=resizes-content" 
+          />
           
-          {/* Favicon - Multiple formats for browser compatibility */}
+          {/* Cross-platform compatibility meta tags */}
+          <meta name="format-detection" content="telephone=yes" />
+          <meta name="mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+          <meta name="apple-mobile-web-app-title" content="Glindent" />
+          <meta name="msapplication-TileImage" content="/icon-192.svg" />
+          <meta name="msapplication-TileColor" content="#007A72" />
+          <meta name="msapplication-navbutton-color" content="#007A72" />
+          <meta name="msapplication-starturl" content="/" />
+          
+          {/* iOS Safari specific */}
+          <meta name="apple-touch-fullscreen" content="yes" />
+          <link rel="apple-touch-startup-image" href="/icon-192.svg" />
+          
+          {/* Samsung Internet specific */}
+          <meta name="samsung-internet-toolbar-color" content="#007A72" />
+          
+          {/* UC Browser specific */}
+          <meta name="full-screen" content="yes" />
+          <meta name="browsermode" content="application" />
+          
+          {/* QQ Browser specific */}
+          <meta name="x5-orientation" content="portrait" />
+          <meta name="x5-fullscreen" content="true" />
+          <meta name="x5-page-mode" content="app" />
+          
+          {/* Favicon - Multiple formats for cross-platform compatibility */}
           {favicon?.id && (
             <link
               rel="shortcut icon"
