@@ -120,10 +120,32 @@ const HeaderSecondary = observer(() => {
   };
 
   // Navigate to home page with hash for section
+  // Maps hash to section index for horizontal scroll on homepage
+  const sectionIndexMap: Record<string, number> = {
+    '#home': 0,
+    '#about': 1,
+    '#products': 2,
+    '#faq': 3,
+    '#contact': 4,
+  };
+
   const handleNavClick = (hash: string) => {
     setMobileMenuOpen(false);
-    // Navigate to home page with hash
-    router.push(`/${hash}`);
+    
+    const sectionIndex = sectionIndexMap[hash] ?? 0;
+    
+    // If we're already on homepage, try to scroll to section
+    if (router.pathname === '/') {
+      // Dispatch custom event for horizontal layout to handle
+      window.dispatchEvent(new CustomEvent('navigateToSection', { 
+        detail: { index: sectionIndex } 
+      }));
+    } else {
+      // Navigate to homepage with section index stored
+      // Store the target section in sessionStorage so homepage can read it
+      sessionStorage.setItem('targetSection', sectionIndex.toString());
+      router.push('/');
+    }
   };
 
   const headerContent = (

@@ -297,6 +297,24 @@ export function getFallbackImages(sku?: string | null, productName?: string | nu
     if (nameLower.includes('porcelain teeth')) {
       return PRODUCT_IMAGES['PORCELAIN'];
     }
+    // Additional matches for common product patterns
+    if (nameLower.includes('zirconia') || nameLower.includes('zirkon')) {
+      return PRODUCT_IMAGES['ZRC'];
+    }
+    if (nameLower.includes('composite')) {
+      return PRODUCT_IMAGES['GDNHC'];
+    }
+    if (nameLower.includes('porcelain') || nameLower.includes('porselen')) {
+      return PRODUCT_IMAGES['MF'];
+    }
+    if (nameLower.includes('ceramic') || nameLower.includes('seramik')) {
+      return PRODUCT_IMAGES['GB'];
+    }
+  }
+  
+  // Debug log for unmatched products
+  if (productName || sku) {
+    console.log('No image fallback found for:', { sku, productName });
   }
   
   return null;

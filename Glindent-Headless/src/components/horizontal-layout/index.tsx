@@ -127,6 +127,33 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
     return () => window.removeEventListener(NAVIGATION_EVENT as any, handleNavigationRequest);
   }, [scrollToSection]);
 
+  // Listen for navigateToSection event (from header-secondary and other pages)
+  useEffect(() => {
+    const handleExternalNavigation = (e: CustomEvent) => {
+      if (typeof e.detail?.index === "number") {
+        scrollToSection(e.detail.index);
+      }
+    };
+    window.addEventListener("navigateToSection" as any, handleExternalNavigation);
+    return () => window.removeEventListener("navigateToSection" as any, handleExternalNavigation);
+  }, [scrollToSection]);
+
+  // Check sessionStorage for target section on mount (when navigating from other pages)
+  useEffect(() => {
+    const targetSection = sessionStorage.getItem('targetSection');
+    if (targetSection) {
+      const sectionIndex = parseInt(targetSection, 10);
+      if (!isNaN(sectionIndex) && sectionIndex >= 0 && sectionIndex < totalSections) {
+        // Small delay to ensure layout is ready
+        setTimeout(() => {
+          scrollToSection(sectionIndex);
+        }, 100);
+      }
+      // Clear after use
+      sessionStorage.removeItem('targetSection');
+    }
+  }, [scrollToSection, totalSections]);
+
   // Touch gesture navigation
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
@@ -160,63 +187,6 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
       if (container) {
         container.removeEventListener("touchstart", handleTouchStart);
         container.removeEventListener("touchend", handleTouchEnd);
-      }
-    };
-  }, [currentSection, scrollToSection]);
-
-  // Wheel navigation with smooth transitions
-  useEffect(() => {
-    let wheelTimeout: NodeJS.Timeout | null = null;
-    let accumulatedDelta = 0;
-
-    const handleWheel = (e: WheelEvent) => {
-      // Don't prevent default for hero section's internal slider
-      const target = e.target as HTMLElement;
-      const isInsideHeroSlider = target.closest('.hero-swiper') !== null;
-      
-      if (!isInsideHeroSlider) {
-        e.preventDefault();
-      } else {
-        // Let hero slider handle vertical scroll
-        return;
-      }
-
-      // Ignore wheel events during animation
-      if (isAnimating.current) return;
-
-      // Accumulate scroll delta
-      accumulatedDelta += e.deltaY;
-
-      // Clear existing timeout
-      if (wheelTimeout) {
-        clearTimeout(wheelTimeout);
-      }
-
-      // After user stops scrolling for 150ms, decide direction
-      wheelTimeout = setTimeout(() => {
-        const threshold = 50;
-
-        if (accumulatedDelta > threshold && currentSection < totalSections - 1) {
-          scrollToSection(currentSection + 1);
-        } else if (accumulatedDelta < -threshold && currentSection > 0) {
-          scrollToSection(currentSection - 1);
-        }
-
-        accumulatedDelta = 0;
-      }, 150);
-    };
-
-    const container = scrollContainerRef.current;
-    if (container) {
-      container.addEventListener("wheel", handleWheel, { passive: false });
-    }
-
-    return () => {
-      if (container) {
-        container.removeEventListener("wheel", handleWheel);
-      }
-      if (wheelTimeout) {
-        clearTimeout(wheelTimeout);
       }
     };
   }, [currentSection, scrollToSection]);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 /**
  * MainLayout - Horizontal Scroll Layout for Homepage
@@ -12,6 +12,32 @@ interface MainLayoutProps {
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+  // Set body styles when MainLayout mounts
+  useEffect(() => {
+    // Disable vertical scrolling for horizontal layout
+    document.documentElement.style.overflow = "hidden";
+    document.documentElement.style.height = "100vh";
+    document.documentElement.style.width = "100vw";
+    document.body.style.overflow = "hidden";
+    document.body.style.height = "100vh";
+    document.body.style.width = "100vw";
+    document.body.style.margin = "0";
+    document.body.style.padding = "0";
+    
+    // Cleanup on unmount
+    return () => {
+      // Reset to defaults (will be overridden by DefaultLayout if navigating away)
+      document.documentElement.style.overflow = "";
+      document.documentElement.style.height = "";
+      document.documentElement.style.width = "";
+      document.body.style.overflow = "";
+      document.body.style.height = "";
+      document.body.style.width = "";
+      document.body.style.margin = "";
+      document.body.style.padding = "";
+    };
+  }, []);
+
   return (
     <>
       <div className="main-layout">
@@ -20,15 +46,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
       <style jsx global>{`
         /* Horizontal Layout Specific Styles */
-        html,
-        body {
-          overflow: hidden !important;
-          height: 100vh;
-          width: 100vw;
-          margin: 0;
-          padding: 0;
-        }
-
         .main-layout {
           position: relative;
           height: 100vh;
@@ -36,12 +53,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           overflow: hidden;
         }
 
-        /* Hide scrollbars */
-        ::-webkit-scrollbar {
+        /* Hide scrollbars in horizontal layout */
+        .main-layout ::-webkit-scrollbar {
           display: none;
         }
         
-        * {
+        .main-layout * {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }

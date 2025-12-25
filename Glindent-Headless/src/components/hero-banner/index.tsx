@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { IkasImage } from "@ikas/storefront";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCards, Mousewheel, Keyboard } from "swiper/modules";
+import { EffectCards, Mousewheel, Keyboard } from "swiper";
 import type { Swiper as SwiperType } from "swiper";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -164,11 +164,15 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
   }, [handleKeyDown]);
 
   const scrollToProducts = () => {
-    scrollToSection(4); // Products is index 4 (ikas order)
+    scrollToSection(2); // Products is index 2 (home: 0, about: 1, products: 2, faq: 3, contact: 4)
   };
 
   const scrollToContact = () => {
-    scrollToSection(2); // Contact is index 2 (ikas order)
+    scrollToSection(4); // Contact is index 4 (home: 0, about: 1, products: 2, faq: 3, contact: 4)
+  };
+
+  const scrollToAbout = () => {
+    scrollToSection(1); // About is index 1 (next section after hero)
   };
 
   return (
@@ -186,17 +190,22 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
           width: 100vw;
           flex-shrink: 0;
           flex-direction: column;
-          padding: 6rem 1.5rem 1.5rem;
+          padding: 4.5rem 1.25rem 1rem;
           overflow: hidden;
+        }
+        @media (min-width: 480px) {
+          .hero-section {
+            padding: 5rem 1.5rem 1.5rem;
+          }
         }
         @media (min-width: 640px) {
           .hero-section {
-            padding: 7rem 2rem 2rem;
+            padding: 5.5rem 2rem 2rem;
           }
         }
         @media (min-width: 768px) {
           .hero-section {
-            padding: 8rem 4rem 3rem;
+            padding: 6rem 3rem 2rem;
           }
         }
         @media (min-width: 1024px) {
@@ -217,9 +226,19 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
         .hero-grid {
           display: grid;
           grid-template-columns: 1fr;
-          gap: 1.5rem;
+          gap: 1rem;
           flex: 1;
-          padding-top: 1rem;
+          padding-top: 0;
+        }
+        @media (min-width: 480px) {
+          .hero-grid {
+            gap: 1.25rem;
+          }
+        }
+        @media (min-width: 640px) {
+          .hero-grid {
+            gap: 1.5rem;
+          }
         }
         @media (min-width: 1024px) {
           .hero-grid {
@@ -238,28 +257,38 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
           position: relative;
           display: block;
           align-self: center;
-          height: 280px;
+          height: 220px;
           order: 1;
+        }
+        @media (min-width: 400px) {
+          .slider-container {
+            height: 260px;
+          }
+        }
+        @media (min-width: 480px) {
+          .slider-container {
+            height: 280px;
+          }
         }
         @media (min-width: 640px) {
           .slider-container {
-            height: 350px;
+            height: 320px;
           }
         }
         @media (min-width: 768px) {
           .slider-container {
-            height: 450px;
+            height: 400px;
           }
         }
         @media (min-width: 1024px) {
           .slider-container {
             order: 2;
-            height: 550px;
+            height: 500px;
           }
         }
         @media (min-width: 1280px) {
           .slider-container {
-            height: 600px;
+            height: 580px;
           }
         }
         
@@ -269,36 +298,59 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
           justify-content: center;
           max-width: 48rem;
           order: 2;
+          padding-bottom: 0.5rem;
+        }
+        @media (min-width: 640px) {
+          .text-content {
+            padding-bottom: 1rem;
+          }
         }
         @media (min-width: 1024px) {
           .text-content {
             order: 1;
+            padding-bottom: 0;
           }
         }
         
         .hero-title {
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-          font-size: clamp(1.875rem, 5vw, 4.5rem);
+          font-size: clamp(1.5rem, 6vw, 4.5rem);
           font-weight: 300;
           line-height: 1.1;
           letter-spacing: -0.02em;
           color: white;
           margin: 0;
         }
+        @media (min-width: 400px) {
+          .hero-title {
+            font-size: clamp(1.75rem, 6vw, 4.5rem);
+          }
+        }
         
         .hero-description {
           max-width: 36rem;
-          font-size: 0.875rem;
-          line-height: 1.6;
+          font-size: 0.8rem;
+          line-height: 1.5;
           color: rgba(255, 255, 255, 0.9);
           margin: 0;
         }
+        @media (min-width: 400px) {
+          .hero-description {
+            font-size: 0.85rem;
+            line-height: 1.6;
+          }
+        }
         @media (min-width: 640px) {
           .hero-description {
-            font-size: 1rem;
+            font-size: 0.95rem;
           }
         }
         @media (min-width: 768px) {
+          .hero-description {
+            font-size: 1.05rem;
+          }
+        }
+        @media (min-width: 1024px) {
           .hero-description {
             font-size: 1.125rem;
           }
@@ -565,7 +617,7 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+                style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
               >
                 {/* Badge */}
                 <motion.div
@@ -574,7 +626,7 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
                   transition={{ duration: 0.3, delay: 0.05 }}
                 >
                   <span className="glass-badge">
-                    <span style={{ fontSize: "0.75rem", color: "white", lineHeight: 1 }}>
+                    <span style={{ fontSize: "0.7rem", color: "white", lineHeight: 1 }}>
                       {heroSlides[activeIndex].badge}
                     </span>
                   </span>
@@ -610,9 +662,9 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, delay: 0.2 }}
-                  style={{ display: "flex", flexDirection: "column", gap: "0.75rem", paddingTop: "0.5rem" }}
+                  style={{ display: "flex", flexDirection: "column", gap: "0.5rem", paddingTop: "0.25rem" }}
                 >
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                     <button onClick={scrollToProducts} className="btn-primary">
                       {primaryButtonText}
                     </button>
@@ -631,7 +683,7 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          onClick={scrollToProducts}
+          onClick={scrollToAbout}
           style={{
             marginTop: "auto",
             marginBottom: "1rem",

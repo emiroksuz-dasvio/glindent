@@ -385,33 +385,30 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
           position: relative;
           z-index: 20;
           display: flex;
-          min-height: 100vh;
+          height: 100vh;
           min-width: 100vw;
           width: 100vw;
           flex-shrink: 0;
           flex-direction: column;
-          padding: 6rem 1.5rem 3rem;
-          overflow-y: auto;
-          overflow-x: hidden;
+          padding: 5rem 1.5rem 1.5rem;
+          overflow: hidden;
         }
 
         @media (min-width: 640px) {
           .contact-section {
-            padding: 7rem 2rem 3rem;
+            padding: 6rem 2rem 2rem;
           }
         }
 
         @media (min-width: 768px) {
           .contact-section {
-            padding: 10rem 4rem 4rem;
+            padding: 7rem 4rem 2rem;
           }
         }
 
         @media (min-width: 1024px) {
           .contact-section {
-            height: 100vh;
-            padding: 10rem 5rem 3rem;
-            overflow: hidden;
+            padding: 8rem 5rem 2rem;
           }
         }
 
@@ -419,17 +416,12 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
           display: flex;
           flex-direction: column;
           width: 100%;
-        }
-
-        @media (min-width: 1024px) {
-          .contact-container {
-            height: 100%;
-            justify-content: center;
-          }
+          height: 100%;
+          overflow: hidden;
         }
 
         .section-header {
-          margin-bottom: 1.5rem;
+          margin-bottom: 1rem;
           flex-shrink: 0;
           transition: all 0.7s ease;
           transform: translateY(-3rem);
@@ -443,13 +435,13 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
 
         @media (min-width: 640px) {
           .section-header {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
           }
         }
 
         @media (min-width: 768px) {
           .section-header {
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
           }
         }
 
@@ -491,15 +483,45 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
         .contact-grid {
           display: grid;
           grid-template-columns: 1fr;
-          gap: 1.5rem;
+          gap: 1rem;
+          flex: 1;
+          overflow-y: auto;
+          overflow-x: hidden;
+          padding-right: 0.5rem;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .contact-grid::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .contact-grid::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 3px;
+        }
+
+        .contact-grid::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 3px;
+        }
+
+        .contact-grid::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (min-width: 640px) {
+          .contact-grid {
+            gap: 1.5rem;
+          }
         }
 
         @media (min-width: 1024px) {
           .contact-grid {
-            flex: 1;
             grid-template-columns: 1fr 1fr;
-            gap: 2.5rem;
-            align-items: stretch;
+            gap: 2rem;
+            align-items: start;
+            overflow: hidden;
+            padding-right: 0;
           }
         }
 
@@ -508,9 +530,9 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          border-radius: 1.5rem;
+          border-radius: 1.25rem;
           background: white;
-          padding: 2rem;
+          padding: 1.25rem;
           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
           transition: all 0.7s ease;
           opacity: 0;
@@ -533,32 +555,62 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
         @media (min-width: 640px) {
           .contact-info-card,
           .contact-form-card {
-            padding: 2.5rem;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .contact-info-card,
+          .contact-form-card {
+            padding: 2rem;
+            max-height: calc(100vh - 14rem);
+            overflow-y: auto;
           }
         }
 
         .card-title {
-          font-size: 1.5rem;
+          font-size: 1.25rem;
           font-weight: 600;
           color: #111827;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.375rem;
+        }
+
+        @media (min-width: 640px) {
+          .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+          }
         }
 
         .card-description {
           color: #6b7280;
-          margin-bottom: 2.5rem;
+          font-size: 0.875rem;
+          margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+          .card-description {
+            margin-bottom: 2rem;
+          }
         }
 
         .contact-items {
           display: flex;
           flex-direction: column;
-          gap: 2rem;
+          gap: 1.25rem;
+        }
+
+        @media (min-width: 640px) {
+          .contact-items {
+            gap: 1.5rem;
+          }
         }
 
         .contact-item {
           display: flex;
           align-items: flex-start;
-          gap: 1.25rem;
+          gap: 1rem;
           text-decoration: none;
           transition: transform 0.3s ease;
         }
@@ -569,15 +621,23 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
 
         .contact-icon {
           flex-shrink: 0;
-          width: 3rem;
-          height: 3rem;
+          width: 2.5rem;
+          height: 2.5rem;
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 0.75rem;
+          border-radius: 0.625rem;
           color: white;
           background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #06b6d4 100%);
           transition: transform 0.3s ease;
+        }
+
+        @media (min-width: 640px) {
+          .contact-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.75rem;
+          }
         }
 
         .contact-item:hover .contact-icon {
@@ -587,23 +647,36 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
         .contact-text {
           display: flex;
           flex-direction: column;
-          padding-top: 0.25rem;
+          padding-top: 0.125rem;
         }
 
         .contact-label {
           font-family: monospace;
-          font-size: 0.75rem;
+          font-size: 0.7rem;
           text-transform: uppercase;
           letter-spacing: 0.05em;
           color: #9ca3af;
-          margin-bottom: 0.25rem;
+          margin-bottom: 0.125rem;
+        }
+
+        @media (min-width: 640px) {
+          .contact-label {
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+          }
         }
 
         .contact-value {
-          font-size: 1.125rem;
+          font-size: 1rem;
           font-weight: 500;
           color: #111827;
           transition: color 0.3s ease;
+        }
+
+        @media (min-width: 640px) {
+          .contact-value {
+            font-size: 1.125rem;
+          }
         }
 
         .contact-item:hover .contact-value {
@@ -613,7 +686,7 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
         .phone-numbers {
           display: flex;
           flex-direction: column;
-          gap: 0.25rem;
+          gap: 0.125rem;
         }
 
         @media (min-width: 640px) {
@@ -624,11 +697,17 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
         }
 
         .phone-link {
-          font-size: 1.125rem;
+          font-size: 1rem;
           font-weight: 500;
           color: #111827;
           text-decoration: none;
           transition: color 0.3s ease;
+        }
+
+        @media (min-width: 640px) {
+          .phone-link {
+            font-size: 1.125rem;
+          }
         }
 
         .phone-link:hover {
@@ -647,45 +726,79 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
         }
 
         .address-text {
-          font-size: 1.125rem;
+          font-size: 1rem;
           font-weight: 500;
           color: #111827;
-          line-height: 1.4;
+          line-height: 1.5;
           margin: 0;
         }
 
+        @media (min-width: 640px) {
+          .address-text {
+            font-size: 1.125rem;
+          }
+        }
+
         .social-section {
-          margin-top: 2rem;
-          padding-top: 2rem;
+          margin-top: 1.25rem;
+          padding-top: 1.25rem;
           border-top: 1px solid #f3f4f6;
+        }
+
+        @media (min-width: 640px) {
+          .social-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+          }
         }
 
         .social-label {
           display: block;
           font-family: monospace;
-          font-size: 0.75rem;
+          font-size: 0.7rem;
           text-transform: uppercase;
           letter-spacing: 0.05em;
           color: #9ca3af;
-          margin-bottom: 1.25rem;
+          margin-bottom: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+          .social-label {
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+          }
         }
 
         .social-links {
           display: flex;
-          gap: 0.75rem;
+          gap: 0.5rem;
+        }
+
+        @media (min-width: 640px) {
+          .social-links {
+            gap: 0.75rem;
+          }
         }
 
         .social-link {
-          width: 3rem;
-          height: 3rem;
+          width: 2.5rem;
+          height: 2.5rem;
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 0.75rem;
+          border-radius: 0.625rem;
           border: 1px solid #e5e7eb;
           background: #f9fafb;
           color: #6b7280;
           transition: all 0.3s ease;
+        }
+
+        @media (min-width: 640px) {
+          .social-link {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.75rem;
+          }
         }
 
         .social-link:hover {
@@ -718,18 +831,25 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
           flex: 1;
           display: flex;
           flex-direction: column;
-          gap: 1.5rem;
+          gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+          .contact-form {
+            gap: 1.25rem;
+          }
         }
 
         .form-row {
           display: grid;
           grid-template-columns: 1fr;
-          gap: 1.5rem;
+          gap: 1rem;
         }
 
         @media (min-width: 640px) {
           .form-row {
             grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
           }
         }
 
@@ -742,29 +862,50 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
           flex: 1;
           display: flex;
           flex-direction: column;
-          min-height: 120px;
+          min-height: 80px;
+        }
+
+        @media (min-width: 640px) {
+          .form-group-message {
+            min-height: 100px;
+          }
         }
 
         .form-label {
           display: block;
           font-family: monospace;
-          font-size: 0.75rem;
+          font-size: 0.7rem;
           text-transform: uppercase;
           letter-spacing: 0.05em;
           color: #6b7280;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.375rem;
+        }
+
+        @media (min-width: 640px) {
+          .form-label {
+            margin-bottom: 0.5rem;
+          }
         }
 
         .form-input,
         .form-textarea {
           width: 100%;
-          padding: 0.875rem 1rem;
-          font-size: 1rem;
+          padding: 0.75rem 0.875rem;
+          font-size: 0.9rem;
           color: #111827;
           background: #f9fafb;
           border: none;
-          border-radius: 0.75rem;
+          border-radius: 0.625rem;
           transition: all 0.2s ease;
+        }
+
+        @media (min-width: 640px) {
+          .form-input,
+          .form-textarea {
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            border-radius: 0.75rem;
+          }
         }
 
         .form-input:hover,
@@ -792,13 +933,25 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
         .form-textarea {
           flex: 1;
           resize: none;
-          min-height: 120px;
+          min-height: 80px;
+        }
+
+        @media (min-width: 640px) {
+          .form-textarea {
+            min-height: 100px;
+          }
         }
 
         .form-error {
           margin-top: 0.25rem;
-          font-size: 0.75rem;
+          font-size: 0.7rem;
           color: #ef4444;
+        }
+
+        @media (min-width: 640px) {
+          .form-error {
+            font-size: 0.75rem;
+          }
         }
 
         .form-submit {
@@ -808,12 +961,12 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
         .submit-button {
           position: relative;
           width: 100%;
-          height: 3.5rem;
-          padding: 0 2rem;
+          height: 3rem;
+          padding: 0 1.5rem;
           border: none;
-          border-radius: 0.75rem;
+          border-radius: 0.625rem;
           font-weight: 600;
-          font-size: 1rem;
+          font-size: 0.9rem;
           color: white;
           background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #06b6d4 100%);
           cursor: pointer;
@@ -822,7 +975,17 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 0.625rem;
+          gap: 0.5rem;
+        }
+
+        @media (min-width: 640px) {
+          .submit-button {
+            height: 3.25rem;
+            padding: 0 2rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            gap: 0.625rem;
+          }
         }
 
         .submit-button:hover {

@@ -84,12 +84,13 @@ const styles: { [key: string]: CSSProperties } = {
     display: "flex",
     alignItems: "flex-start",
     justifyContent: "center",
-    padding: "100px 20px 40px 20px",
+    padding: "120px 20px 60px 20px",
     boxSizing: "border-box" as const,
   },
   container: {
     width: "100%",
     maxWidth: "900px",
+    minHeight: "calc(100vh - 180px)",
     position: "relative" as const,
     zIndex: 10,
   },
@@ -404,10 +405,10 @@ const AuthAddresses: React.FC<AuthAddressesProps> = (props) => {
         phone: address.phone || "",
         addressLine1: address.addressLine1 || address.address1 || "",
         addressLine2: address.addressLine2 || address.address2 || "",
-        city: address.city || "",
-        state: address.state || address.province || "",
+        city: typeof address.city === 'object' ? address.city?.name : (address.city || ""),
+        state: typeof address.state === 'object' ? address.state?.name : (address.state || address.province || ""),
         postalCode: address.postalCode || address.zip || "",
-        country: address.country || "United Kingdom",
+        country: typeof address.country === 'object' ? address.country?.name : (address.country || "United Kingdom"),
         isDefault: address.isDefault || false,
       });
     } else {
@@ -548,10 +549,12 @@ const AuthAddresses: React.FC<AuthAddressesProps> = (props) => {
                         </p>
                       )}
                       <p style={styles.addressText}>
-                        {address.city}, {address.state || address.province}{" "}
+                        {typeof address.city === 'object' ? address.city?.name : address.city}, {typeof address.state === 'object' ? address.state?.name : (address.state || address.province)}{" "}
                         {address.postalCode || address.zip}
                       </p>
-                      <p style={styles.addressText}>{address.country}</p>
+                      <p style={styles.addressText}>
+                        {typeof address.country === 'object' ? address.country?.name : address.country}
+                      </p>
                       {address.phone && (
                         <p style={styles.addressText}>{address.phone}</p>
                       )}

@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <!-- Gradient background -->
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#004d47;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#007A72;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#009688;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Subtle pattern overlay -->
+    <pattern id="dots" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+      <circle cx="15" cy="15" r="1" fill="rgba(255,255,255,0.1)"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg-gradient)"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  
+  <!-- Decorative circles -->
+  <circle cx="100" cy="100" r="200" fill="rgba(255,255,255,0.03)"/>
+  <circle cx="1100" cy="530" r="250" fill="rgba(255,255,255,0.03)"/>
+  <circle cx="900" cy="100" r="150" fill="rgba(255,255,255,0.02)"/>
+  
+  <!-- Logo area -->
+  <g transform="translate(600, 200)">
+    <!-- "glindent" text -->
+    <text
+      x="0"
+      y="0"
+      fill="white"
+      font-family="'Poppins', 'Arial Black', sans-serif"
+      font-size="120"
+      font-weight="900"
+      font-style="italic"
+      letter-spacing="-4px"
+      text-anchor="middle"
+    >glindent</text>
+    
+    <!-- Sparkle/Star -->
+    <g transform="translate(230, -60)">
+      <line x1="0" y1="-25" x2="0" y2="25" stroke="white" stroke-width="4"/>
+      <line x1="-25" y1="0" x2="25" y2="0" stroke="white" stroke-width="4"/>
+      <circle cx="0" cy="0" r="5" fill="white"/>
+    </g>
+  </g>
+  
+  <!-- Tagline -->
+  <text
+    x="600"
+    y="280"
+    fill="rgba(255,255,255,0.9)"
+    font-family="'Poppins', Arial, sans-serif"
+    font-size="24"
+    font-weight="400"
+    letter-spacing="8px"
+    text-anchor="middle"
+  >WAY TO DENTISTRY</text>
+  
+  <!-- Divider line -->
+  <line x1="400" y1="330" x2="800" y2="330" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+  
+  <!-- Description -->
+  <text
+    x="600"
+    y="400"
+    fill="rgba(255,255,255,0.85)"
+    font-family="'Poppins', Arial, sans-serif"
+    font-size="32"
+    font-weight="500"
+    text-anchor="middle"
+  >Premium Dental Supplies</text>
+  
+  <text
+    x="600"
+    y="450"
+    fill="rgba(255,255,255,0.7)"
+    font-family="'Poppins', Arial, sans-serif"
+    font-size="24"
+    font-weight="400"
+    text-anchor="middle"
+  >Zirconia Discs • X-Ray Films • Composites • CAD/CAM Materials</text>
+  
+  <!-- UK Badge -->
+  <g transform="translate(600, 530)">
+    <rect x="-80" y="-20" width="160" height="40" rx="20" fill="rgba(255,255,255,0.15)"/>
+    <text
+      x="0"
+      y="6"
+      fill="white"
+      font-family="'Poppins', Arial, sans-serif"
+      font-size="18"
+      font-weight="600"
+      text-anchor="middle"
+    >🇬🇧 UK Supplier</text>
+  </g>
+  
+  <!-- Tooth icons (decorative) -->
+  <g transform="translate(150, 450)" opacity="0.15">
+    <path d="M20 5c-5 0-9 4-10 9-1-5-5-9-10-9-6 0-10 5-10 11 0 8 10 16 20 24 10-8 20-16 20-24 0-6-4-11-10-11z" fill="white" transform="scale(2)"/>
+  </g>
+  <g transform="translate(1000, 150)" opacity="0.1">
+    <path d="M20 5c-5 0-9 4-10 9-1-5-5-9-10-9-6 0-10 5-10 11 0 8 10 16 20 24 10-8 20-16 20-24 0-6-4-11-10-11z" fill="white" transform="scale(2.5)"/>
+  </g>
+</svg>

@@ -103,12 +103,13 @@ const styles: { [key: string]: CSSProperties } = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: "100px 20px 40px 20px", // Top padding for header
+    padding: "120px 20px 60px 20px", // Top padding for header
     boxSizing: "border-box" as const,
   },
   container: {
     width: "100%",
     maxWidth: "440px",
+    minHeight: "auto",
     position: "relative" as const,
     zIndex: 10, // Below header (z-index 50)
   },

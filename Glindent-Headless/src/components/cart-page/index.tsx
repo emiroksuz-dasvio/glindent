@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getProductMainImage } from "src/lib/product-images";
 
 // Icons
 const MinusIcon = () => (
@@ -111,7 +112,22 @@ const CartItem = observer(({ item, onRemove, onUpdateQuantity }: {
   onUpdateQuantity: (quantity: number) => void;
 }) => {
   const [isUpdating, setIsUpdating] = useState(false);
-  const imageUrl = item.variant?.mainImage?.src || "/placeholder.svg";
+  const [imageError, setImageError] = useState(false);
+  
+  // Try multiple image sources
+  const ikasImageUrl = 
+    item.variant?.mainImage?.src ||
+    (item.variant?.mainImage as any)?.image?.src ||
+    (item.variant as any)?.images?.[0]?.src ||
+    (item.variant as any)?.images?.[0]?.image?.src;
+  
+  // Get Cloudinary fallback using SKU or product name
+  const sku = item.variant?.sku;
+  const productName = item.variant?.name || "Product";
+  const cloudinaryFallback = getProductMainImage(null, sku, productName);
+  
+  // Use ikas image if available and no error, otherwise use Cloudinary fallback
+  const imageUrl = imageError || !ikasImageUrl ? cloudinaryFallback : ikasImageUrl;
   
   const handleQuantityChange = async (newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -136,6 +152,7 @@ const CartItem = observer(({ item, onRemove, onUpdateQuantity }: {
           layout="fill"
           objectFit="cover"
           unoptimized
+          onError={() => setImageError(true)}
         />
       </div>
       
@@ -287,24 +304,24 @@ const CartPage: React.FC = () => {
           position: relative;
           z-index: 10;
           min-height: 100vh;
-          padding: 6rem 1.5rem 2rem;
+          padding: 7rem 1.5rem 3rem;
         }
         
         @media (min-width: 640px) {
           .cart-content {
-            padding: 7rem 2rem 2rem;
+            padding: 8rem 2rem 3rem;
           }
         }
         
         @media (min-width: 768px) {
           .cart-content {
-            padding: 10rem 4rem 3rem;
+            padding: 9rem 4rem 4rem;
           }
         }
         
         @media (min-width: 1024px) {
           .cart-content {
-            padding: 8rem 5rem 3rem;
+            padding: 9rem 5rem 4rem;
           }
         }
         

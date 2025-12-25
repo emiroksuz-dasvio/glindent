@@ -1,9 +1,119 @@
 import { observer } from "mobx-react-lite";
 import { useStore, IkasOrderLineItem, IkasImage } from "@ikas/storefront";
 import Link from "next/link";
-import Image from "next/image";
 import { useState, CSSProperties } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getProductMainImage } from "src/lib/product-images";
+
+// ========================
+// RESPONSIVE STYLES (injected as global)
+// ========================
+const responsiveStyles = `
+  /* Cart Page Container - Transparent to show animated background */
+  .cart-page-wrapper {
+    background: transparent;
+    padding: 100px 20px 32px;
+    min-height: 50vh;
+  }
+  @media (min-width: 640px) {
+    .cart-page-wrapper {
+      padding: 110px 32px 40px;
+    }
+  }
+  @media (min-width: 768px) {
+    .cart-page-wrapper {
+      padding: 120px 48px 48px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .cart-page-wrapper {
+      padding: 120px 64px 48px;
+    }
+  }
+  .cart-page-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  
+  /* Cart Items */
+  .cart-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  @media (min-width: 640px) {
+    .cart-item {
+      padding: 20px;
+      gap: 20px;
+    }
+  }
+  .cart-item-image {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #f9fafb;
+  }
+  @media (min-width: 640px) {
+    .cart-item-image {
+      width: 100px;
+      height: 100px;
+    }
+  }
+  .cart-item-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+  }
+  @media (min-width: 640px) {
+    .cart-item-name {
+      font-size: 16px;
+    }
+  }
+  .cart-item-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+  }
+  @media (min-width: 640px) {
+    .cart-item-price {
+      font-size: 18px;
+    }
+  }
+  .cart-item-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  @media (min-width: 480px) {
+    .cart-item-bottom {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+  .cart-title {
+    font-size: 24px;
+    font-weight: 300;
+    color: white;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+  @media (min-width: 640px) {
+    .cart-title {
+      font-size: 32px;
+    }
+  }
+`;
 
 // ========================
 // IKAS PROPS INTERFACE
@@ -280,6 +390,7 @@ const CartItem = observer(({
   const [isRemoveHovered, setIsRemoveHovered] = useState(false);
   const [isMinusHovered, setIsMinusHovered] = useState(false);
   const [isPlusHovered, setIsPlusHovered] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const handleQuantityChange = async (newQuantity: number) => {
     if (newQuantity < 1 || isUpdating) return;
@@ -288,8 +399,22 @@ const CartItem = observer(({
     setIsUpdating(false);
   };
 
-  const imageSrc = item.variant?.mainImage?.src || "/placeholder.svg";
-  const productName = item.variant?.name || "Product";
+  // Try multiple image sources
+  const ikasImageUrl = 
+    item.variant?.mainImage?.src ||
+    (item.variant?.mainImage as any)?.image?.src ||
+    (item.variant as any)?.images?.[0]?.src ||
+    (item.variant as any)?.images?.[0]?.image?.src ||
+    // Product level images
+    (item as any).product?.mainImage?.src ||
+    (item as any).product?.mainImage?.image?.src;
+  
+  // Get product name for fallback (prefer product name over variant name)
+  const productName = (item as any).product?.name || item.variant?.name || "Product";
+  const displayName = item.variant?.name || productName;
+  const sku = item.variant?.sku;
+  const cloudinaryFallback = getProductMainImage(null, sku, productName);
+  const imageSrc = imageError || !ikasImageUrl ? cloudinaryFallback : ikasImageUrl;
   const options = item.options?.map(opt => `${opt.name}: ${opt.values?.join(", ")}`).join(", ") || "";
 
   return (
@@ -298,23 +423,27 @@ const CartItem = observer(({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -100 }}
-      style={styles.item}
+      className="cart-item"
     >
-      <div style={styles.itemImage}>
-        <Image
+      <div className="cart-item-image">
+        <img
           src={imageSrc}
-          alt={productName}
-          layout="fill"
-          objectFit="cover"
-          unoptimized
+          alt={displayName}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            borderRadius: "12px",
+          }}
+          onError={() => setImageError(true)}
         />
       </div>
       <div style={styles.itemDetails}>
         <div>
-          <h3 style={styles.itemName}>{productName}</h3>
+          <h3 className="cart-item-name">{displayName}</h3>
           {options && <p style={styles.itemOptions}>{options}</p>}
         </div>
-        <div style={styles.itemBottom}>
+        <div className="cart-item-bottom">
           <div style={styles.itemActions}>
             <div style={styles.quantitySelector}>
               <button 
@@ -357,7 +486,7 @@ const CartItem = observer(({
               <TrashIcon />
             </button>
           </div>
-          <div style={styles.itemPrice}>
+          <div className="cart-item-price">
             {item.formattedFinalPriceWithQuantity || item.formattedPriceWithQuantity}
           </div>
         </div>
@@ -381,6 +510,7 @@ const CartItems: React.FC<CartItemsProps> = (props) => {
   const cart = store.cartStore.cart;
   const items = cart?.orderLineItems || [];
   const itemCount = cart?.itemQuantity || 0;
+  const [isBackHovered, setIsBackHovered] = useState(false);
 
   const handleRemoveItem = async (item: IkasOrderLineItem) => {
     await store.cartStore.removeItem(item);
@@ -393,60 +523,68 @@ const CartItems: React.FC<CartItemsProps> = (props) => {
   // Empty cart state
   if (items.length === 0) {
     return (
-      <section style={styles.emptySection}>
-        <div style={styles.emptyCard}>
-          <div style={styles.emptyIcon}>
-            <ShoppingBagIcon />
-          </div>
-          <h2 style={styles.emptyTitle}>{emptyTitle}</h2>
-          <p style={styles.emptyDesc}>{emptyDescription}</p>
-          <Link href="/">
-            <a style={styles.browseBtn}>{continueShoppingText}</a>
-          </Link>
+      <div className="cart-page-wrapper">
+        <style dangerouslySetInnerHTML={{ __html: responsiveStyles }} />
+        <div className="cart-page-container">
+          <section style={styles.emptySection}>
+            <div style={styles.emptyCard}>
+              <div style={styles.emptyIcon}>
+                <ShoppingBagIcon />
+              </div>
+              <h2 style={styles.emptyTitle}>{emptyTitle}</h2>
+              <p style={styles.emptyDesc}>{emptyDescription}</p>
+              <Link href="/">
+                <a style={styles.browseBtn}>{continueShoppingText}</a>
+              </Link>
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
     );
   }
 
-  const [isBackHovered, setIsBackHovered] = useState(false);
-
   return (
-    <section style={styles.section}>
-      {/* Back Link */}
-      <Link href="/">
-        <a 
-          style={{
-            ...styles.backLink,
-            ...(isBackHovered ? styles.backLinkHover : {})
-          }}
-          onMouseEnter={() => setIsBackHovered(true)}
-          onMouseLeave={() => setIsBackHovered(false)}
-        >
-          <ArrowLeftIcon />
-          <span>{continueShoppingText}</span>
-        </a>
-      </Link>
+    <div className="cart-page-wrapper">
+      <style dangerouslySetInnerHTML={{ __html: responsiveStyles }} />
+      <div className="cart-page-container">
+        <section style={styles.section}>
+          {/* Back Link */}
+          <Link href="/">
+            <a 
+              style={{
+                ...styles.backLink,
+                ...(isBackHovered ? styles.backLinkHover : {})
+              }}
+              onMouseEnter={() => setIsBackHovered(true)}
+              onMouseLeave={() => setIsBackHovered(false)}
+            >
+              <ArrowLeftIcon />
+              <span>{continueShoppingText}</span>
+            </a>
+          </Link>
 
-      {/* Title */}
-      <div style={styles.header}>
-        <h1 style={styles.title}>{title}</h1>
-        <span style={styles.itemCount}>{itemCount} items</span>
-      </div>
+          {/* Title */}
+          <div style={styles.header}>
+            <h1 className="cart-title">{title}</h1>
+            <span style={styles.itemCount}>{itemCount} items</span>
+          </div>
 
-      {/* Items List */}
-      <div style={styles.list}>
-        <AnimatePresence>
-          {items.map((item: IkasOrderLineItem) => (
-            <CartItem
-              key={item.id}
-              item={item}
-              onRemove={handleRemoveItem}
-              onUpdateQuantity={handleUpdateQuantity}
-            />
-          ))}
-        </AnimatePresence>
+          {/* Items List */}
+          <div style={styles.list}>
+            <AnimatePresence>
+              {items.map((item: IkasOrderLineItem) => (
+                <CartItem
+                  key={item.id}
+                  item={item}
+                  onRemove={handleRemoveItem}
+                  onUpdateQuantity={handleUpdateQuantity}
+                />
+              ))}
+            </AnimatePresence>
+          </div>
+        </section>
       </div>
-    </section>
+    </div>
   );
 };
 

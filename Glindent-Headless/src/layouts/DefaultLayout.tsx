@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { CSSProperties } from "react";
 
 /**
@@ -35,6 +35,30 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({
   children, 
   showBackground = true 
 }) => {
+  // Reset body styles when DefaultLayout mounts
+  useEffect(() => {
+    // Enable vertical scrolling
+    document.documentElement.style.overflow = "auto";
+    document.documentElement.style.overflowX = "hidden";
+    document.documentElement.style.height = "auto";
+    document.body.style.overflow = "auto";
+    document.body.style.overflowX = "hidden";
+    document.body.style.height = "auto";
+    document.body.style.minHeight = "100vh";
+    
+    // Cleanup on unmount
+    return () => {
+      // Reset to defaults (will be overridden by MainLayout if navigating home)
+      document.documentElement.style.overflow = "";
+      document.documentElement.style.overflowX = "";
+      document.documentElement.style.height = "";
+      document.body.style.overflow = "";
+      document.body.style.overflowX = "";
+      document.body.style.height = "";
+      document.body.style.minHeight = "";
+    };
+  }, []);
+
   return (
     <>
       <div style={styles.container} className="default-layout">
@@ -45,16 +69,6 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({
 
       <style jsx global>{`
         /* Default Layout Specific Styles */
-        html,
-        body {
-          overflow-x: hidden;
-          overflow-y: auto;
-          height: auto;
-          min-height: 100vh;
-          margin: 0;
-          padding: 0;
-        }
-
         .default-layout {
           background: transparent;
         }
@@ -63,7 +77,7 @@ const DefaultLayout: React.FC<DefaultLayoutProps> = ({
           padding-top: 0;
         }
 
-        /* Fix scrolling on default pages */
+        /* Enable scrollbar on default pages */
         ::-webkit-scrollbar {
           width: 8px;
           height: 8px;

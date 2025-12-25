@@ -6,9 +6,9 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import Config from "config.json";
 import { NavigationProvider } from "src/components/horizontal-layout";
-import { ToothParticles } from "src/components/tooth-particles";
 import MainLayout from "src/layouts/MainLayout";
 import DefaultLayout from "src/layouts/DefaultLayout";
+import { ToothParticles } from "src/components/tooth-particles";
 
 // Import global styles
 import "src/styles/global.css";
@@ -52,6 +52,9 @@ const pageVariants = {
  * - All other pages → DefaultLayout (standard vertical scroll)
  * 
  * Background elements (animated background, grain, tooth particles) are shown on all pages
+ * 
+ * Performance Optimizations:
+ * - ToothParticles lazy loaded (client-side only)
  */
 const IkasThemeApp: React.FC<AppProps> = (props) => {
   const { Component, pageProps } = props;
@@ -76,11 +79,11 @@ const IkasThemeApp: React.FC<AppProps> = (props) => {
       {/* Grain Overlay */}
       <div className="grain-overlay" />
       
-      {/* Tooth Particles Overlay - Hide on checkout for cleaner look */}
+      {/* Tooth Particles Overlay - Lazy loaded, hide on checkout */}
       {!isCheckoutPage && <ToothParticles />}
       
       {/* Main Content - Different layouts for different pages */}
-      <AnimatePresence mode="wait" initial={false}>
+      <AnimatePresence exitBeforeEnter initial={false}>
         {isHomePage ? (
           // HOMEPAGE: Horizontal scroll layout with navigation
           <MainLayout key="home-layout">

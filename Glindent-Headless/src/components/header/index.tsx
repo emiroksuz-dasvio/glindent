@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigation } from "../horizontal-layout";
 import { useRouter } from "next/router";
+import { getProductMainImage } from "src/lib/product-images";
 
 // ========================
 // IKAS PROPS INTERFACE
@@ -176,6 +177,57 @@ const MinusIcon = ({ className = "" }: { className?: string }) => (
 );
 
 // ========================
+// CART ITEM IMAGE COMPONENT
+// ========================
+const CartItemImage = ({ item }: { item: any }) => {
+  const [imgError, setImgError] = useState(false);
+  
+  // Try multiple paths for ikas image
+  const ikasImg = 
+    // Direct src
+    item.variant?.mainImage?.src ||
+    // Nested image.src structure
+    item.variant?.mainImage?.image?.src ||
+    // Images array - first item
+    item.variant?.images?.[0]?.src ||
+    item.variant?.images?.[0]?.image?.src ||
+    // Product level image
+    item.product?.mainImage?.src ||
+    item.product?.mainImage?.image?.src ||
+    // Variant image URL directly
+    item.variant?.imageUrl ||
+    // Any image property
+    item.variant?.image?.src ||
+    item.variant?.image;
+  
+  // Get product name for fallback matching (use product name, not variant name)
+  const productName = item.product?.name || item.variant?.name || '';
+  const sku = item.variant?.sku || '';
+  
+  // Get fallback from Cloudinary
+  const fallbackImg = getProductMainImage(null, sku, productName);
+  
+  // Use fallback if ikas image failed or doesn't exist
+  const imgSrc = (!imgError && ikasImg) ? ikasImg : fallbackImg;
+  
+  return (
+    <div className="cart-item-image">
+      <img
+        src={imgSrc || '/placeholder.svg'}
+        alt={item.variant?.name || "Product"}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          borderRadius: "8px",
+        }}
+        onError={() => setImgError(true)}
+      />
+    </div>
+  );
+};
+
+// ========================
 // CART DROPDOWN COMPONENT
 // ========================
 const CartDropdown = observer(() => {
@@ -281,60 +333,54 @@ const CartDropdown = observer(() => {
                 </div>
               ) : (
                 <div className="cart-items-list">
-                  {items.map((item: any) => (
-                    <div key={item.id} className="cart-item">
-                      <div className="cart-item-image">
-                        <Image
-                          src={item.variant?.mainImage?.src || "/placeholder.svg"}
-                          alt={item.variant?.name || "Product"}
-                          layout="fill"
-                          objectFit="cover"
-                          unoptimized
-                        />
-                      </div>
-                      <div className="cart-item-details">
-                        <div className="cart-item-top">
-                          <h3 className="cart-item-name">{item.variant?.name || "Product"}</h3>
-                          <button
-                            onClick={() => handleRemoveItem(item)}
-                            disabled={isUpdating === item.id}
-                            className="cart-item-remove"
-                          >
-                            <TrashIcon />
-                          </button>
-                        </div>
-                        {item.options && item.options.length > 0 && (
-                          <p className="cart-item-variant">
-                            {item.options.map((opt: any) => opt.values?.map((v: any) => v.name).join(", ")).join(", ")}
-                          </p>
-                        )}
-                        <div className="cart-item-bottom">
-                          <p className="cart-item-price">
-                            {item.formattedFinalPriceWithQuantity || item.formattedPriceWithQuantity}
-                          </p>
-                          <div className="cart-item-quantity">
+                  {items.map((item: any) => {
+                    return (
+                      <div key={item.id} className="cart-item">
+                        <CartItemImage item={item} />
+                        <div className="cart-item-details">
+                          <div className="cart-item-top">
+                            <h3 className="cart-item-name">{item.variant?.name || item.product?.name || "Product"}</h3>
                             <button
-                              onClick={() => handleUpdateQuantity(item, item.quantity - 1)}
+                              onClick={() => handleRemoveItem(item)}
                               disabled={isUpdating === item.id}
-                              className="quantity-btn"
+                              className="cart-item-remove"
                             >
-                              <MinusIcon />
+                              <TrashIcon />
                             </button>
-                            <span className="quantity-value">
-                              {isUpdating === item.id ? "..." : item.quantity}
-                            </span>
-                            <button
-                              onClick={() => handleUpdateQuantity(item, item.quantity + 1)}
-                              disabled={isUpdating === item.id}
-                              className="quantity-btn"
-                            >
-                              <PlusIcon />
-                            </button>
+                          </div>
+                          {item.options && item.options.length > 0 && (
+                            <p className="cart-item-variant">
+                              {item.options.map((opt: any) => opt.values?.map((v: any) => v.name).join(", ")).join(", ")}
+                            </p>
+                          )}
+                          <div className="cart-item-bottom">
+                            <p className="cart-item-price">
+                              {item.formattedFinalPriceWithQuantity || item.formattedPriceWithQuantity}
+                            </p>
+                            <div className="cart-item-quantity">
+                              <button
+                                onClick={() => handleUpdateQuantity(item, item.quantity - 1)}
+                                disabled={isUpdating === item.id}
+                                className="quantity-btn"
+                              >
+                                <MinusIcon />
+                              </button>
+                              <span className="quantity-value">
+                                {isUpdating === item.id ? "..." : item.quantity}
+                              </span>
+                              <button
+                                onClick={() => handleUpdateQuantity(item, item.quantity + 1)}
+                                disabled={isUpdating === item.id}
+                                className="quantity-btn"
+                              >
+                                <PlusIcon />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>

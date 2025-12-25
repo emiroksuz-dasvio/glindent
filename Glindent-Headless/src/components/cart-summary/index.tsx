@@ -4,6 +4,95 @@ import Link from "next/link";
 import { useState, CSSProperties } from "react";
 
 // ========================
+// RESPONSIVE STYLES
+// ========================
+const responsiveStyles = `
+  .cart-summary-section {
+    background: transparent;
+    padding: 0 20px 60px;
+  }
+  @media (min-width: 640px) {
+    .cart-summary-section {
+      padding: 0 32px 80px;
+    }
+  }
+  @media (min-width: 768px) {
+    .cart-summary-section {
+      padding: 0 48px 100px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .cart-summary-section {
+      padding: 0 64px 120px;
+    }
+  }
+  .cart-summary-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .cart-summary-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  @media (min-width: 640px) {
+    .cart-summary-card {
+      padding: 24px;
+    }
+  }
+  .cart-summary-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0;
+  }
+  @media (min-width: 640px) {
+    .cart-summary-title {
+      font-size: 20px;
+    }
+  }
+  .cart-total-price {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.02em;
+  }
+  @media (min-width: 640px) {
+    .cart-total-price {
+      font-size: 28px;
+    }
+  }
+  .cart-checkout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 52px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #0d9488 0%, #0891b2 50%, #06b6d4 100%);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    margin-bottom: 20px;
+  }
+  @media (min-width: 640px) {
+    .cart-checkout-btn {
+      height: 56px;
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
+  }
+  .cart-checkout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(13, 148, 136, 0.35);
+  }
+`;
+
+// ========================
 // IKAS PROPS INTERFACE
 // ========================
 interface CartSummaryProps {
@@ -306,7 +395,6 @@ const CartSummary: React.FC<CartSummaryProps> = (props) => {
   const [couponCode, setCouponCode] = useState("");
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [couponError, setCouponError] = useState("");
-  const [isCheckoutHovered, setIsCheckoutHovered] = useState(false);
 
   const items = cart?.orderLineItems || [];
   const itemCount = cart?.itemQuantity || 0;
@@ -345,24 +433,26 @@ const CartSummary: React.FC<CartSummaryProps> = (props) => {
   }
 
   return (
-    <section style={styles.section}>
-      <div style={styles.card}>
-        {/* Header */}
-        <div style={styles.header}>
-          <h2 style={styles.headerTitle}>{title}</h2>
-          <span style={styles.itemCount}>{itemCount} items</span>
-        </div>
+    <div className="cart-summary-section">
+      <style dangerouslySetInnerHTML={{ __html: responsiveStyles }} />
+      <div className="cart-summary-container">
+        <div className="cart-summary-card">
+          {/* Header */}
+          <div style={styles.header}>
+            <h2 className="cart-summary-title">{title}</h2>
+            <span style={styles.itemCount}>{itemCount} items</span>
+          </div>
 
-        {/* Free Shipping Progress */}
-        {!isFreeShipping && (
-          <div style={styles.freeShipping}>
-            <div style={styles.freeShippingText}>
-              <TruckIcon />
-              <span>Add £{amountToFreeShipping.toFixed(2)} more for free shipping</span>
-            </div>
-            <div style={styles.progressBar}>
-              <div 
-                style={{
+          {/* Free Shipping Progress */}
+          {!isFreeShipping && (
+            <div style={styles.freeShipping}>
+              <div style={styles.freeShippingText}>
+                <TruckIcon />
+                <span>Add £{amountToFreeShipping.toFixed(2)} more for free shipping</span>
+              </div>
+              <div style={styles.progressBar}>
+                <div 
+                  style={{
                   ...styles.progressFill,
                   width: `${progressToFreeShipping}%`
                 }}
@@ -425,18 +515,13 @@ const CartSummary: React.FC<CartSummaryProps> = (props) => {
         {/* Total */}
         <div style={styles.totalRow}>
           <span style={styles.totalLabel}>{totalLabel}</span>
-          <span style={styles.totalPrice}>£{grandTotal.toFixed(2)}</span>
+          <span className="cart-total-price">£{grandTotal.toFixed(2)}</span>
         </div>
 
         {/* Checkout Button */}
         <a 
           href={checkoutUrl}
-          style={{
-            ...styles.checkoutBtn,
-            ...(isCheckoutHovered ? { transform: "translateY(-2px)", boxShadow: "0 8px 24px rgba(13, 148, 136, 0.35)" } : {}),
-          }}
-          onMouseEnter={() => setIsCheckoutHovered(true)}
-          onMouseLeave={() => setIsCheckoutHovered(false)}
+          className="cart-checkout-btn"
         >
           {checkoutButtonText}
         </a>
@@ -464,8 +549,9 @@ const CartSummary: React.FC<CartSummaryProps> = (props) => {
             <span style={styles.trustLabel}>Quality</span>
           </div>
         </div>
+        </div>
       </div>
-    </section>
+    </div>
   );
 };
 

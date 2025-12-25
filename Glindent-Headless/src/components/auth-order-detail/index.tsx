@@ -81,12 +81,13 @@ const styles: { [key: string]: CSSProperties } = {
     display: "flex",
     alignItems: "flex-start",
     justifyContent: "center",
-    padding: "100px 20px 40px 20px",
+    padding: "120px 20px 60px 20px",
     boxSizing: "border-box" as const,
   },
   container: {
     width: "100%",
     maxWidth: "900px",
+    minHeight: "calc(100vh - 180px)",
     position: "relative" as const,
     zIndex: 10,
   },
@@ -503,9 +504,11 @@ const AuthOrderDetail: React.FC<AuthOrderDetailProps> = (props) => {
                     <p style={styles.infoText}>{shippingAddress.addressLine2}</p>
                   )}
                   <p style={styles.infoText}>
-                    {shippingAddress.city}, {shippingAddress.postalCode}
+                    {typeof shippingAddress.city === 'object' ? shippingAddress.city?.name : shippingAddress.city}, {shippingAddress.postalCode}
                   </p>
-                  <p style={styles.infoText}>{shippingAddress.country}</p>
+                  <p style={styles.infoText}>
+                    {typeof shippingAddress.country === 'object' ? shippingAddress.country?.name : shippingAddress.country}
+                  </p>
                 </div>
 
                 {/* Payment Info */}

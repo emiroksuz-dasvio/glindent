@@ -25,30 +25,68 @@ export function useProductsWithFilters(productList?: IkasProductList) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
 
-  // Extract categories from products
+  // Extract categories from products with proper hierarchy
   const categories = useMemo(() => {
     const categoryMap = new Map<string, Category>();
     
     allProducts.forEach(product => {
-      const cats = (product as any).categories || [];
+      const cats = product.categories || [];
       cats.forEach((cat: any) => {
         if (!categoryMap.has(cat.id)) {
+          // Check for parentId in different possible locations
+          const parentId = cat.parentId || cat.parent?.id || null;
+          
           categoryMap.set(cat.id, {
             id: cat.id,
             name: cat.name,
-            parentId: cat.parentId || null,
+            parentId: parentId,
           });
+          
+          // Also check categoryPathItems for hierarchy
+          if (cat.categoryPathItems && Array.isArray(cat.categoryPathItems)) {
+            cat.categoryPathItems.forEach((pathItem: any, index: number) => {
+              if (!categoryMap.has(pathItem.id)) {
+                const pathParentId = index > 0 ? cat.categoryPathItems[index - 1].id : null;
+                categoryMap.set(pathItem.id, {
+                  id: pathItem.id,
+                  name: pathItem.name,
+                  parentId: pathParentId,
+                });
+              }
+            });
+          }
         }
       });
     });
 
     const allCats = Array.from(categoryMap.values());
     
-    // Build tree - main categories have no parent
+    // Debug: Log categories
+    console.log('=== Categories Debug ===');
+    console.log('All categories:', allCats.map(c => ({ id: c.id, name: c.name, parentId: c.parentId })));
+    
+    // Build tree - main categories have no parent (parentId is null/undefined)
     const mainCats = allCats.filter(c => !c.parentId);
+    
+    // Recursive function to build subcategories
+    const buildSubcategories = (parentId: string): Category[] => {
+      return allCats
+        .filter(c => c.parentId === parentId)
+        .map(cat => ({
+          ...cat,
+          subcategories: buildSubcategories(cat.id)
+        }));
+    };
+    
+    // Assign subcategories to main categories
     mainCats.forEach(main => {
-      main.subcategories = allCats.filter(c => c.parentId === main.id);
+      main.subcategories = buildSubcategories(main.id);
     });
+    
+    console.log('Main categories with subs:', mainCats.map(c => ({
+      name: c.name,
+      subcategories: c.subcategories?.map(s => s.name) || []
+    })));
 
     return { all: allCats, main: mainCats };
   }, [allProducts]);
@@ -96,16 +134,79 @@ export function useProductsWithFilters(productList?: IkasProductList) {
     return result;
   }, [allProducts, selectedCategory, selectedBrand, searchQuery]);
 
-  // Get product count for a category
-  const getCategoryProductCount = useCallback((categoryId: string) => {
-    return allProducts.filter(product => {
+  // Get product count for a category (including products in subcategories)
+  const getCategoryProductCount = useCallback((categoryId: string, includeSubcategories = true) => {
+    // Direct count for this category
+    const directCount = allProducts.filter(product => {
+      const cats = (product as any).categories || [];
+      return cats.some((cat: any) => cat.id === categoryId);
+    }).length;
+    
+    if (!includeSubcategories) return directCount;
+    
+    // Also count products in subcategories
+    const category = categories.all.find(c => c.id === categoryId);
+    if (!category) return directCount;
+    
+    // Get all descendant category IDs
+    const getDescendantIds = (cat: Category): string[] => {
+      const ids: string[] = [];
+      if (cat.subcategories) {
+        cat.subcategories.forEach(sub => {
+          ids.push(sub.id);
+          ids.push(...getDescendantIds(sub));
+        });
+      }
+      return ids;
+    };
+    
+    // Find the category with subcategories from mainCategories
+    const findCategoryWithSubs = (cats: Category[], id: string): Category | null => {
+      for (const c of cats) {
+        if (c.id === id) return c;
+        if (c.subcategories) {
+          const found = findCategoryWithSubs(c.subcategories, id);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    
+    const catWithSubs = findCategoryWithSubs(categories.main, categoryId);
+    if (!catWithSubs) return directCount;
+    
+    const descendantIds = getDescendantIds(catWithSubs);
+    const totalCount = allProducts.filter(product => {
       const cats = (product as any).categories || [];
       return cats.some((cat: any) => 
-        cat.id === categoryId || 
-        cat.parentId === categoryId
+        cat.id === categoryId || descendantIds.includes(cat.id)
       );
     }).length;
-  }, [allProducts]);
+    
+    return totalCount;
+  }, [allProducts, categories]);
+
+  // Check if a category or any of its subcategories have products
+  const categoryHasProducts = useCallback((category: Category): boolean => {
+    const count = getCategoryProductCount(category.id, true);
+    return count > 0;
+  }, [getCategoryProductCount]);
+
+  // Filter main categories to only include those with products
+  const filteredMainCategories = useMemo(() => {
+    const filterCategories = (cats: Category[]): Category[] => {
+      return cats
+        .filter(cat => categoryHasProducts(cat))
+        .map(cat => ({
+          ...cat,
+          subcategories: cat.subcategories 
+            ? filterCategories(cat.subcategories)
+            : undefined
+        }));
+    };
+    
+    return filterCategories(categories.main);
+  }, [categories.main, categoryHasProducts]);
 
   // Clear filters
   const clearFilters = useCallback(() => {
@@ -123,7 +224,7 @@ export function useProductsWithFilters(productList?: IkasProductList) {
     
     // Categories
     categories: categories.all,
-    mainCategories: categories.main,
+    mainCategories: filteredMainCategories, // Only categories with products
     
     // Filters
     selectedCategory,
@@ -136,6 +237,7 @@ export function useProductsWithFilters(productList?: IkasProductList) {
     // Helpers
     availableBrands,
     getCategoryProductCount,
+    categoryHasProducts,
     clearFilters,
   };
 }

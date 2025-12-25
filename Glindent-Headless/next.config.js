@@ -22,7 +22,15 @@ const config = {
     deviceSizes: [
       180, 360, 540, 720, 900, 1080, 1296, 1512, 1728, 1950, 2560, 3840,
     ],
+    // Allow external images from Cloudinary and Unsplash
+    domains: [
+      'res.cloudinary.com',
+      'images.unsplash.com',
+    ],
   },
+
+  // Keep React Strict Mode disabled for ikas compatibility
+  reactStrictMode: false,
 
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     if (!isServer) {

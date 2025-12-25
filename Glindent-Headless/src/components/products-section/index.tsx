@@ -1,10 +1,68 @@
 import { observer } from "mobx-react-lite";
 import { IkasProduct, IkasProductList, useStore } from "@ikas/storefront";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useProductsWithFilters, Category } from "src/hooks/use-all-products";
 import { getProductMainImage, getProductGalleryImages } from "src/lib/product-images";
+
+// ============================================
+// TRANSLATION HELPERS
+// ============================================
+
+// Turkish to English translations for variant types and values
+const variantTranslations: Record<string, string> = {
+  // Variant Types
+  'renk': 'Color',
+  'boyut': 'Size',
+  'beden': 'Size',
+  'ebat': 'Size',
+  'ölçü': 'Dimension',
+  'hacim': 'Volume',
+  'ağırlık': 'Weight',
+  'miktar': 'Quantity',
+  'paket': 'Package',
+  'ton': 'Shade',
+  'numara': 'Number',
+  'çap': 'Diameter',
+  'kalınlık': 'Thickness',
+  'uzunluk': 'Length',
+  'genişlik': 'Width',
+  'yükseklik': 'Height',
+  'kapasite': 'Capacity',
+  'malzeme': 'Material',
+  'tip': 'Type',
+  'model': 'Model',
+  'şekil': 'Shape',
+  'desen': 'Pattern',
+  // Common color names
+  'beyaz': 'White',
+  'siyah': 'Black',
+  'kırmızı': 'Red',
+  'mavi': 'Blue',
+  'yeşil': 'Green',
+  'sarı': 'Yellow',
+  'turuncu': 'Orange',
+  'mor': 'Purple',
+  'pembe': 'Pink',
+  'gri': 'Gray',
+  'kahverengi': 'Brown',
+  'bej': 'Beige',
+  'lacivert': 'Navy',
+  'turkuaz': 'Turquoise',
+  'altın': 'Gold',
+  'gümüş': 'Silver',
+  'şeffaf': 'Transparent',
+  'doğal': 'Natural',
+};
+
+// Translate Turkish text to English
+const translateToEnglish = (text: string): string => {
+  if (!text) return text;
+  const lowerText = text.toLowerCase().trim();
+  return variantTranslations[lowerText] || text;
+};
 
 // ============================================
 // ICONS
@@ -213,6 +271,52 @@ const Toast = ({ toast, onClose }: { toast: ToastState; onClose: () => void }) =
 };
 
 // ============================================
+// RELATED PRODUCT CARD (with image error handling)
+// ============================================
+
+interface RelatedProductCardProps {
+  product: IkasProduct;
+  imageUrl: string;
+  price: string;
+  onClose: () => void;
+  onOpenModal?: (product: IkasProduct) => void;
+}
+
+const RelatedProductCard = ({ product, imageUrl, price, onClose, onOpenModal }: RelatedProductCardProps) => {
+  const [imgError, setImgError] = useState(false);
+  const fallbackImg = getProductMainImage(null, product.selectedVariant?.sku || product.variants?.[0]?.sku, product.name);
+  
+  const displayImage = imgError ? fallbackImg : imageUrl;
+  
+  return (
+    <div 
+      className="related-product-card"
+      onClick={() => {
+        onClose();
+        setTimeout(() => onOpenModal?.(product), 150);
+      }}
+      role="button"
+      tabIndex={0}
+    >
+      <div className="related-product-image">
+        <Image
+          src={displayImage}
+          alt={product.name}
+          layout="fill"
+          objectFit="cover"
+          unoptimized
+          onError={() => setImgError(true)}
+        />
+      </div>
+      <div className="related-product-info">
+        <h4 className="related-product-name">{product.name}</h4>
+        <span className="related-product-price">{price}</span>
+      </div>
+    </div>
+  );
+};
+
+// ============================================
 // PRODUCT DETAIL MODAL
 // ============================================
 
@@ -222,10 +326,12 @@ interface ProductDetailModalProps {
   onClose: () => void;
   allProducts?: IkasProduct[];
   onShowToast?: (message: string, type: 'error' | 'success' | 'warning') => void;
+  onOpenModal?: (product: IkasProduct) => void;
 }
 
-const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [], onShowToast }: ProductDetailModalProps) => {
+const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [], onShowToast, onOpenModal }: ProductDetailModalProps) => {
   const store = useStore();
+  const router = useRouter();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
@@ -234,9 +340,6 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'description' | 'details'>('description');
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
-  
-  // Variant selection state - store selected values for each variant type
-  const [selectedVariantValues, setSelectedVariantValues] = useState<Record<string, string>>({});
 
   useEffect(() => {
     setMounted(true);
@@ -249,31 +352,19 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
     }
   }, [product, isOpen]);
 
-  // Initialize selected variant values when product changes
+  // Debug: Log product data when modal opens
   useEffect(() => {
     if (product && isOpen) {
-      // Debug: Log variant data in detail
+      console.log('=== Product Modal Debug ===');
       console.log('Product name:', product.name);
-      console.log('Product variants count:', product.variants?.length);
-      console.log('Product variantTypes:', JSON.stringify(product.variantTypes, null, 2));
-      if (product.variants?.[0]) {
-        console.log('First variant sample:', JSON.stringify({
-          sku: product.variants[0].sku,
-          variantValues: product.variants[0].variantValues
-        }, null, 2));
-      }
-      
-      // Get current selected variant's values as initial selection
-      const initialSelection: Record<string, string> = {};
-      const currentVariant = product.selectedVariant;
-      if (currentVariant?.variantValues) {
-        currentVariant.variantValues.forEach((vv: any) => {
-          if (vv.variantTypeId) {
-            initialSelection[vv.variantTypeId] = vv.id;
-          }
-        });
-      }
-      setSelectedVariantValues(initialSelection);
+      console.log('Description:', product.description);
+      console.log('Short Description:', product.shortDescription);
+      console.log('Has variants:', product.hasVariant);
+      console.log('Variants count:', product.variants?.length);
+      console.log('VariantTypes:', product.variantTypes);
+      console.log('DisplayedVariantTypes:', product.displayedVariantTypes);
+      console.log('Selected Variant:', product.selectedVariant);
+      console.log('Categories:', (product as any).categories);
     }
   }, [product, isOpen]);
 
@@ -303,57 +394,49 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
     if (e.target === e.currentTarget) onClose();
   };
 
-  // Find the matching variant based on selected variant values
-  const findMatchingVariant = useCallback(() => {
-    if (!product?.variants || product.variants.length === 0) {
-      return product?.selectedVariant;
+  // Use ikas's built-in selectedVariant (updated when user selects variant values)
+  const variant = product?.selectedVariant;
+  
+  // Handle variant value selection using ikas's selectVariantValue method
+  const handleVariantValueSelect = useCallback((variantValue: any) => {
+    if (product) {
+      // Use ikas's built-in method to select variant
+      product.selectVariantValue(variantValue, true); // disableRoute=true to prevent navigation
+      // Reset image to first when variant changes
+      setSelectedImageIndex(0);
+    }
+  }, [product]);
+
+  // Get displayed variant types from ikas (properly formatted for UI)
+  const displayedVariantTypes = useMemo(() => {
+    if (!product) return [];
+    
+    // Use ikas's displayedVariantTypes getter if available
+    const dvt = product.displayedVariantTypes;
+    if (dvt && dvt.length > 0) {
+      console.log('Using displayedVariantTypes:', dvt);
+      return dvt;
     }
     
-    const selectedValueIds = Object.values(selectedVariantValues);
-    if (selectedValueIds.length === 0) {
-      return product?.selectedVariant;
-    }
-
-    // Find variant that matches all selected values
-    const matchingVariant = product.variants.find((v: any) => {
-      if (!v.variantValues) return false;
-      const variantValueIds = v.variantValues.map((vv: any) => vv.id);
-      return selectedValueIds.every(id => variantValueIds.includes(id));
-    });
-
-    return matchingVariant || product?.selectedVariant;
-  }, [product, selectedVariantValues]);
-
-  const variant = findMatchingVariant();
-  
-  // Handle variant value selection
-  const handleVariantValueSelect = useCallback((variantTypeId: string, variantValueId: string) => {
-    setSelectedVariantValues(prev => ({
-      ...prev,
-      [variantTypeId]: variantValueId
-    }));
-    // Reset image to first when variant changes
-    setSelectedImageIndex(0);
-  }, []);
-
-  // Get variant types with their available values
-  const variantTypesWithValues = useMemo(() => {
-    if (!product?.variantTypes || !product?.variants) {
-      console.log('No variantTypes or variants available');
+    // Fallback: manually build from variantTypes and variants
+    if (!product.variantTypes || !product.variants) {
       return [];
     }
     
     const result = product.variantTypes.map((vt: any) => {
-      // Get all unique values for this variant type from all variants
-      const valuesMap = new Map();
+      const displayedVariantValues: any[] = [];
+      const seenValues = new Set<string>();
+      
       product.variants.forEach((v: any) => {
         if (v.variantValues) {
           v.variantValues.forEach((vv: any) => {
-            if (vv.variantTypeId === vt.id && !valuesMap.has(vv.id)) {
-              valuesMap.set(vv.id, {
-                ...vv,
+            if (vv.variantTypeId === vt.id && !seenValues.has(vv.id)) {
+              seenValues.add(vv.id);
+              displayedVariantValues.push({
+                variant: v,
+                variantValue: vv,
                 hasStock: v.stock > 0,
-                isSelected: selectedVariantValues[vt.id] === vv.id
+                isSelected: product.selectedVariantValues?.some((sv: any) => sv.id === vv.id) || false
               });
             }
           });
@@ -361,20 +444,14 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
       });
       
       return {
-        ...vt,
-        values: Array.from(valuesMap.values())
+        variantType: vt,
+        displayedVariantValues
       };
-    }).filter((vt: any) => vt.values.length > 0);
+    }).filter((vt: any) => vt.displayedVariantValues.length > 0);
     
-    console.log('Computed variantTypesWithValues:', JSON.stringify(result.map((v: any) => ({
-      id: v.id,
-      name: v.name,
-      valuesCount: v.values.length,
-      values: v.values.map((val: any) => val.name)
-    })), null, 2));
-    
+    console.log('Fallback variantTypes:', result);
     return result;
-  }, [product?.variantTypes, product?.variants, selectedVariantValues]);
+  }, [product, product?.selectedVariantValues]);
   
   // Get fallback images from Cloudinary
   const fallbackImages: string[] = useMemo(() => {
@@ -383,34 +460,47 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
   }, [variant?.sku, product]);
   
   // Get all images from variant or product with fallback to Cloudinary
+  // This updates automatically when variant changes (variant is product.selectedVariant)
   const allImages: string[] = useMemo(() => {
     if (!product) return [];
     
     const ikasImages: string[] = [];
     
-    // Collect images from ikas
-    if (variant?.mainImage?.image?.src) {
-      ikasImages.push(variant.mainImage.image.src);
+    // PRIORITY 1: Selected variant's images (when user selects a color/size)
+    const currentVariant = product.selectedVariant;
+    if (currentVariant?.mainImage?.image?.src) {
+      ikasImages.push(currentVariant.mainImage.image.src);
     }
-    if (variant?.images?.length) {
-      variant.images.forEach((img: any) => {
+    if (currentVariant?.images?.length) {
+      currentVariant.images.forEach((img: any) => {
         if (img?.image?.src && !ikasImages.includes(img.image.src)) {
           ikasImages.push(img.image.src);
         }
       });
     }
+    
+    // PRIORITY 2: Product main image (if different from variant)
     if ((product as any).mainImage?.image?.src && !ikasImages.includes((product as any).mainImage.image.src)) {
       ikasImages.push((product as any).mainImage.image.src);
     }
     
-    // If we have ikas images, return them (we'll handle errors with onError)
+    // PRIORITY 3: All other variant images (for gallery completeness)
+    if (product.variants) {
+      product.variants.forEach((v: any) => {
+        if (v.mainImage?.image?.src && !ikasImages.includes(v.mainImage.image.src)) {
+          ikasImages.push(v.mainImage.image.src);
+        }
+      });
+    }
+    
+    // If we have ikas images, return them
     if (ikasImages.length > 0) {
       return ikasImages;
     }
     
     // Use fallback if no ikas images
     return fallbackImages;
-  }, [variant, product, fallbackImages]);
+  }, [product, product?.selectedVariant, fallbackImages]);
 
   // Handle image error - get fallback for that index
   const handleImageError = useCallback((index: number) => {
@@ -446,7 +536,9 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
   const handleAddToCart = useCallback(async () => {
     // Check if user is logged in
     if (!isLoggedIn) {
-      onShowToast?.("You must log in first to add items to cart", "warning");
+      onShowToast?.("Please log in to add items to cart", "warning");
+      onClose();
+      router.push('/account/login');
       return;
     }
     
@@ -461,7 +553,7 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
       console.error("Failed to add to cart:", error);
     }
     setIsAdding(false);
-  }, [isLoggedIn, variant, product, quantity, store.cartStore, onShowToast]);
+  }, [isLoggedIn, variant, product, quantity, store.cartStore, onShowToast, onClose, router]);
 
   // Related products
   const relatedProducts = useMemo(() => {
@@ -481,6 +573,17 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
 
   // Early return AFTER all hooks
   if (!product || !mounted) return null;
+
+  // Get selected value name for each variant type
+  const getSelectedValueName = (dvt: any) => {
+    const values = dvt.displayedVariantValues || dvt.values || [];
+    const selected = values.find((dv: any) => dv.isSelected);
+    if (selected) {
+      const variantValue = selected.variantValue || selected;
+      return translateToEnglish(variantValue.name);
+    }
+    return null;
+  };
 
   const modalContent = (
     <div 
@@ -515,7 +618,7 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
             
             {allImages.length > 1 && (
               <div className="product-modal-thumbnails">
-                {allImages.map((src, idx) => (
+                {allImages.slice(0, 6).map((src, idx) => (
                   <button
                     key={idx}
                     className={`product-modal-thumb ${selectedImageIndex === idx ? 'active' : ''}`}
@@ -554,61 +657,119 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
               )}
             </div>
 
-            {/* Variant Selection */}
-            {variantTypesWithValues.length > 0 && (
+            {/* Short Description */}
+            {product.shortDescription && (
+              <p className="product-modal-short-desc">{product.shortDescription}</p>
+            )}
+
+            {/* Variant Selection - Using Dropdown Selects for cleaner UI */}
+            {displayedVariantTypes.length > 0 && (
               <div className="product-modal-variants">
-                {variantTypesWithValues.map((variantType) => (
-                  <div key={variantType.id} className="variant-type-row">
-                    <span className="variant-type-label">{variantType.name}:</span>
-                    <div className="variant-values">
-                      {variantType.values.map((value: { id: string; name: string }) => (
-                        <button
-                          key={value.id}
-                          className={`variant-value-btn ${selectedVariantValues[variantType.id] === value.id ? 'selected' : ''}`}
-                          onClick={() => handleVariantValueSelect(variantType.id, value.id)}
-                        >
-                          {value.name}
-                        </button>
-                      ))}
+                {displayedVariantTypes.map((dvt: any) => {
+                  const typeName = translateToEnglish(dvt.variantType?.name || dvt.name);
+                  const availableValues = (dvt.displayedVariantValues || dvt.values || []).filter((dv: any) => dv.hasStock !== false);
+                  
+                  if (availableValues.length === 0) return null;
+                  
+                  const selectedName = getSelectedValueName(dvt);
+                  
+                  // Use dropdown for more than 4 options, chips for 4 or less
+                  const useDropdown = availableValues.length > 4;
+                  
+                  return (
+                    <div key={dvt.variantType?.id || dvt.id} className="variant-selector-group">
+                      <label className="variant-selector-label">{typeName}</label>
+                      
+                      {useDropdown ? (
+                        <div className="variant-select-wrapper">
+                          <select
+                            className="variant-select"
+                            value={selectedName || ''}
+                            onChange={(e) => {
+                              const selectedValue = availableValues.find((dv: any) => {
+                                const vv = dv.variantValue || dv;
+                                return translateToEnglish(vv.name) === e.target.value;
+                              });
+                              if (selectedValue) {
+                                handleVariantValueSelect(selectedValue.variantValue || selectedValue);
+                              }
+                            }}
+                          >
+                            {availableValues.map((dv: any) => {
+                              const variantValue = dv.variantValue || dv;
+                              const valueName = translateToEnglish(variantValue.name);
+                              return (
+                                <option key={variantValue.id} value={valueName}>
+                                  {valueName}
+                                </option>
+                              );
+                            })}
+                          </select>
+                          <ChevronDownIcon />
+                        </div>
+                      ) : (
+                        <div className="variant-chips-row">
+                          {availableValues.map((dv: any) => {
+                            const variantValue = dv.variantValue || dv;
+                            const isSelected = dv.isSelected || false;
+                            const valueName = translateToEnglish(variantValue.name);
+                            
+                            return (
+                              <button
+                                key={variantValue.id}
+                                className={`variant-chip-small ${isSelected ? 'selected' : ''}`}
+                                onClick={() => handleVariantValueSelect(variantValue)}
+                              >
+                                {valueName}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
-            {/* Description */}
-            {product.shortDescription && (
-              <p className="product-modal-desc">{product.shortDescription}</p>
-            )}
-
-            {/* Stock Status */}
-            <div className="product-modal-stock">
-              {product.hasStock ? (
-                <span className="stock-available">
-                  <CheckIcon /> In Stock
+            {/* Product Meta Info */}
+            <div className="product-modal-meta-section">
+              {/* Stock Status */}
+              <div className="meta-row">
+                <span className="meta-icon">
+                  {product.hasStock ? (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="15" y1="9" x2="9" y2="15"/>
+                      <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                  )}
                 </span>
-              ) : (
-                <span className="stock-unavailable">Out of Stock</span>
+                <span className={`meta-text ${product.hasStock ? 'in-stock' : 'out-of-stock'}`}>
+                  {product.hasStock ? 'In Stock' : 'Out of Stock'}
+                </span>
+              </div>
+
+              {/* SKU */}
+              {variant?.sku && (
+                <div className="meta-row">
+                  <span className="meta-label-inline">SKU:</span>
+                  <span className="meta-text">{variant.sku}</span>
+                </div>
+              )}
+
+              {/* Category */}
+              {(product as any).categories?.length > 0 && (
+                <div className="meta-row">
+                  <span className="meta-label-inline">Category:</span>
+                  <span className="meta-text">{(product as any).categories.map((c: any) => c.name).join(", ")}</span>
+                </div>
               )}
             </div>
-
-            {/* SKU */}
-            {variant?.sku && (
-              <div className="product-modal-meta">
-                <span className="meta-label">SKU:</span>
-                <span className="meta-value">{variant.sku}</span>
-              </div>
-            )}
-
-            {/* Categories */}
-            {(product as any).categories?.length > 0 && (
-              <div className="product-modal-meta">
-                <span className="meta-label">Category:</span>
-                <span className="meta-value">
-                  {(product as any).categories.map((c: any) => c.name).join(", ")}
-                </span>
-              </div>
-            )}
 
             {/* Add to Cart Section */}
             {product.hasStock && (
@@ -640,7 +801,7 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
                   {addedToCart ? (
                     <>
                       <CheckIcon />
-                      <span>Added to Cart!</span>
+                      <span>Added!</span>
                     </>
                   ) : isAdding ? (
                     <span>Adding...</span>
@@ -657,7 +818,7 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
         </div>
 
         {/* Product Description Tabs */}
-        {((product as any).description || product.shortDescription) && (
+        {(product.description || product.shortDescription) && (
           <div className="product-modal-tabs">
             <div className="tabs-header">
               <button 
@@ -666,26 +827,26 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
               >
                 Description
               </button>
-              {variant?.sku && (
-                <button 
-                  className={`tab-btn ${activeTab === 'details' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('details')}
-                >
-                  Details
-                </button>
-              )}
+              <button 
+                className={`tab-btn ${activeTab === 'details' ? 'active' : ''}`}
+                onClick={() => setActiveTab('details')}
+              >
+                Specifications
+              </button>
             </div>
             <div className="tabs-content">
               {activeTab === 'description' && (
                 <div className="tab-panel description-panel">
-                  {(product as any).description ? (
+                  {product.description ? (
                     <div 
                       className="product-full-description"
-                      dangerouslySetInnerHTML={{ __html: (product as any).description }}
+                      dangerouslySetInnerHTML={{ __html: product.description }}
                     />
                   ) : product.shortDescription ? (
                     <p className="product-short-description">{product.shortDescription}</p>
-                  ) : null}
+                  ) : (
+                    <p className="product-no-description">No description available.</p>
+                  )}
                 </div>
               )}
               {activeTab === 'details' && (
@@ -732,28 +893,23 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
             <h3 className="related-heading">Related Products</h3>
             <div className="related-products-grid">
               {relatedProducts.map(p => {
-                const ikasImage = p.selectedVariant?.mainImage?.image?.src || 
-                  (p as any).mainImage?.image?.src;
-                const pImage = getProductMainImage(ikasImage, p.selectedVariant?.sku, p.name);
+                const variantImage = p.selectedVariant?.mainImage?.image?.src;
+                const productImage = (p as any).mainImage?.image?.src;
+                const firstVariantImage = p.variants?.[0]?.mainImage?.image?.src;
+                const ikasImage = variantImage || productImage || firstVariantImage;
+                const pImage = ikasImage || getProductMainImage(null, p.selectedVariant?.sku || p.variants?.[0]?.sku, p.name);
                 const pPrice = p.selectedVariant?.price?.formattedBuyPrice || 
                   p.selectedVariant?.price?.formattedSellPrice || "";
                 
                 return (
-                  <div key={p.id} className="related-product-card">
-                    <div className="related-product-image">
-                      <Image
-                        src={pImage}
-                        alt={p.name}
-                        layout="fill"
-                        objectFit="cover"
-                        unoptimized
-                      />
-                    </div>
-                    <div className="related-product-info">
-                      <h4 className="related-product-name">{p.name}</h4>
-                      <span className="related-product-price">{pPrice}</span>
-                    </div>
-                  </div>
+                  <RelatedProductCard
+                    key={p.id}
+                    product={p}
+                    imageUrl={pImage}
+                    price={pPrice}
+                    onClose={onClose}
+                    onOpenModal={onOpenModal}
+                  />
                 );
               })}
             </div>
@@ -779,6 +935,7 @@ interface ProductCardProps {
 
 const ProductCard = observer(({ product, index, onOpenModal, onShowToast }: ProductCardProps) => {
   const store = useStore();
+  const router = useRouter();
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -810,7 +967,8 @@ const ProductCard = observer(({ product, index, onOpenModal, onShowToast }: Prod
     
     // Check if user is logged in
     if (!isLoggedIn) {
-      onShowToast?.("You must log in first to add items to cart", "warning");
+      onShowToast?.("Please log in to add items to cart", "warning");
+      router.push('/account/login');
       return;
     }
     
@@ -887,7 +1045,7 @@ const ProductCard = observer(({ product, index, onOpenModal, onShowToast }: Prod
 });
 
 // ============================================
-// CATEGORY SIDEBAR ITEM
+// CATEGORY SIDEBAR ITEM (Accordion Style)
 // ============================================
 
 interface CategoryItemProps {
@@ -905,35 +1063,68 @@ const CategoryItem = ({
   getCategoryProductCount,
   level = 0 
 }: CategoryItemProps) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  // Auto-expand if a subcategory is selected
   const hasSubcategories = category.subcategories && category.subcategories.length > 0;
   const isSelected = selectedCategory === category.id;
+  const isChildSelected = hasSubcategories && category.subcategories!.some(
+    sub => sub.id === selectedCategory || 
+    (sub.subcategories || []).some(s => s.id === selectedCategory)
+  );
+  
+  const [isExpanded, setIsExpanded] = useState(isSelected || isChildSelected);
   const count = getCategoryProductCount(category.id);
 
+  // Don't render categories with 0 products
+  if (count === 0) {
+    return null;
+  }
+
+  // Update expansion when selection changes
+  useEffect(() => {
+    if (isSelected || isChildSelected) {
+      setIsExpanded(true);
+    }
+  }, [isSelected, isChildSelected]);
+
+  const handleCategoryClick = () => {
+    if (isSelected) {
+      onSelect(null);
+    } else {
+      onSelect(category.id);
+      if (hasSubcategories) {
+        setIsExpanded(true);
+      }
+    }
+  };
+
+  const handleExpandClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsExpanded(!isExpanded);
+  };
+
   return (
-    <div className="category-item-wrapper">
-      <button
-        className={`category-item ${isSelected ? 'active' : ''}`}
-        style={{ paddingLeft: `${0.75 + level * 0.75}rem` }}
-        onClick={() => onSelect(isSelected ? null : category.id)}
+    <div className={`category-accordion ${level > 0 ? 'subcategory' : ''}`}>
+      <div 
+        className={`category-accordion-header ${isSelected ? 'active' : ''} ${isChildSelected ? 'child-active' : ''}`}
+        onClick={handleCategoryClick}
       >
-        <span className="category-name">{category.name}</span>
-        <span className="category-count">({count})</span>
-        {hasSubcategories && (
-          <button 
-            className="expand-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsExpanded(!isExpanded);
-            }}
-          >
-            <ChevronDownIcon isOpen={isExpanded} />
-          </button>
-        )}
-      </button>
+        <div className="category-info">
+          {hasSubcategories && (
+            <button 
+              className={`expand-toggle ${isExpanded ? 'expanded' : ''}`}
+              onClick={handleExpandClick}
+              aria-label={isExpanded ? 'Collapse' : 'Expand'}
+            >
+              <ChevronDownIcon isOpen={isExpanded} />
+            </button>
+          )}
+          <span className="category-label">{category.name}</span>
+        </div>
+        <span className="category-badge">{count}</span>
+      </div>
       
-      {hasSubcategories && isExpanded && (
-        <div className="subcategories">
+      {hasSubcategories && (
+        <div className={`category-accordion-content ${isExpanded ? 'expanded' : ''}`}>
           {category.subcategories!.map(sub => (
             <CategoryItem
               key={sub.id}
@@ -1095,14 +1286,19 @@ const ProductsSection: React.FC<ProductsSectionProps> = observer((props) => {
         {/* Categories */}
         <div className="filter-section">
           <h4 className="filter-section-title">Categories</h4>
-          <div className="categories-list">
-            <button
-              className={`category-item ${!selectedCategory ? 'active' : ''}`}
+          <div className="categories-accordion">
+            {/* All Products */}
+            <div 
+              className={`category-accordion-header all-products ${!selectedCategory ? 'active' : ''}`}
               onClick={() => setSelectedCategory(null)}
             >
-              <span className="category-name">All Products</span>
-              <span className="category-count">({totalCount})</span>
-            </button>
+              <div className="category-info">
+                <span className="category-label">All Products</span>
+              </div>
+              <span className="category-badge">{totalCount}</span>
+            </div>
+            
+            {/* Category Tree */}
             {mainCategories.map(cat => (
               <CategoryItem
                 key={cat.id}
@@ -1145,14 +1341,19 @@ const ProductsSection: React.FC<ProductsSectionProps> = observer((props) => {
         {/* Categories */}
         <div className="filter-section">
           <h4 className="filter-section-title">Categories</h4>
-          <div className="categories-list">
-            <button
-              className={`category-item ${!selectedCategory ? 'active' : ''}`}
+          <div className="categories-accordion">
+            {/* All Products */}
+            <div 
+              className={`category-accordion-header all-products ${!selectedCategory ? 'active' : ''}`}
               onClick={() => setSelectedCategory(null)}
             >
-              <span className="category-name">All Products</span>
-              <span className="category-count">({totalCount})</span>
-            </button>
+              <div className="category-info">
+                <span className="category-label">All Products</span>
+              </div>
+              <span className="category-badge">{totalCount}</span>
+            </div>
+            
+            {/* Category Tree */}
             {mainCategories.map(cat => (
               <CategoryItem
                 key={cat.id}
@@ -1343,6 +1544,7 @@ const ProductsSection: React.FC<ProductsSectionProps> = observer((props) => {
         onClose={handleCloseModal}
         allProducts={allProducts}
         onShowToast={showToast}
+        onOpenModal={handleOpenModal}
       />
       
       {/* Toast Notification */}
