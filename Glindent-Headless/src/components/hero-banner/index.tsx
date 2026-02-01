@@ -185,7 +185,9 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
           position: relative;
           display: flex;
           min-height: 100vh;
+          min-height: calc(var(--vh, 1vh) * 100);
           height: 100vh;
+          height: calc(var(--vh, 1vh) * 100);
           min-width: 100vw;
           width: 100vw;
           flex-shrink: 0;

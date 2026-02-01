@@ -154,39 +154,118 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
     }
   }, [scrollToSection, totalSections]);
 
-  // Touch gesture navigation
+  // Enhanced cross-platform touch gesture navigation
   useEffect(() => {
+    // Platform detection
+    const userAgent = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+    const isAndroid = /Android/.test(userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(userAgent);
+    
+    let touchStartTime = 0;
+    let isSwiping = false;
+    let touchMoved = false;
+    
     const handleTouchStart = (e: TouchEvent) => {
       touchStartX.current = e.touches[0].clientX;
       touchStartY.current = e.touches[0].clientY;
+      touchStartTime = Date.now();
+      isSwiping = false;
+      touchMoved = false;
+      
+      // iOS Safari specific: prevent default bounce behavior
+      if (isIOS && isSafari) {
+        e.preventDefault();
+      }
+    };
+    
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!touchStartX.current || !touchStartY.current) return;
+      
+      const touchCurrentX = e.touches[0].clientX;
+      const touchCurrentY = e.touches[0].clientY;
+      const deltaX = touchStartX.current - touchCurrentX;
+      const deltaY = touchStartY.current - touchCurrentY;
+      
+      touchMoved = true;
+      
+      // Determine if this is a horizontal swipe with platform-specific thresholds
+      const threshold = isIOS ? 8 : isAndroid ? 12 : 10;
+      
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > threshold) {
+        isSwiping = true;
+        e.preventDefault(); // Prevent scrolling when swiping horizontally
+        
+        // Android specific: additional preventDefault for Samsung Internet
+        if (isAndroid) {
+          e.stopPropagation();
+        }
+      }
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
+      if (!touchStartX.current || !touchStartY.current || !touchMoved) {
+        touchStartX.current = 0;
+        touchStartY.current = 0;
+        return;
+      }
+      
       const touchEndX = e.changedTouches[0].clientX;
       const touchEndY = e.changedTouches[0].clientY;
       const deltaX = touchStartX.current - touchEndX;
       const deltaY = touchStartY.current - touchEndY;
-
-      // Horizontal swipe detected
-      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+      const touchDuration = Date.now() - touchStartTime;
+      
+      // Platform-specific swipe sensitivity
+      const minDistance = isIOS ? 30 : isAndroid ? 40 : 50;
+      const maxDuration = isIOS ? 800 : isAndroid ? 600 : 500;
+      
+      // Only process swipe if it was a horizontal gesture with appropriate timing
+      if (isSwiping && 
+          Math.abs(deltaX) > Math.abs(deltaY) && 
+          Math.abs(deltaX) > minDistance && 
+          touchDuration < maxDuration) {
+        
         if (deltaX > 0 && currentSection < totalSections - 1) {
           scrollToSection(currentSection + 1);
         } else if (deltaX < 0 && currentSection > 0) {
           scrollToSection(currentSection - 1);
         }
       }
+      
+      // Reset
+      touchStartX.current = 0;
+      touchStartY.current = 0;
+      isSwiping = false;
+      touchMoved = false;
     };
 
+    // Enhanced touch event options for better cross-platform support
+    const touchOptions = {
+      passive: false, // Allow preventDefault
+      capture: false
+    };
+    
     const container = scrollContainerRef.current;
     if (container) {
       container.addEventListener("touchstart", handleTouchStart, { passive: true });
+      container.addEventListener("touchmove", handleTouchMove, touchOptions);
       container.addEventListener("touchend", handleTouchEnd, { passive: true });
+      
+      // iOS Safari specific: handle touchcancel
+      if (isIOS) {
+        container.addEventListener("touchcancel", handleTouchEnd, { passive: true });
+      }
     }
 
     return () => {
       if (container) {
         container.removeEventListener("touchstart", handleTouchStart);
+        container.removeEventListener("touchmove", handleTouchMove);
         container.removeEventListener("touchend", handleTouchEnd);
+        if (isIOS) {
+          container.removeEventListener("touchcancel", handleTouchEnd);
+        }
       }
     };
   }, [currentSection, scrollToSection]);
@@ -232,20 +311,45 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
         </motion.div>
 
         <style jsx global>{`
+          /* CSS Custom Properties for cross-platform viewport */
+          :root {
+            --vh: 1vh;
+            --safe-area-inset-top: env(safe-area-inset-top, 0px);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-area-inset-left: env(safe-area-inset-left, 0px);
+            --safe-area-inset-right: env(safe-area-inset-right, 0px);
+          }
+          
           html,
           body {
             overflow: hidden !important;
             height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
             width: 100vw;
             margin: 0;
             padding: 0;
+            /* Cross-platform font smoothing */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
           }
 
           .horizontal-main {
             position: relative;
             height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
             width: 100vw;
             overflow: hidden;
+            touch-action: pan-x pinch-zoom;
+            /* Cross-browser hardware acceleration */
+            -webkit-transform: translate3d(0, 0, 0);
+            -moz-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+            /* Prevent text selection during swipe */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
           }
 
           .horizontal-container {
@@ -254,8 +358,15 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
             display: flex;
             flex-direction: row !important;
             height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
             opacity: 0;
             transition: opacity 0.7s ease;
+            touch-action: pan-x pinch-zoom;
+            /* Cross-browser performance optimization */
+            -webkit-transform: translate3d(0, 0, 0);
+            -moz-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
           }
 
           .horizontal-container.loaded {
@@ -268,7 +379,9 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
             display: flex !important;
             flex-direction: row !important;
             height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
             min-height: 100vh;
+            min-height: calc(var(--vh, 1vh) * 100);
           }
 
           /* Each section should be full viewport width */
@@ -276,19 +389,118 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
             min-width: 100vw;
             width: 100vw;
             min-height: 100vh;
+            min-height: calc(var(--vh, 1vh) * 100);
             height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
             flex-shrink: 0;
             overflow: hidden;
+            touch-action: pan-y pinch-zoom;
+            /* Performance optimization */
+            -webkit-transform: translate3d(0, 0, 0);
+            -moz-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
           }
 
-          /* Hide scrollbars */
+          /* Cross-browser scrollbar hiding */
           ::-webkit-scrollbar {
             display: none;
+            width: 0;
+            height: 0;
           }
           
           * {
             -ms-overflow-style: none;
             scrollbar-width: none;
+          }
+          
+          /* Cross-platform mobile improvements */
+          @media (max-width: 768px) {
+            .horizontal-main,
+            .horizontal-container {
+              -webkit-overflow-scrolling: touch;
+              overscroll-behavior-x: none;
+              overscroll-behavior-y: auto;
+              /* iOS specific optimizations */
+              -webkit-backface-visibility: hidden;
+              -moz-backface-visibility: hidden;
+              backface-visibility: hidden;
+            }
+            
+            .horizontal-section {
+              overflow-y: auto;
+              -webkit-overflow-scrolling: touch;
+              overscroll-behavior: contain;
+              /* Prevent bounce on sections */
+              -webkit-transform: translate3d(0, 0, 0);
+              -moz-transform: translate3d(0, 0, 0);
+              transform: translate3d(0, 0, 0);
+            }
+            
+            /* Prevent zoom on double tap */
+            * {
+              -webkit-tap-highlight-color: transparent;
+              -webkit-touch-callout: none;
+            }
+          }
+          
+          /* iOS Safari specific fixes */
+          @supports (-webkit-touch-callout: none) {
+            html, body {
+              height: -webkit-fill-available;
+              min-height: -webkit-fill-available;
+            }
+            
+            .horizontal-main,
+            .horizontal-container,
+            .horizontal-section {
+              height: -webkit-fill-available;
+              min-height: -webkit-fill-available;
+            }
+            
+            /* Address notch on iPhone X+ */
+            .horizontal-main {
+              padding-top: var(--safe-area-inset-top);
+              padding-bottom: var(--safe-area-inset-bottom);
+              padding-left: var(--safe-area-inset-left);
+              padding-right: var(--safe-area-inset-right);
+            }
+          }
+          
+          /* Android Chrome specific fixes */
+          @media screen and (-webkit-min-device-pixel-ratio: 0) {
+            .horizontal-main {
+              position: fixed;
+              overscroll-behavior: none;
+            }
+            
+            /* Samsung Internet specific */
+            @media screen and (max-width: 768px) {
+              .horizontal-container {
+                -webkit-transform: translateZ(0);
+                -moz-transform: translateZ(0);
+                transform: translateZ(0);
+              }
+            }
+          }
+          
+          /* Firefox specific optimizations */
+          @-moz-document url-prefix() {
+            .horizontal-main {
+              scrollbar-width: none;
+            }
+            
+            .horizontal-container {
+              -moz-transform: translate3d(0, 0, 0);
+            }
+          }
+          
+          /* Edge/IE specific */
+          @supports (-ms-overflow-style: none) {
+            .horizontal-main,
+            .horizontal-container {
+              -ms-overflow-style: none;
+              -ms-scroll-chaining: none;
+            }
           }
         `}</style>
       </main>

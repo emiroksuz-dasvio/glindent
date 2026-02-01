@@ -386,12 +386,54 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
           z-index: 20;
           display: flex;
           height: 100vh;
+          height: calc(var(--vh, 1vh) * 100);
           min-width: 100vw;
           width: 100vw;
           flex-shrink: 0;
           flex-direction: column;
           padding: 5rem 1.5rem 1.5rem;
           overflow: hidden;
+        }
+        
+        /* Mobile-specific scroll improvements with cross-platform support */
+        @media (max-width: 767px) {
+          .contact-section {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            touch-action: pan-y pinch-zoom;
+            padding: 3rem 1rem 2rem;
+            /* Cross-platform performance */
+            -webkit-transform: translate3d(0, 0, 0);
+            -moz-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+            will-change: scroll-position;
+          }
+          
+          .contact-container {
+            overflow: visible;
+            min-height: calc(var(--vh, 1vh) * 100 - 6rem);
+            /* iOS Safari specific */
+            min-height: -webkit-fill-available;
+          }
+        }
+        
+        /* iOS Safari specific fixes */
+        @supports (-webkit-touch-callout: none) {
+          @media (max-width: 767px) {
+            .contact-section {
+              height: -webkit-fill-available;
+              -webkit-overflow-scrolling: touch;
+              -webkit-transform: translateZ(0);
+            }
+          }
+        }
+        
+        /* Android specific optimizations */
+        @media screen and (max-width: 767px) and (-webkit-min-device-pixel-ratio: 0) {
+          .contact-section {
+            overscroll-behavior-y: contain;
+          }
         }
 
         @media (min-width: 640px) {
