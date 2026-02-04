@@ -1063,80 +1063,30 @@ const CategoryItem = ({
   getCategoryProductCount,
   level = 0 
 }: CategoryItemProps) => {
-  // Auto-expand if a subcategory is selected
-  const hasSubcategories = category.subcategories && category.subcategories.length > 0;
   const isSelected = selectedCategory === category.id;
-  const isChildSelected = hasSubcategories && category.subcategories!.some(
-    sub => sub.id === selectedCategory || 
-    (sub.subcategories || []).some(s => s.id === selectedCategory)
-  );
-  
-  const [isExpanded, setIsExpanded] = useState(isSelected || isChildSelected);
   const count = getCategoryProductCount(category.id);
-
-  // Don't render categories with 0 products
-  if (count === 0) {
-    return null;
-  }
-
-  // Update expansion when selection changes
-  useEffect(() => {
-    if (isSelected || isChildSelected) {
-      setIsExpanded(true);
-    }
-  }, [isSelected, isChildSelected]);
 
   const handleCategoryClick = () => {
     if (isSelected) {
       onSelect(null);
     } else {
       onSelect(category.id);
-      if (hasSubcategories) {
-        setIsExpanded(true);
-      }
     }
   };
 
-  const handleExpandClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsExpanded(!isExpanded);
-  };
-
   return (
-    <div className={`category-accordion ${level > 0 ? 'subcategory' : ''}`}>
+    <div>
       <div 
-        className={`category-accordion-header ${isSelected ? 'active' : ''} ${isChildSelected ? 'child-active' : ''}`}
+        className={`category-accordion-header ${isSelected ? 'active' : ''}`}
         onClick={handleCategoryClick}
+        style={{ cursor: 'pointer' }}
       >
         <div className="category-info">
-          {hasSubcategories && (
-            <button 
-              className={`expand-toggle ${isExpanded ? 'expanded' : ''}`}
-              onClick={handleExpandClick}
-              aria-label={isExpanded ? 'Collapse' : 'Expand'}
-            >
-              <ChevronDownIcon isOpen={isExpanded} />
-            </button>
-          )}
           <span className="category-label">{category.name}</span>
         </div>
         <span className="category-badge">{count}</span>
       </div>
-      
-      {hasSubcategories && (
-        <div className={`category-accordion-content ${isExpanded ? 'expanded' : ''}`}>
-          {category.subcategories!.map(sub => (
-            <CategoryItem
-              key={sub.id}
-              category={sub}
-              selectedCategory={selectedCategory}
-              onSelect={onSelect}
-              getCategoryProductCount={getCategoryProductCount}
-              level={level + 1}
-            />
-          ))}
-        </div>
-      )}
+      {/* Subcategories hidden - user requested only 3 main categories */}
     </div>
   );
 };

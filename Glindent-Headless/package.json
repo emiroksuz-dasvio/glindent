@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "generate": "ikas --generate",
+    "create-welcome-video": "python create-welcome-video.py",
     "prettier:all": "npx prettier@^2.1 './**/src/**/*.(ts|tsx|css|scss)' --write"
   },
   "dependencies": {

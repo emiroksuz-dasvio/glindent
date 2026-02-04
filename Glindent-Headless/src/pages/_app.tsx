@@ -9,6 +9,8 @@ import { NavigationProvider } from "src/components/horizontal-layout";
 import MainLayout from "src/layouts/MainLayout";
 import DefaultLayout from "src/layouts/DefaultLayout";
 import { ToothParticles } from "src/components/tooth-particles";
+import { WelcomeModal } from "src/components/welcome-modal";
+import { useFirstVisit } from "src/hooks/use-first-visit";
 
 // Import global styles
 import "src/styles/global.css";
@@ -55,10 +57,12 @@ const pageVariants = {
  * 
  * Performance Optimizations:
  * - ToothParticles lazy loaded (client-side only)
+ * - WelcomeModal shown only on first visit
  */
 const IkasThemeApp: React.FC<AppProps> = (props) => {
   const { Component, pageProps } = props;
   const router = useRouter();
+  const { isFirstVisit, hasChecked } = useFirstVisit();
   
   // Determine if we're on homepage
   const isHomePage = router.pathname === "/" || router.pathname === "/index";
@@ -68,6 +72,22 @@ const IkasThemeApp: React.FC<AppProps> = (props) => {
 
   return (
     <>
+      {/* Welcome Modal - Show only on first visit and homepage */}
+      {hasChecked && (
+        <WelcomeModal
+          videoUrl="/videos/welcome.mp4"
+          videoMp4Url="/videos/welcome.mp4"
+          videoWebmUrl="/videos/welcome.webm"
+          videoOgvUrl="/videos/welcome.ogv"
+          title="Welcome to Glindent"
+          subtitle="Discover premium dental supplies"
+          enableAutoplay={true}
+          showOnlyFirstVisit={true}
+          isOpen={isFirstVisit && isHomePage}
+          onClose={() => {}}
+        />
+      )}
+
       {/* Background Elements - Shown on all pages */}
       <div className="animated-background">
         <div className="orb orb-1" />

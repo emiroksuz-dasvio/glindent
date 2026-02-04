@@ -85,3 +85,14 @@ export type NotFoundProps = {
 	searchPlaceholder?: string;
 };
 
+export type WelcomeModalProps = {
+	videoUrl: string;
+	videoMp4Url?: string;
+	videoWebmUrl?: string;
+	videoOgvUrl?: string;
+	title?: string;
+	subtitle?: string;
+	enableAutoplay?: boolean;
+	showOnlyFirstVisit?: boolean;
+};
+
