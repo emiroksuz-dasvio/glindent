@@ -860,7 +860,11 @@ const CartPage: React.FC = () => {
       <nav className="cart-header-nav" style={{ opacity: isLoaded ? 1 : 0 }}>
         <Link href="/">
           <a style={{ display: "flex", alignItems: "center" }}>
-            <GlindentLogo className="h-7 sm:h-8 md:h-9 w-auto" />
+            <img
+              src="/logo.png"
+              alt="Glindent Logo"
+              style={{ height: "28px", width: "auto" }}
+            />
           </a>
         </Link>
         <div style={{

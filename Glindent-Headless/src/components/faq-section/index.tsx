@@ -99,22 +99,25 @@ const FaqSection: React.FC<FaqSectionProps> = (props) => {
           width: 100vw;
           flex-shrink: 0;
           flex-direction: column;
-          padding: 6rem 1.5rem 1.5rem;
+          padding: 4rem 1.5rem 1.5rem;
           overflow: hidden;
         }
         @media (min-width: 640px) {
           .faq-section {
-            padding: 7rem 2rem 2rem;
+            padding: 5rem 2rem 1.5rem;
+            overflow-y: auto;
           }
         }
         @media (min-width: 768px) {
           .faq-section {
-            padding: 10rem 4rem 3rem;
+            padding: 6rem 4rem 2rem;
+            overflow-y: auto;
           }
         }
         @media (min-width: 1024px) {
           .faq-section {
-            padding: 10rem 5rem 3rem;
+            padding: 8rem 5rem 2rem;
+            overflow: hidden;
           }
         }
 
@@ -125,17 +128,17 @@ const FaqSection: React.FC<FaqSectionProps> = (props) => {
           line-height: 1;
           letter-spacing: -0.02em;
           color: white;
-          margin: 0 0 1.5rem 0;
+          margin: 0 0 1rem 0;
           white-space: nowrap;
         }
         @media (min-width: 640px) {
           .faq-title {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
           }
         }
         @media (min-width: 768px) {
           .faq-title {
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
           }
         }
 
@@ -144,6 +147,19 @@ const FaqSection: React.FC<FaqSectionProps> = (props) => {
           overflow-y: auto;
           padding-right: 0.5rem;
           scrollbar-width: thin;
+          max-height: calc(100vh - 10rem);
+          width: 100%;
+          min-height: 0;
+        }
+        @media (min-width: 640px) {
+          .faq-list {
+            max-height: calc(100vh - 8rem);
+          }
+        }
+        @media (min-width: 1024px) {
+          .faq-list {
+            max-height: none;
+          }
         }
 
         .faq-item {

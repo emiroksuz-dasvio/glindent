@@ -28,12 +28,8 @@ class MyDocument extends Document {
     return (
       <Html lang={locale}>
         <Head>
-          {/* Charset & Viewport */}
+          {/* Charset */}
           <meta charSet="utf-8" />
-          <meta 
-            name="viewport" 
-            content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover, interactive-widget=resizes-content" 
-          />
           
           {/* Cross-platform compatibility meta tags */}
           <meta name="format-detection" content="telephone=yes" />
@@ -41,14 +37,14 @@ class MyDocument extends Document {
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
           <meta name="apple-mobile-web-app-title" content="Glindent" />
-          <meta name="msapplication-TileImage" content="/icon-192.svg" />
+          <meta name="msapplication-TileImage" content="/android-chrome-192x192.png" />
           <meta name="msapplication-TileColor" content="#007A72" />
           <meta name="msapplication-navbutton-color" content="#007A72" />
           <meta name="msapplication-starturl" content="/" />
           
           {/* iOS Safari specific */}
           <meta name="apple-touch-fullscreen" content="yes" />
-          <link rel="apple-touch-startup-image" href="/icon-192.svg" />
+          <link rel="apple-touch-startup-image" href="/apple-touch-icon.png" />
           
           {/* Samsung Internet specific */}
           <meta name="samsung-internet-toolbar-color" content="#007A72" />
@@ -70,12 +66,13 @@ class MyDocument extends Document {
               type="image/webp"
             />
           )}
-          <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
           <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-          <link rel="apple-touch-icon" sizes="180x180" href="/icon-192.svg" />
+          <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+          <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+          <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
           
           {/* PWA Manifest */}
-          <link rel="manifest" href="/manifest.json" />
+          <link rel="manifest" href="/site.webmanifest" />
           <meta name="theme-color" content="#007A72" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

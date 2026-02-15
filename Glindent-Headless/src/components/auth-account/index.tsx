@@ -8,6 +8,16 @@ import HeaderSecondary from "src/components/header-secondary";
 // ========================
 // SVG ICONS
 // ========================
+const DentalInsuranceIcon = () => (
+  <img 
+    src="/dental-insurance.png" 
+    alt="Dental Insurance" 
+    width="24" 
+    height="24"
+    style={{ filter: 'brightness(0) invert(1)' }}
+  />
+);
+
 const UserIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
@@ -310,7 +320,7 @@ const AuthAccount: React.FC<AuthAccountProps> = (props) => {
           <div style={styles.card}>
             <div style={styles.header}>
               <div style={styles.avatar}>
-                <UserIcon />
+                <DentalInsuranceIcon />
               </div>
               <div style={styles.userInfo}>
                 <h1 style={styles.userName}>

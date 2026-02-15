@@ -1025,7 +1025,14 @@ const Header: React.FC<HeaderProps> = observer((props) => {
               unoptimized
             />
           ) : (
-            <GlindentLogo className="h-7 sm:h-8 md:h-9 w-auto" />
+            <Image
+              src="/logo.png"
+              alt="Glindent Logo"
+              width={140}
+              height={36}
+              objectFit="contain"
+              unoptimized
+            />
           )}
         </button>
 
@@ -1247,7 +1254,11 @@ const Header: React.FC<HeaderProps> = observer((props) => {
               >
                 {/* Logo */}
                 <div style={{ marginBottom: "2rem", paddingLeft: "0.5rem", opacity: 0.9 }}>
-                  <GlindentLogo className="h-7 w-auto" />
+                  <img
+                    src="/logo.png"
+                    alt="Glindent Logo"
+                    style={{ height: "28px", width: "auto" }}
+                  />
                 </div>
 
                 {/* Navigation Links */}

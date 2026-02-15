@@ -23,10 +23,8 @@ interface ContactSectionProps {
   formCardTitle?: string;
   submitButtonText?: string;
   // Social media links
-  twitterUrl?: string;
   instagramUrl?: string;
   linkedinUrl?: string;
-  dribbbleUrl?: string;
 }
 
 // SVG Icons
@@ -57,12 +55,6 @@ const SendIcon = () => (
   </svg>
 )
 
-const TwitterIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>
-  </svg>
-)
-
 const InstagramIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
@@ -76,15 +68,6 @@ const LinkedInIcon = () => (
     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
     <rect width="4" height="12" x="2" y="9"/>
     <circle cx="4" cy="4" r="2"/>
-  </svg>
-)
-
-const DribbbleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/>
-    <path d="M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94"/>
-    <path d="M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32"/>
-    <path d="M8.56 2.75c4.37 6 6 9.42 8 17.72"/>
   </svg>
 )
 
@@ -113,10 +96,8 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
     contactCardDescription = "Fill up the form and our Team will get back to you within 24 hours.",
     formCardTitle = "Send a Message",
     submitButtonText = "Send Message",
-    twitterUrl = "#",
     instagramUrl = "#",
     linkedinUrl = "#",
-    dribbbleUrl = "#",
   } = props;
 
   const [formData, setFormData] = useState<FormData>({
@@ -269,11 +250,6 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
             <div className="social-section">
               <span className="social-label">Follow Us</span>
               <div className="social-links">
-                {twitterUrl && (
-                  <a href={twitterUrl} className="social-link twitter" aria-label="Twitter">
-                    <TwitterIcon />
-                  </a>
-                )}
                 {instagramUrl && (
                   <a href={instagramUrl} className="social-link instagram" aria-label="Instagram">
                     <InstagramIcon />
@@ -282,11 +258,6 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
                 {linkedinUrl && (
                   <a href={linkedinUrl} className="social-link linkedin" aria-label="LinkedIn">
                     <LinkedInIcon />
-                  </a>
-                )}
-                {dribbbleUrl && (
-                  <a href={dribbbleUrl} className="social-link dribbble" aria-label="Dribbble">
-                    <DribbbleIcon />
                   </a>
                 )}
               </div>
@@ -312,7 +283,6 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
                       if (errors.name) setErrors({ ...errors, name: undefined })
                     }}
                     className={`form-input ${errors.name ? 'has-error' : ''}`}
-                    placeholder="John Doe"
                   />
                   {errors.name && (
                     <p className="form-error">{errors.name}</p>
@@ -329,7 +299,6 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
                       if (errors.email) setErrors({ ...errors, email: undefined })
                     }}
                     className={`form-input ${errors.email ? 'has-error' : ''}`}
-                    placeholder="john@example.com"
                   />
                   {errors.email && (
                     <p className="form-error">{errors.email}</p>
@@ -527,10 +496,12 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
           grid-template-columns: 1fr;
           gap: 1rem;
           flex: 1;
+          width: 100%;
           overflow-y: auto;
           overflow-x: hidden;
           padding-right: 0.5rem;
           -webkit-overflow-scrolling: touch;
+          min-height: 0;
         }
 
         .contact-grid::-webkit-scrollbar {
@@ -554,6 +525,9 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
         @media (min-width: 640px) {
           .contact-grid {
             gap: 1.5rem;
+            grid-template-columns: 1fr;
+            height: auto;
+            max-height: none;
           }
         }
 
@@ -564,6 +538,8 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
             align-items: start;
             overflow: hidden;
             padding-right: 0;
+            height: auto;
+            max-height: none;
           }
         }
 
@@ -578,6 +554,8 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
           transition: all 0.7s ease;
           opacity: 0;
+          min-height: auto;
+          height: 100%;
         }
 
         .contact-info-card {
@@ -599,6 +577,9 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
           .contact-form-card {
             padding: 1.5rem;
             border-radius: 1.5rem;
+            min-height: auto;
+            max-height: none;
+            height: 100%;
           }
         }
 
@@ -606,8 +587,9 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
           .contact-info-card,
           .contact-form-card {
             padding: 2rem;
-            max-height: calc(100vh - 14rem);
-            overflow-y: auto;
+            max-height: none;
+            overflow-y: visible;
+            height: auto;
           }
         }
 
@@ -626,6 +608,7 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
         }
 
         .card-description {
+          display: none;
           color: #6b7280;
           font-size: 0.875rem;
           margin-bottom: 1.5rem;
@@ -782,14 +765,15 @@ const ContactSection: React.FC<ContactSectionProps> = (props) => {
         }
 
         .social-section {
-          margin-top: 1.25rem;
+          margin-top: auto;
           padding-top: 1.25rem;
           border-top: 1px solid #f3f4f6;
+          flex-shrink: 0;
         }
 
         @media (min-width: 640px) {
           .social-section {
-            margin-top: 1.5rem;
+            margin-top: auto;
             padding-top: 1.5rem;
           }
         }

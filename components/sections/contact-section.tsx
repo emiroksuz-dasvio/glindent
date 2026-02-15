@@ -1,6 +1,6 @@
 "use client"
 
-import { MapPin, Phone, Send, Twitter, Instagram, Linkedin, Dribbble, Mail } from "lucide-react"
+import { MapPin, Phone, Send, Instagram, Linkedin, Mail } from "lucide-react"
 import { useReveal } from "@/hooks/use-reveal"
 import { useState, type FormEvent } from "react"
 import { toast } from "sonner"
@@ -75,7 +75,7 @@ export function ContactSection() {
       ref={ref}
       className="relative z-20 flex min-h-screen w-screen shrink-0 snap-start flex-col px-6 pt-24 pb-6 sm:px-8 sm:pt-28 sm:pb-8 md:px-16 md:pt-40 md:pb-12 lg:px-20 overflow-x-hidden"
     >
-      <div className="h-full flex flex-col w-full justify-center">
+      <div className="flex-1 flex flex-col w-full justify-start">
         {/* Title */}
         <div
           className={`mb-6 sm:mb-8 md:mb-12 shrink-0 transition-all duration-700 ${
@@ -89,7 +89,7 @@ export function ContactSection() {
         </div>
 
         {/* Main Content Grid */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-stretch">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start lg:items-stretch overflow-y-auto lg:overflow-y-visible max-h-[calc(100vh-20rem)] lg:max-h-none">
           
           {/* Left Card - Contact Information */}
           <div 
@@ -159,10 +159,8 @@ export function ContactSection() {
               <span className="font-mono text-xs text-gray-400 uppercase tracking-wider block mb-5">Follow Us</span>
               <div className="flex gap-3">
                 {[
-                  { icon: Twitter, label: "Twitter", href: "#", color: "hover:bg-sky-500 hover:border-sky-500" },
                   { icon: Instagram, label: "Instagram", href: "#", color: "hover:bg-pink-600 hover:border-pink-600" },
-                  { icon: Linkedin, label: "LinkedIn", href: "#", color: "hover:bg-blue-600 hover:border-blue-600" },
-                  { icon: Dribbble, label: "Dribbble", href: "#", color: "hover:bg-pink-500 hover:border-pink-500" }
+                  { icon: Linkedin, label: "LinkedIn", href: "#", color: "hover:bg-blue-600 hover:border-blue-600" }
                 ].map(({ icon: Icon, label, href, color }) => (
                   <a
                     key={label}
@@ -202,7 +200,6 @@ export function ContactSection() {
                     className={`w-full rounded-xl border-0 bg-gray-50 px-4 py-3.5 text-base text-gray-900 placeholder:text-gray-400 transition-all hover:bg-gray-100 focus:bg-white focus:outline-none focus:ring-2 ${
                       errors.name ? "focus:ring-red-400" : "focus:ring-teal-500/20"
                     }`}
-                    placeholder="John Doe"
                   />
                   {errors.name && (
                     <p className="mt-1 text-xs text-red-500">{errors.name}</p>

@@ -352,22 +352,7 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
     }
   }, [product, isOpen]);
 
-  // Debug: Log product data when modal opens
-  useEffect(() => {
-    if (product && isOpen) {
-      console.log('=== Product Modal Debug ===');
-      console.log('Product name:', product.name);
-      console.log('Description:', product.description);
-      console.log('Short Description:', product.shortDescription);
-      console.log('Has variants:', product.hasVariant);
-      console.log('Variants count:', product.variants?.length);
-      console.log('VariantTypes:', product.variantTypes);
-      console.log('DisplayedVariantTypes:', product.displayedVariantTypes);
-      console.log('Selected Variant:', product.selectedVariant);
-      console.log('Categories:', (product as any).categories);
-    }
-  }, [product, isOpen]);
-
+  // Reset state when modal closes
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -414,7 +399,6 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
     // Use ikas's displayedVariantTypes getter if available
     const dvt = product.displayedVariantTypes;
     if (dvt && dvt.length > 0) {
-      console.log('Using displayedVariantTypes:', dvt);
       return dvt;
     }
     
@@ -449,7 +433,6 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
       };
     }).filter((vt: any) => vt.displayedVariantValues.length > 0);
     
-    console.log('Fallback variantTypes:', result);
     return result;
   }, [product, product?.selectedVariantValues]);
   
@@ -519,10 +502,22 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
     return getDisplayImage(selectedImageIndex);
   }, [getDisplayImage, selectedImageIndex]);
 
+  // Format price helper with currency symbol
+  const formatPrice = (price: any, currencySymbol: string = '£') => {
+    if (!price || price === 0) return null;
+    if (typeof price === 'string') return price;
+    if (typeof price === 'number') return `${currencySymbol}${price.toFixed(2)}`;
+    return null;
+  };
+
   const priceDisplay = useMemo(() => {
-    return variant?.price?.formattedBuyPrice || 
-      variant?.price?.formattedSellPrice || 
-      "Contact for price";
+    const currencySymbol = variant?.price?.currencySymbol || '£';
+    
+    // Use raw numeric prices (formatted getters seem broken)
+    if (variant?.price?.buyPrice) return formatPrice(variant.price.buyPrice, currencySymbol);
+    if (variant?.price?.sellPrice) return formatPrice(variant.price.sellPrice, currencySymbol);
+    
+    return "Contact for price";
   }, [variant?.price]);
 
   const originalPrice = variant?.price?.formattedSellPrice;
@@ -948,9 +943,44 @@ const ProductCard = observer(({ product, index, onOpenModal, onShowToast }: Prod
   const fallbackImage = getProductMainImage(null, variant?.sku, product.name);
   const imageUrl = imageError ? fallbackImage : (ikasImageUrl || fallbackImage);
 
-  const priceDisplay = variant?.price?.formattedBuyPrice || 
-    variant?.price?.formattedSellPrice ||
-    "Contact for price";
+  // Format price helper with currency symbol
+  const formatPrice = (price: any, currencySymbol: string = '£') => {
+    if (!price || price === 0) return null;
+    if (typeof price === 'string') return price;
+    if (typeof price === 'number') return `${currencySymbol}${price.toFixed(2)}`;
+    return null;
+  };
+
+  // Get price - try multiple sources
+  const priceDisplay = useMemo(() => {
+    const currencySymbol = variant?.price?.currencySymbol || '£';
+    
+    // Try raw numeric prices first (most reliable)
+    if (variant?.price?.buyPrice) return formatPrice(variant.price.buyPrice, currencySymbol);
+    if (variant?.price?.sellPrice) return formatPrice(variant.price.sellPrice, currencySymbol);
+    
+    // Fallback to formatted prices
+    if (variant?.price?.formattedBuyPrice) return variant.price.formattedBuyPrice;
+    if (variant?.price?.formattedSellPrice) return variant.price.formattedSellPrice;
+    
+    // If no variant, try getting cheapest variant price
+    if (!variant && product.variants && product.variants.length > 0) {
+      const variantsWithPrice = product.variants.filter((v: any) => 
+        v.price?.buyPrice || v.price?.sellPrice
+      );
+      if (variantsWithPrice.length > 0) {
+        const cheapest = variantsWithPrice.reduce((acc: any, v: any) => {
+          const accPrice = parseFloat(acc.price?.buyPrice || acc.price?.sellPrice || '0');
+          const vPrice = parseFloat(v.price?.buyPrice || v.price?.sellPrice || '0');
+          return vPrice < accPrice ? v : acc;
+        });
+        const cheapestCurrency = cheapest.price?.currencySymbol || '£';
+        return formatPrice(cheapest.price?.buyPrice || cheapest.price?.sellPrice, cheapestCurrency);
+      }
+    }
+    
+    return "Contact for price";
+  }, [variant, product.variants]);
 
   // Check if user is logged in
   const customer = store.customerStore.customer;

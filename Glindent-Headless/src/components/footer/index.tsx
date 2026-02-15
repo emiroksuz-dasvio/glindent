@@ -152,7 +152,7 @@ const Footer: React.FC<FooterProps> = (props) => {
             {logo?.src ? (
               <img src={logo.src} alt="Glindent Logo" className="footer-logo-img" />
             ) : (
-              <GlindentLogo />
+              <img src="/logo.png" alt="Glindent Logo" className="footer-logo-img" />
             )}
             <p className="footer-tagline">{tagline}</p>
             <p className="footer-description">
