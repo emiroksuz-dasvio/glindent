@@ -200,26 +200,21 @@ const CartItemImage = ({ item }: { item: any }) => {
     item.variant?.image?.src ||
     item.variant?.image;
   
-  // Get product name for fallback matching (use product name, not variant name)
-  const productName = item.product?.name || item.variant?.name || '';
-  const sku = item.variant?.sku || '';
-  
-  // Get fallback from Cloudinary
-  const fallbackImg = getProductMainImage(null, sku, productName);
-  
-  // Use fallback if ikas image failed or doesn't exist
-  const imgSrc = (!imgError && ikasImg) ? ikasImg : fallbackImg;
+  // Use ikas image if available and no error, otherwise use placeholder
+  const imgSrc = (!imgError && ikasImg) ? ikasImg : getProductMainImage(null);
+  const isLogoFallback = imgSrc === '/glindent-logo.png';
   
   return (
     <div className="cart-item-image">
       <img
-        src={imgSrc || '/placeholder.svg'}
+        src={imgSrc}
         alt={item.variant?.name || "Product"}
         style={{
           width: "100%",
           height: "100%",
-          objectFit: "cover",
+          objectFit: isLogoFallback ? "contain" : "cover",
           borderRadius: "8px",
+          padding: isLogoFallback ? "8px" : "0",
         }}
         onError={() => setImgError(true)}
       />
@@ -968,7 +963,7 @@ const Header: React.FC<HeaderProps> = observer((props) => {
           padding: 0;
         }
         .section-indicator.active {
-          width: 2rem;
+          width: 1.5rem;
           background: white;
         }
         .section-indicator:not(.active) {
@@ -977,6 +972,19 @@ const Header: React.FC<HeaderProps> = observer((props) => {
         }
         .section-indicator:not(.active):hover {
           background: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Smaller dots on mobile */
+        @media (max-width: 768px) {
+          .section-indicator {
+            height: 0.25rem;
+          }
+          .section-indicator.active {
+            width: 0.75rem;
+          }
+          .section-indicator:not(.active) {
+            width: 0.25rem;
+          }
         }
         
         .shop-now-btn {

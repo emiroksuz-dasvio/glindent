@@ -412,9 +412,7 @@ const CartItem = observer(({
   // Get product name for fallback (prefer product name over variant name)
   const productName = (item as any).product?.name || item.variant?.name || "Product";
   const displayName = item.variant?.name || productName;
-  const sku = item.variant?.sku;
-  const cloudinaryFallback = getProductMainImage(null, sku, productName);
-  const imageSrc = imageError || !ikasImageUrl ? cloudinaryFallback : ikasImageUrl;
+  const imageSrc = imageError || !ikasImageUrl ? getProductMainImage(null) : ikasImageUrl;
   const options = item.options?.map(opt => `${opt.name}: ${opt.values?.join(", ")}`).join(", ") || "";
 
   return (
@@ -432,8 +430,9 @@ const CartItem = observer(({
           style={{
             width: "100%",
             height: "100%",
-            objectFit: "cover",
+            objectFit: imageSrc === '/glindent-logo.png' ? "contain" : "cover",
             borderRadius: "12px",
+            padding: imageSrc === '/glindent-logo.png' ? "8px" : "0",
           }}
           onError={() => setImageError(true)}
         />

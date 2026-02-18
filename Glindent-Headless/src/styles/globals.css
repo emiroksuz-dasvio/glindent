@@ -1577,12 +1577,22 @@ img {
   background: #f9fafb;
 }
 
+.product-image-wrapper.logo-fallback {
+  padding: 1.5rem;
+  background: white;
+}
+
 .product-image {
   transition: transform 0.3s ease;
 }
 
 .product-card:hover .product-image {
   transform: scale(1.05);
+}
+
+/* Don't scale logo on hover */
+.product-card:hover .logo-fallback .product-image {
+  transform: scale(1);
 }
 
 .out-of-stock-badge {
@@ -2432,6 +2442,11 @@ img {
   background: #f3f4f6;
 }
 
+.related-product-image.logo-fallback {
+  padding: 1rem;
+  background: white;
+}
+
 .related-product-info {
   padding: 0.75rem;
 }
@@ -3128,6 +3143,11 @@ img {
   background: #f3f4f6;
 }
 
+.cart-item-image.logo-fallback {
+  padding: 8px;
+  background: white;
+}
+
 .cart-item-image img {
   width: 100%;
   height: 100%;
@@ -3279,6 +3299,13 @@ img[alt]::after {
     /* Cross-platform touch feedback */
     -webkit-tap-highlight-color: rgba(0, 168, 154, 0.2);
     -webkit-touch-callout: none;
+  }
+  
+  /* Exception for indicator dots - they need to be small */
+  .section-indicator,
+  .slide-indicator {
+    min-height: unset !important;
+    min-width: unset !important;
   }
   
   /* Better text readability on mobile - cross platform */

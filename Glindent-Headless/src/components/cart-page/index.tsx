@@ -121,13 +121,8 @@ const CartItem = observer(({ item, onRemove, onUpdateQuantity }: {
     (item.variant as any)?.images?.[0]?.src ||
     (item.variant as any)?.images?.[0]?.image?.src;
   
-  // Get Cloudinary fallback using SKU or product name
-  const sku = item.variant?.sku;
-  const productName = item.variant?.name || "Product";
-  const cloudinaryFallback = getProductMainImage(null, sku, productName);
-  
-  // Use ikas image if available and no error, otherwise use Cloudinary fallback
-  const imageUrl = imageError || !ikasImageUrl ? cloudinaryFallback : ikasImageUrl;
+  // Use ikas image if available and no error, otherwise use placeholder
+  const imageUrl = imageError || !ikasImageUrl ? getProductMainImage(null) : ikasImageUrl;
   
   const handleQuantityChange = async (newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -145,12 +140,12 @@ const CartItem = observer(({ item, onRemove, onUpdateQuantity }: {
       transition={{ duration: 0.3 }}
       className="cart-item"
     >
-      <div className="cart-item-image">
+      <div className={`cart-item-image ${imageUrl === '/glindent-logo.png' ? 'logo-fallback' : ''}`}>
         <Image
           src={imageUrl}
           alt={item.variant?.name || "Product"}
           layout="fill"
-          objectFit="cover"
+          objectFit={imageUrl === '/glindent-logo.png' ? "contain" : "cover"}
           unoptimized
           onError={() => setImageError(true)}
         />

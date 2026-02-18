@@ -283,10 +283,8 @@ interface RelatedProductCardProps {
 }
 
 const RelatedProductCard = ({ product, imageUrl, price, onClose, onOpenModal }: RelatedProductCardProps) => {
-  const [imgError, setImgError] = useState(false);
-  const fallbackImg = getProductMainImage(null, product.selectedVariant?.sku || product.variants?.[0]?.sku, product.name);
-  
-  const displayImage = imgError ? fallbackImg : imageUrl;
+  const displayImage = getProductMainImage(imageUrl);
+  const isLogoFallback = displayImage === '/glindent-logo.png';
   
   return (
     <div 
@@ -298,14 +296,13 @@ const RelatedProductCard = ({ product, imageUrl, price, onClose, onOpenModal }: 
       role="button"
       tabIndex={0}
     >
-      <div className="related-product-image">
+      <div className={`related-product-image ${isLogoFallback ? 'logo-fallback' : ''}`}>
         <Image
           src={displayImage}
           alt={product.name}
           layout="fill"
-          objectFit="cover"
+          objectFit={isLogoFallback ? "contain" : "cover"}
           unoptimized
-          onError={() => setImgError(true)}
         />
       </div>
       <div className="related-product-info">
@@ -339,18 +336,10 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
   const modalRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'description' | 'details'>('description');
-  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  // Reset image errors when product changes
-  useEffect(() => {
-    if (product && isOpen) {
-      setImageErrors(new Set());
-    }
-  }, [product, isOpen]);
 
   // Reset state when modal closes
   useEffect(() => {
@@ -436,14 +425,7 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
     return result;
   }, [product, product?.selectedVariantValues]);
   
-  // Get fallback images from Cloudinary
-  const fallbackImages: string[] = useMemo(() => {
-    if (!product) return [];
-    return getProductGalleryImages([], variant?.sku, product.name);
-  }, [variant?.sku, product]);
-  
-  // Get all images from variant or product with fallback to Cloudinary
-  // This updates automatically when variant changes (variant is product.selectedVariant)
+  // Get all images from IKAS variant and product
   const allImages: string[] = useMemo(() => {
     if (!product) return [];
     
@@ -476,31 +458,14 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
       });
     }
     
-    // If we have ikas images, return them
-    if (ikasImages.length > 0) {
-      return ikasImages;
-    }
-    
-    // Use fallback if no ikas images
-    return fallbackImages;
-  }, [product, product?.selectedVariant, fallbackImages]);
+    // Filter and return only valid IKAS images
+    return getProductGalleryImages(ikasImages);
+  }, [product, product?.selectedVariant]);
 
-  // Handle image error - get fallback for that index
-  const handleImageError = useCallback((index: number) => {
-    setImageErrors(prev => new Set(prev).add(index));
-  }, []);
-
-  // Get actual image to display (considering errors)
-  const getDisplayImage = useCallback((index: number): string => {
-    if (imageErrors.has(index) && fallbackImages.length > 0) {
-      return fallbackImages[Math.min(index, fallbackImages.length - 1)];
-    }
-    return allImages[index] || fallbackImages[0] || '/placeholder.svg';
-  }, [allImages, fallbackImages, imageErrors]);
-
+  // Get current image to display
   const currentImage = useMemo(() => {
-    return getDisplayImage(selectedImageIndex);
-  }, [getDisplayImage, selectedImageIndex]);
+    return allImages[selectedImageIndex] || '/glindent-logo.png';
+  }, [allImages, selectedImageIndex]);
 
   // Format price helper with currency symbol
   const formatPrice = (price: any, currencySymbol: string = '£') => {
@@ -607,7 +572,6 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
                 objectFit="contain"
                 unoptimized
                 priority
-                onError={() => handleImageError(selectedImageIndex)}
               />
             </div>
             
@@ -620,13 +584,12 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
                     onClick={() => setSelectedImageIndex(idx)}
                   >
                     <Image
-                      src={getDisplayImage(idx)}
+                      src={allImages[idx]}
                       alt={`${product.name} ${idx + 1}`}
                       width={64}
                       height={64}
                       objectFit="cover"
                       unoptimized
-                      onError={() => handleImageError(idx)}
                     />
                   </button>
                 ))}
@@ -892,7 +855,7 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
                 const productImage = (p as any).mainImage?.image?.src;
                 const firstVariantImage = p.variants?.[0]?.mainImage?.image?.src;
                 const ikasImage = variantImage || productImage || firstVariantImage;
-                const pImage = ikasImage || getProductMainImage(null, p.selectedVariant?.sku || p.variants?.[0]?.sku, p.name);
+                const pImage = getProductMainImage(ikasImage);
                 const pPrice = p.selectedVariant?.price?.formattedBuyPrice || 
                   p.selectedVariant?.price?.formattedSellPrice || "";
                 
@@ -934,14 +897,11 @@ const ProductCard = observer(({ product, index, onOpenModal, onShowToast }: Prod
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [imageError, setImageError] = useState(false);
 
   const variant = product.selectedVariant;
   
-  // Get image with fallback to Cloudinary
-  const ikasImageUrl = variant?.mainImage?.image?.src || (product as any).mainImage?.image?.src;
-  const fallbackImage = getProductMainImage(null, variant?.sku, product.name);
-  const imageUrl = imageError ? fallbackImage : (ikasImageUrl || fallbackImage);
+  // Get image from IKAS
+  const imageUrl = getProductMainImage(variant?.mainImage?.image?.src || (product as any).mainImage?.image?.src);
 
   // Format price helper with currency symbol
   const formatPrice = (price: any, currencySymbol: string = '£') => {
@@ -1026,15 +986,14 @@ const ProductCard = observer(({ product, index, onOpenModal, onShowToast }: Prod
       style={{ transitionDelay: `${Math.min(index * 30, 200)}ms` }}
     >
       <div className="product-card" onClick={handleCardClick} role="button" tabIndex={0}>
-        <div className="product-image-wrapper">
+        <div className={`product-image-wrapper ${imageUrl === '/glindent-logo.png' ? 'logo-fallback' : ''}`}>
           <Image
             src={imageUrl}
             alt={product.name}
             layout="fill"
-            objectFit="cover"
+            objectFit={imageUrl === '/glindent-logo.png' ? "contain" : "cover"}
             className="product-image"
             unoptimized
-            onError={() => setImageError(true)}
           />
           {!product.hasStock && (
             <div className="out-of-stock-badge">Out of Stock</div>

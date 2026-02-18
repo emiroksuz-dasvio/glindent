@@ -427,8 +427,19 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
         }
         .slide-indicator.active {
           background: white;
-          height: 2rem;
+          height: 1.5rem;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Smaller dots on mobile */
+        @media (max-width: 768px) {
+          .slide-indicator {
+            width: 0.25rem;
+            height: 0.25rem;
+          }
+          .slide-indicator.active {
+            height: 0.75rem;
+          }
         }
         
         .image-card {
