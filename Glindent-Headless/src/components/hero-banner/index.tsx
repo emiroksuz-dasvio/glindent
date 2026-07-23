@@ -128,7 +128,7 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
   const swiperRef = useRef<SwiperType | null>(null);
   
   // Use navigation context for horizontal slider
-  const { scrollToSection } = useNavigation();
+  const { scrollToId } = useNavigation();
 
   // Set mounted after initial render to avoid jarring animations on page load
   useEffect(() => {
@@ -163,17 +163,10 @@ const HeroBanner: React.FC<HeroBannerProps> = (props) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
-  const scrollToProducts = () => {
-    scrollToSection(2); // Products is index 2 (home: 0, about: 1, products: 2, faq: 3, contact: 4)
-  };
-
-  const scrollToContact = () => {
-    scrollToSection(4); // Contact is index 4 (home: 0, about: 1, products: 2, faq: 3, contact: 4)
-  };
-
-  const scrollToAbout = () => {
-    scrollToSection(1); // About is index 1 (next section after hero)
-  };
+  // Navigate by section id — positions come from the ikas panel and can change
+  const scrollToProducts = () => scrollToId("products");
+  const scrollToContact = () => scrollToId("contact");
+  const scrollToAbout = () => scrollToId("about");
 
   return (
     <section

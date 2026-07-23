@@ -1,10 +1,42 @@
 import React, { useRef, useEffect, useState, createContext, useContext, ReactNode, useCallback } from "react";
 import { motion, useMotionValue, useSpring, animate } from "framer-motion";
 
+// Stable section ids, rendered as the `id` attribute of each `.horizontal-section`.
+// Never navigate by a hardcoded index: the section ORDER is decided in the ikas panel
+// and can differ from the local theme.json, which silently breaks index-based links.
+export type SectionId = "hero" | "about" | "products" | "faq" | "contact";
+
+export const SECTION_IDS: SectionId[] = ["hero", "about", "products", "faq", "contact"];
+
+/**
+ * Maps a human label ("About Us", "Shop Now", "#contact") to a section id, so links
+ * authored in the ikas panel land on the right section without carrying an index.
+ */
+export function matchSectionId(label: string): SectionId | null {
+  const text = label.toLowerCase();
+  if (/home|anasayfa|ana sayfa|hero/.test(text)) return "hero";
+  if (/about|hakk|story/.test(text)) return "about";
+  if (/product|shop|store|ürün|urun|catalog/.test(text)) return "products";
+  if (/faq|question|sss|help/.test(text)) return "faq";
+  if (/contact|touch|reach|ileti/.test(text)) return "contact";
+  return null;
+}
+
+/**
+ * Resolves a section id to its live position among the rendered `.horizontal-section`
+ * elements. Returns -1 when the DOM isn't available or the section isn't on the page.
+ */
+export function getSectionIndexById(id: SectionId | string): number {
+  if (typeof document === "undefined") return -1;
+  const sections = Array.from(document.querySelectorAll(".horizontal-section"));
+  return sections.findIndex((el) => el.id === id);
+}
+
 // Context for sharing navigation state
 interface NavigationContextType {
   currentSection: number;
   scrollToSection: (index: number) => void;
+  scrollToId: (id: SectionId | string) => void;
   totalSections: number;
   isInsideProvider: boolean; // Flag to indicate we're inside the provider
 }
@@ -12,6 +44,7 @@ interface NavigationContextType {
 const NavigationContext = createContext<NavigationContextType>({
   currentSection: 0,
   scrollToSection: () => {},
+  scrollToId: () => {},
   totalSections: 5,
   isInsideProvider: false,
 });
@@ -43,15 +76,21 @@ export const useNavigation = () => {
   }
 
   // Fallback: use global state
+  const scrollToSection = (index: number) => {
+    if (globalScrollToSection) {
+      globalScrollToSection(index);
+    } else {
+      // Dispatch event as last resort
+      window.dispatchEvent(new CustomEvent(NAVIGATION_EVENT, { detail: { section: index, action: "scrollTo" } }));
+    }
+  };
+
   return {
     currentSection: localSection,
-    scrollToSection: (index: number) => {
-      if (globalScrollToSection) {
-        globalScrollToSection(index);
-      } else {
-        // Dispatch event as last resort
-        window.dispatchEvent(new CustomEvent(NAVIGATION_EVENT, { detail: { section: index, action: "scrollTo" } }));
-      }
+    scrollToSection,
+    scrollToId: (id: SectionId | string) => {
+      const index = getSectionIndexById(id);
+      if (index >= 0) scrollToSection(index);
     },
     totalSections: 5,
     isInsideProvider: false,
@@ -108,6 +147,11 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
     });
   }, [x, totalSections]);
 
+  const scrollToId = useCallback((id: SectionId | string) => {
+    const index = getSectionIndexById(id);
+    if (index >= 0) scrollToSection(index);
+  }, [scrollToSection]);
+
   // Set global reference for fallback navigation
   useEffect(() => {
     globalScrollToSection = scrollToSection;
@@ -127,19 +171,32 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
     return () => window.removeEventListener(NAVIGATION_EVENT as any, handleNavigationRequest);
   }, [scrollToSection]);
 
-  // Listen for navigateToSection event (from header-secondary and other pages)
+  // Listen for navigateToSection event (from header-secondary and other pages).
+  // `id` is preferred; `index` stays supported for older callers.
   useEffect(() => {
     const handleExternalNavigation = (e: CustomEvent) => {
-      if (typeof e.detail?.index === "number") {
+      if (typeof e.detail?.id === "string") {
+        scrollToId(e.detail.id);
+      } else if (typeof e.detail?.index === "number") {
         scrollToSection(e.detail.index);
       }
     };
     window.addEventListener("navigateToSection" as any, handleExternalNavigation);
     return () => window.removeEventListener("navigateToSection" as any, handleExternalNavigation);
-  }, [scrollToSection]);
+  }, [scrollToSection, scrollToId]);
 
   // Check sessionStorage for target section on mount (when navigating from other pages)
   useEffect(() => {
+    const targetSectionId = sessionStorage.getItem('targetSectionId');
+    if (targetSectionId) {
+      // Small delay to ensure the sections are mounted before resolving their order
+      setTimeout(() => {
+        scrollToId(targetSectionId);
+      }, 100);
+      sessionStorage.removeItem('targetSectionId');
+      return;
+    }
+
     const targetSection = sessionStorage.getItem('targetSection');
     if (targetSection) {
       const sectionIndex = parseInt(targetSection, 10);
@@ -152,7 +209,7 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
       // Clear after use
       sessionStorage.removeItem('targetSection');
     }
-  }, [scrollToSection, totalSections]);
+  }, [scrollToSection, scrollToId, totalSections]);
 
   // Enhanced cross-platform touch gesture navigation
   useEffect(() => {
@@ -299,7 +356,7 @@ export function NavigationProvider({ children }: NavigationProviderProps) {
   }, [currentSection, scrollToSection]);
 
   return (
-    <NavigationContext.Provider value={{ currentSection, scrollToSection, totalSections, isInsideProvider: true }}>
+    <NavigationContext.Provider value={{ currentSection, scrollToSection, scrollToId, totalSections, isInsideProvider: true }}>
       <main className="horizontal-main">
         {/* Horizontal Scroll Container */}
         <motion.div

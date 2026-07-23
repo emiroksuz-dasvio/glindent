@@ -125,27 +125,16 @@ class MyDocument extends Document {
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
           
           {/* Google Fonts - Poppins with font-display: swap for better performance */}
-          {/* Preload critical font weights (400, 600, 700) for faster initial render */}
-          <link 
-            rel="preload"
-            href="https://fonts.gstatic.com/s/poppins/v21/pxiEyp8kv8JHgFVrJJfecg.woff2"
-            as="font"
-            type="font/woff2"
-            crossOrigin="anonymous"
+          {/* Only the weights actually used in the theme (300-800). No italic is
+              used anywhere, and 900 is unused — requesting them would declare
+              12 extra @font-face rules for nothing. */}
+          <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
           />
-          <link 
-            href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700;1,900&display=swap" 
-            rel="stylesheet" 
-          />
-          
-          {/* Inline critical CSS for font-display */}
+
+          {/* Inline critical CSS */}
           <style dangerouslySetInnerHTML={{ __html: `
-            /* Ensure font-display: swap is applied */
-            @font-face {
-              font-family: 'Poppins';
-              font-display: swap;
-            }
-            
             /* Prevent layout shift during font loading */
             body {
               font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;

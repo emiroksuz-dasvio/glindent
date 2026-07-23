@@ -5,7 +5,16 @@ import { useRouter } from "next/router";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useProductsWithFilters, Category } from "src/hooks/use-all-products";
-import { getProductMainImage, getProductGalleryImages } from "src/lib/product-images";
+import { getProductMainImage, getProductGalleryImages, resizeIkasImage } from "src/lib/product-images";
+
+// ============================================
+// IMAGE WIDTHS
+// ============================================
+// IkasImage.src always resolves to the 1080px rendition, which is far larger
+// than these slots render at. Request the size we actually paint instead.
+const GRID_CARD_IMAGE_WIDTH = 540;
+const RELATED_CARD_IMAGE_WIDTH = 360;
+const MODAL_THUMB_IMAGE_WIDTH = 180;
 
 // ============================================
 // TRANSLATION HELPERS
@@ -283,7 +292,7 @@ interface RelatedProductCardProps {
 }
 
 const RelatedProductCard = ({ product, imageUrl, price, onClose, onOpenModal }: RelatedProductCardProps) => {
-  const displayImage = getProductMainImage(imageUrl);
+  const displayImage = getProductMainImage(imageUrl, RELATED_CARD_IMAGE_WIDTH);
   const isLogoFallback = displayImage === '/glindent-logo.png';
   
   return (
@@ -462,6 +471,12 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
     return getProductGalleryImages(ikasImages);
   }, [product, product?.selectedVariant]);
 
+  // Thumbnail strip renders at 64px — no need for the full-size renditions
+  const thumbImages: string[] = useMemo(
+    () => allImages.map(src => resizeIkasImage(src, MODAL_THUMB_IMAGE_WIDTH)),
+    [allImages]
+  );
+
   // Get current image to display
   const currentImage = useMemo(() => {
     return allImages[selectedImageIndex] || '/glindent-logo.png';
@@ -584,7 +599,7 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
                     onClick={() => setSelectedImageIndex(idx)}
                   >
                     <Image
-                      src={allImages[idx]}
+                      src={thumbImages[idx]}
                       alt={`${product.name} ${idx + 1}`}
                       width={64}
                       height={64}
@@ -855,7 +870,7 @@ const ProductDetailModal = observer(({ product, isOpen, onClose, allProducts = [
                 const productImage = (p as any).mainImage?.image?.src;
                 const firstVariantImage = p.variants?.[0]?.mainImage?.image?.src;
                 const ikasImage = variantImage || productImage || firstVariantImage;
-                const pImage = getProductMainImage(ikasImage);
+                const pImage = getProductMainImage(ikasImage, RELATED_CARD_IMAGE_WIDTH);
                 const pPrice = p.selectedVariant?.price?.formattedBuyPrice || 
                   p.selectedVariant?.price?.formattedSellPrice || "";
                 
@@ -901,7 +916,10 @@ const ProductCard = observer(({ product, index, onOpenModal, onShowToast }: Prod
   const variant = product.selectedVariant;
   
   // Get image from IKAS
-  const imageUrl = getProductMainImage(variant?.mainImage?.image?.src || (product as any).mainImage?.image?.src);
+  const imageUrl = getProductMainImage(
+    variant?.mainImage?.image?.src || (product as any).mainImage?.image?.src,
+    GRID_CARD_IMAGE_WIDTH
+  );
 
   // Format price helper with currency symbol
   const formatPrice = (price: any, currencySymbol: string = '£') => {

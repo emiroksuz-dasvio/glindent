@@ -858,7 +858,7 @@ const CartPage: React.FC = () => {
             <img
               src="/logo.png"
               alt="Glindent Logo"
-              style={{ height: "28px", width: "auto" }}
+              style={{ height: "36px", width: "auto" }}
             />
           </a>
         </Link>

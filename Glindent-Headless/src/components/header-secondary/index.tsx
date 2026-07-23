@@ -71,11 +71,11 @@ const XIcon = ({ className = "" }: { className?: string }) => (
 // NAV LINKS - Same sections as main header
 // ========================
 const navLinks = [
-  { label: "Home", hash: "#home", index: 0 },
-  { label: "About Us", hash: "#about", index: 1 },
-  { label: "Products", hash: "#products", index: 2 },
-  { label: "FAQ", hash: "#faq", index: 3 },
-  { label: "Contact", hash: "#contact", index: 4 },
+  { label: "Home", hash: "#home" },
+  { label: "About Us", hash: "#about" },
+  { label: "Products", hash: "#products" },
+  { label: "FAQ", hash: "#faq" },
+  { label: "Contact", hash: "#contact" },
 ];
 
 // ========================
@@ -98,13 +98,22 @@ const HeaderSecondary = observer(() => {
     setIsLoaded(true);
     setMounted(true);
 
+    // Reading pageYOffset forces layout, so coalesce to one read per frame.
+    let frame: number | null = null;
     const handleScroll = () => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      setIsScrolled(scrollTop > 20);
+      if (frame !== null) return;
+      frame = requestAnimationFrame(() => {
+        frame = null;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        setIsScrolled(scrollTop > 20);
+      });
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      if (frame !== null) cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -119,31 +128,23 @@ const HeaderSecondary = observer(() => {
     }
   };
 
-  // Navigate to home page with hash for section
-  // Maps hash to section index for horizontal scroll on homepage
-  const sectionIndexMap: Record<string, number> = {
-    '#home': 0,
-    '#about': 1,
-    '#products': 2,
-    '#faq': 3,
-    '#contact': 4,
-  };
-
+  // Navigate to the homepage section behind a hash.
+  // Sections are addressed by id, never by position: the order lives in the ikas panel.
   const handleNavClick = (hash: string) => {
     setMobileMenuOpen(false);
-    
-    const sectionIndex = sectionIndexMap[hash] ?? 0;
-    
+
+    const rawId = hash.replace('#', '');
+    const sectionId = rawId === 'home' ? 'hero' : rawId;
+
     // If we're already on homepage, try to scroll to section
     if (router.pathname === '/') {
       // Dispatch custom event for horizontal layout to handle
-      window.dispatchEvent(new CustomEvent('navigateToSection', { 
-        detail: { index: sectionIndex } 
+      window.dispatchEvent(new CustomEvent('navigateToSection', {
+        detail: { id: sectionId }
       }));
     } else {
-      // Navigate to homepage with section index stored
-      // Store the target section in sessionStorage so homepage can read it
-      sessionStorage.setItem('targetSection', sectionIndex.toString());
+      // Navigate to homepage with the target section stored for the layout to pick up
+      sessionStorage.setItem('targetSectionId', sectionId);
       router.push('/');
     }
   };
@@ -285,7 +286,7 @@ const HeaderSecondary = observer(() => {
             <img
               src="/logo.png"
               alt="Glindent Logo"
-              style={{ height: "28px", width: "auto" }}
+              style={{ height: "36px", width: "auto" }}
             />
           </a>
         </Link>
@@ -497,7 +498,7 @@ const HeaderSecondary = observer(() => {
                   <img
                     src="/logo.png"
                     alt="Glindent Logo"
-                    style={{ height: "28px", width: "auto" }}
+                    style={{ height: "34px", width: "auto" }}
                   />
                 </div>
 

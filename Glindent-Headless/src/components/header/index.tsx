@@ -5,7 +5,13 @@ import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigation } from "../horizontal-layout";
+import {
+  useNavigation,
+  getSectionIndexById,
+  matchSectionId,
+  SECTION_IDS,
+  SectionId,
+} from "../horizontal-layout";
 import { useRouter } from "next/router";
 import { getProductMainImage } from "src/lib/product-images";
 
@@ -758,7 +764,7 @@ const Header: React.FC<HeaderProps> = observer((props) => {
   const isLoggedIn = !!customer;
   
   // Use navigation context for horizontal slider
-  const { currentSection, scrollToSection: navigateToSection } = useNavigation();
+  const { currentSection, scrollToId } = useNavigation();
 
   // Logout handler
   const handleLogout = async () => {
@@ -777,38 +783,79 @@ const Header: React.FC<HeaderProps> = observer((props) => {
     setIsLoaded(true);
     setMounted(true);
 
-    // Scroll event listener for mobile background
+    // Scroll event listener for mobile background.
+    // Reading pageYOffset forces layout, so coalesce to one read per frame.
+    let frame: number | null = null;
     const handleScroll = () => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      setIsScrolled(scrollTop > 20);
+      if (frame !== null) return;
+      frame = requestAnimationFrame(() => {
+        frame = null;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        setIsScrolled(scrollTop > 20);
+      });
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      if (frame !== null) cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
-  // Default navigation links (fallback if not provided from IKAS)
-  // Order based on ikas component rendering: Hero(0), About(1), Products(2), FAQ(3), Contact(4)
-  const defaultNavLinks = [
-    { label: "Home", index: 0 },
-    { label: "About Us", index: 1 },
-    { label: "Products", index: 2 },
-    { label: "FAQ", index: 3 },
-    { label: "Contact", index: 4 },
+  // Default navigation links (fallback if not provided from IKAS).
+  // Bound to section ids, not positions: the section order comes from the ikas panel
+  // and is resolved from the DOM at click time.
+  const defaultNavLinks: { label: string; sectionId: SectionId }[] = [
+    { label: "Home", sectionId: "hero" },
+    { label: "About Us", sectionId: "about" },
+    { label: "Products", sectionId: "products" },
+    { label: "FAQ", sectionId: "faq" },
+    { label: "Contact", sectionId: "contact" },
   ];
 
-  // Use IKAS navigation links if provided, otherwise use defaults
+  // Use IKAS navigation links if provided, otherwise use defaults.
+  // Panel links carry no section id, so derive one from the label and fall back to
+  // the matching default slot when the label is unrecognised.
   const navLinks = navigationLinks && navigationLinks.length > 0
-    ? navigationLinks.map((link, index) => ({
-        label: link.label || `Link ${index + 1}`,
-        href: link.href || "#",
-        index,
-      }))
+    ? navigationLinks.map((link, index) => {
+        const label = link.label || `Link ${index + 1}`;
+        return {
+          label,
+          sectionId: matchSectionId(label) || defaultNavLinks[index]?.sectionId || "hero",
+        };
+      })
     : defaultNavLinks;
 
-  const handleNavClick = (index: number) => {
-    navigateToSection(index);
+  // Resolve each section's live position so the active-link underline stays correct
+  // regardless of the panel's component order.
+  const [sectionIndices, setSectionIndices] = useState<Record<string, number>>({});
+  useEffect(() => {
+    if (router.pathname !== "/") return;
+    const resolve = () => {
+      const next: Record<string, number> = {};
+      SECTION_IDS.forEach((id) => {
+        next[id] = getSectionIndexById(id);
+      });
+      setSectionIndices(next);
+    };
+    resolve();
+    // Sections mount asynchronously through ikas, so re-resolve once they settle
+    const timers = [setTimeout(resolve, 500), setTimeout(resolve, 1500)];
+    return () => timers.forEach(clearTimeout);
+    // Re-resolving on navigation keeps the underline right if the panel order changes
+  }, [router.pathname, currentSection]);
+
+  const handleNavClick = (sectionId: SectionId | string) => {
     setMobileMenuOpen(false);
+
+    if (router.pathname !== "/") {
+      // Sections only exist on the homepage — hand the target over and route there
+      sessionStorage.setItem("targetSectionId", sectionId);
+      router.push("/");
+      return;
+    }
+
+    scrollToId(sectionId);
   };
 
   const headerContent = (
@@ -1011,7 +1058,7 @@ const Header: React.FC<HeaderProps> = observer((props) => {
       >
         {/* Logo */}
         <button
-          onClick={() => handleNavClick(0)}
+          onClick={() => handleNavClick("hero")}
           style={{
             display: "flex",
             alignItems: "center",
@@ -1023,12 +1070,13 @@ const Header: React.FC<HeaderProps> = observer((props) => {
             transition: "transform 0.2s ease",
           }}
         >
+          {/* Logo box keeps logo.png's 3.22:1 aspect so `contain` doesn't reserve dead width */}
           {logo?.src ? (
             <Image
               src={logo.src}
               alt="Glindent Logo"
-              width={140}
-              height={36}
+              width={142}
+              height={44}
               objectFit="contain"
               unoptimized
             />
@@ -1036,8 +1084,8 @@ const Header: React.FC<HeaderProps> = observer((props) => {
             <Image
               src="/logo.png"
               alt="Glindent Logo"
-              width={140}
-              height={36}
+              width={142}
+              height={44}
               objectFit="contain"
               unoptimized
             />
@@ -1053,12 +1101,12 @@ const Header: React.FC<HeaderProps> = observer((props) => {
           }}
           className="desktop-nav"
         >
-          {navLinks.map((link, index) => {
-            const isActive = currentSection === index;
+          {navLinks.map((link) => {
+            const isActive = currentSection === sectionIndices[link.sectionId];
             return (
               <button
                 key={link.label}
-                onClick={() => handleNavClick(index)}
+                onClick={() => handleNavClick(link.sectionId)}
                 className="nav-link-btn"
                 style={{
                   color: isActive ? "white" : "rgba(255, 255, 255, 0.8)",
@@ -1265,20 +1313,22 @@ const Header: React.FC<HeaderProps> = observer((props) => {
                   <img
                     src="/logo.png"
                     alt="Glindent Logo"
-                    style={{ height: "28px", width: "auto" }}
+                    style={{ height: "34px", width: "auto" }}
                   />
                 </div>
 
                 {/* Navigation Links */}
                 <nav style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  {navLinks.map((link, index) => (
+                  {navLinks.map((link, index) => {
+                    const isActive = currentSection === sectionIndices[link.sectionId];
+                    return (
                     <button
                       key={link.label}
-                      onClick={() => handleNavClick(index)}
-                      className={`mobile-nav-link ${currentSection === index ? "active" : ""}`}
+                      onClick={() => handleNavClick(link.sectionId)}
+                      className={`mobile-nav-link ${isActive ? "active" : ""}`}
                     >
                       {/* Active indicator */}
-                      {currentSection === index && (
+                      {isActive && (
                         <div
                           style={{
                             position: "absolute",
@@ -1297,7 +1347,7 @@ const Header: React.FC<HeaderProps> = observer((props) => {
                           style={{
                             fontSize: "0.75rem",
                             fontFamily: "monospace",
-                            color: currentSection === index ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.4)",
+                            color: isActive ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.4)",
                           }}
                         >
                           0{index + 1}
@@ -1305,7 +1355,8 @@ const Header: React.FC<HeaderProps> = observer((props) => {
                         {link.label}
                       </span>
                     </button>
-                  ))}
+                    );
+                  })}
                 </nav>
 
                 {/* Divider */}
@@ -1331,13 +1382,16 @@ const Header: React.FC<HeaderProps> = observer((props) => {
                   }}
                 >
                   <div style={{ display: "flex", gap: "0.5rem" }}>
-                    {[0, 1, 2, 3, 4].map((idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleNavClick(idx)}
-                        className={`section-indicator ${currentSection === idx ? "active" : ""}`}
-                      />
-                    ))}
+                    {/* Dots follow the live section order, not the declaration order */}
+                    {[...SECTION_IDS]
+                      .sort((a, b) => (sectionIndices[a] ?? 99) - (sectionIndices[b] ?? 99))
+                      .map((id) => (
+                        <button
+                          key={id}
+                          onClick={() => handleNavClick(id)}
+                          className={`section-indicator ${currentSection === sectionIndices[id] ? "active" : ""}`}
+                        />
+                      ))}
                   </div>
                   <span
                     style={{

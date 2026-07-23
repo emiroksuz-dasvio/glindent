@@ -57,8 +57,9 @@ const AboutSection: React.FC<AboutSectionProps> = (props) => {
     stat3Number = defaultStats[2].number,
     stat3Label = defaultStats[2].label,
     stat3Sublabel = defaultStats[2].sublabel,
-    primaryButtonText = "Explore Products",
-    secondaryButtonText = "Get in Touch",
+    // Defaults match the copy that was previously hardcoded in the buttons
+    primaryButtonText = "Shop Products",
+    secondaryButtonText = "Contact Us",
   } = props;
 
   // Build stats from props
@@ -78,7 +79,7 @@ const AboutSection: React.FC<AboutSectionProps> = (props) => {
   const isInView = useInView(sectionRef, { once: true, margin: "-30%" });
   
   // Use navigation context for horizontal slider
-  const { scrollToSection } = useNavigation();
+  const { scrollToId } = useNavigation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -90,7 +91,7 @@ const AboutSection: React.FC<AboutSectionProps> = (props) => {
 
     const scrollElement = scrollRef.current;
     if (scrollElement) {
-      scrollElement.addEventListener("scroll", handleScroll);
+      scrollElement.addEventListener("scroll", handleScroll, { passive: true });
       handleScroll();
     }
 
@@ -442,11 +443,11 @@ const AboutSection: React.FC<AboutSectionProps> = (props) => {
             gap: "0.75rem",
           }}
         >
-          <button onClick={() => scrollToSection(4)} className="about-btn about-btn-primary">
-            Shop Products
+          <button onClick={() => scrollToId("products")} className="about-btn about-btn-primary">
+            {primaryButtonText}
           </button>
-          <button onClick={() => scrollToSection(2)} className="about-btn about-btn-secondary">
-            Contact Us
+          <button onClick={() => scrollToId("contact")} className="about-btn about-btn-secondary">
+            {secondaryButtonText}
           </button>
         </motion.div>
       </div>

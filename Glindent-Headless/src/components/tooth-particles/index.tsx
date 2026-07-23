@@ -36,23 +36,25 @@ export function ToothParticles() {
       opacity: Math.random() * 0.08 + 0.04
     }))
 
-    // Create particle elements
-    particlesRef.current.forEach((particle, index) => {
+    // Create particle elements. Position lives entirely in `transform` so the
+    // animation loop never touches layout-triggering properties (left/top).
+    const elements: HTMLElement[] = particlesRef.current.map((particle) => {
       const img = document.createElement("img")
       img.src = "/tooth-icon.png"
+      img.alt = ""
       img.style.position = "absolute"
+      img.style.left = "0"
+      img.style.top = "0"
       img.style.width = `${particle.size}px`
       img.style.height = `${particle.size}px`
       img.style.opacity = String(particle.opacity)
       img.style.pointerEvents = "none"
-      img.style.left = `${particle.x}px`
-      img.style.top = `${particle.y}px`
-      img.style.transform = `translate(-50%, -50%) rotate(${particle.rotation}deg)`
-      img.dataset.index = String(index)
+      img.style.transform = `translate3d(${particle.x}px, ${particle.y}px, 0) translate(-50%, -50%) rotate(${particle.rotation}deg)`
       container.appendChild(img)
+      return img
     })
 
-    // Animation loop
+    // Animation loop — elements are held by reference, no per-frame DOM queries
     const animate = () => {
       particlesRef.current.forEach((particle, index) => {
         // Update position
@@ -66,19 +68,34 @@ export function ToothParticles() {
         if (particle.y < -100) particle.y = window.innerHeight + 100
         if (particle.y > window.innerHeight + 100) particle.y = -100
 
-        // Update DOM element
-        const img = container.querySelector(`[data-index="${index}"]`) as HTMLElement
+        // Update DOM element (compositor-only property)
+        const img = elements[index]
         if (img) {
-          img.style.left = `${particle.x}px`
-          img.style.top = `${particle.y}px`
-          img.style.transform = `translate(-50%, -50%) rotate(${particle.rotation}deg)`
+          img.style.transform = `translate3d(${particle.x}px, ${particle.y}px, 0) translate(-50%, -50%) rotate(${particle.rotation}deg)`
         }
       })
 
       animationRef.current = requestAnimationFrame(animate)
     }
 
-    animate()
+    const start = () => {
+      if (animationRef.current === undefined) animate()
+    }
+
+    const stop = () => {
+      if (animationRef.current !== undefined) {
+        cancelAnimationFrame(animationRef.current)
+        animationRef.current = undefined
+      }
+    }
+
+    // Don't burn CPU while the tab is in the background
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') stop()
+      else start()
+    }
+
+    if (document.visibilityState !== 'hidden') start()
 
     // Handle window resize
     const handleResize = () => {
@@ -88,13 +105,13 @@ export function ToothParticles() {
       })
     }
 
-    window.addEventListener('resize', handleResize)
+    window.addEventListener('resize', handleResize, { passive: true })
+    document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-      }
+      stop()
       window.removeEventListener('resize', handleResize)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
       // Cleanup particle elements
       container.innerHTML = ''
     }
@@ -104,6 +121,7 @@ export function ToothParticles() {
     <>
       <div
         ref={containerRef}
+        className="tooth-particles-container"
         style={{
           position: 'fixed',
           inset: 0,
@@ -114,7 +132,7 @@ export function ToothParticles() {
       />
       <style jsx global>{`
         .tooth-particles-container img {
-          will-change: transform, left, top;
+          will-change: transform;
           backface-visibility: hidden;
         }
       `}</style>

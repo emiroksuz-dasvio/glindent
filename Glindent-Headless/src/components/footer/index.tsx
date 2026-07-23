@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite"
 import { IkasImage } from "@ikas/storefront"
 import { motion, useInView } from "framer-motion"
 import { useRef } from "react"
-import { useNavigation } from "../horizontal-layout"
+import { useNavigation, SectionId } from "../horizontal-layout"
 
 // ========================
 // IKAS PROPS INTERFACE
@@ -118,15 +118,15 @@ const Footer: React.FC<FooterProps> = (props) => {
 
   const footerRef = useRef<HTMLElement>(null)
   const isInView = useInView(footerRef, { once: true, margin: "-50px" })
-  const { scrollToSection } = useNavigation()
+  const { scrollToId } = useNavigation()
 
-  // Order based on ikas component rendering: Hero(0), About(1), Contact(2), FAQ(3), Products(4)
-  const navLinks = [
-    { label: "Home", index: 0 },
-    { label: "About", index: 1 },
-    { label: "Products", index: 4 },
-    { label: "FAQ", index: 3 },
-    { label: "Contact", index: 2 },
+  // Bound to section ids; the live order is resolved from the DOM on click
+  const navLinks: { label: string; sectionId: SectionId }[] = [
+    { label: "Home", sectionId: "hero" },
+    { label: "About", sectionId: "about" },
+    { label: "Products", sectionId: "products" },
+    { label: "FAQ", sectionId: "faq" },
+    { label: "Contact", sectionId: "contact" },
   ];
 
   const socialLinks = [
@@ -167,7 +167,7 @@ const Footer: React.FC<FooterProps> = (props) => {
               {navLinks.map((link, index) => (
                 <motion.button
                   key={link.label}
-                  onClick={() => scrollToSection(link.index)}
+                  onClick={() => scrollToId(link.sectionId)}
                   className="footer-nav-link"
                   initial={{ opacity: 0, y: 10 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -254,6 +254,15 @@ const Footer: React.FC<FooterProps> = (props) => {
         .footer-logo {
           height: 2rem;
           width: auto;
+          margin-bottom: 0.75rem;
+        }
+
+        /* logo.png is 1588x493 and was rendering at its intrinsic size without this */
+        .footer-logo-img {
+          display: block;
+          height: 2.5rem;
+          width: auto;
+          max-width: 100%;
           margin-bottom: 0.75rem;
         }
 

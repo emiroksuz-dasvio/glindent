@@ -8,9 +8,13 @@ export function ScrollIndicator({ sections }: ScrollIndicatorProps) {
   const [activeSection, setActiveSection] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => {
+    // Each pass reads offsetTop/offsetHeight per section, which forces layout.
+    // Coalesce to at most one pass per frame.
+    let frame: number | null = null;
+
+    const measure = () => {
       const scrollPosition = window.scrollY + window.innerHeight / 3;
-      
+
       sections.forEach((section, index) => {
         const element = document.getElementById(section.id);
         if (element) {
@@ -22,10 +26,21 @@ export function ScrollIndicator({ sections }: ScrollIndicatorProps) {
       });
     };
 
-    window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Initial check
-    
-    return () => window.removeEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      if (frame !== null) return;
+      frame = requestAnimationFrame(() => {
+        frame = null;
+        measure();
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    measure(); // Initial check
+
+    return () => {
+      if (frame !== null) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [sections]);
 
   const scrollToSection = (id: string) => {

@@ -28,38 +28,7 @@ export function useProductsWithFilters(productList?: IkasProductList) {
   // Extract categories from products with proper hierarchy
   const categories = useMemo(() => {
     const categoryMap = new Map<string, Category>();
-    
-    // First, log what products we have
-    console.log('=== Products Check ===');
-    console.log('Total products:', allProducts.length);
-    if (allProducts.length > 0) {
-      console.log('First product sample:', {
-        name: allProducts[0].name,
-        categoriesLength: (allProducts[0].categories || []).length,
-        categories: allProducts[0].categories?.slice(0, 3),
-        firstCategoryDetail: allProducts[0].categories?.[0]
-      });
-      // Log all product categories to understand structure
-      console.log('All product categories:', allProducts.map(p => ({
-        productName: p.name,
-        categoryIds: (p.categories || []).map((c: any) => c.id),
-        categoryNames: (p.categories || []).map((c: any) => c.name),
-        categoryParentIds: (p.categories || []).map((c: any) => c.parentId)
-      })));
-    }
-    
-    // Log all categories with their parentId mapping
-    console.log('=== Category Mapping ===');
-    allProducts.forEach((p, idx) => {
-      const cats = p.categories || [];
-      if (cats.length > 0) {
-        console.log(`Product ${idx}: ${p.name}`);
-        cats.forEach(c => {
-          console.log(`  -> Category: ${c.name} (id: ${c.id}, parentId: ${c.parentId})`);
-        });
-      }
-    });
-    
+
     allProducts.forEach(product => {
       const cats = product.categories || [];
       cats.forEach((cat: any) => {
@@ -92,24 +61,12 @@ export function useProductsWithFilters(productList?: IkasProductList) {
     });
 
     const allCats = Array.from(categoryMap.values());
-    
-    // Debug: Log categories
-    console.log('=== Categories Debug ===');
-    console.log('Total unique categories found:', allCats.length);
-    if (allCats.length === 0) {
-      console.warn('⚠️ NO CATEGORIES FOUND! This might be an issue with the data structure.');
-    }
-    console.log('All categories:', allCats.map(c => ({ id: c.id, name: c.name, parentId: c.parentId })));
-    console.log('Main categories (no parentId):', allCats.filter(c => !c.parentId).map(c => c.name));
-    console.log('🔍 ALL MAIN CATEGORY NAMES:', allCats.filter(c => !c.parentId).map(c => c.name).join(', '));
-    
+
     // If no categories found, create fallback categories based on brand/product name patterns
     let mainCats = allCats.filter(c => !c.parentId);
     let finalAllCats = allCats;
-    
+
     if (allCats.length === 0 && allProducts.length > 0) {
-      console.warn('⚠️ NO CATEGORIES FROM IKAS! Creating fallback categories from product analysis...');
-      
       // Analyze products to create intelligent fallback categories
       const labProducts = allProducts.filter(p => {
         const name = (p.name || '').toLowerCase();
@@ -168,7 +125,6 @@ export function useProductsWithFilters(productList?: IkasProductList) {
       }
       
       finalAllCats = Array.from(categoryMap.values());
-      console.log('Fallback categories created:', mainCats.map(c => c.name));
     } else {
       // Normal case - build tree from existing categories
       // Build tree - main categories have no parent (parentId is null/undefined)
@@ -190,11 +146,6 @@ export function useProductsWithFilters(productList?: IkasProductList) {
       main.subcategories = buildSubcategories(main.id);
     });
 
-    console.log('Main categories with subs:', mainCats.map(c => ({
-      name: c.name,
-      subcategories: c.subcategories?.map(s => s.name) || []
-    })));
-
     // Choose the top 3 root-level categories dynamically based on product count
     const getCountForCategory = (cat: Category) => {
       // Count products that belong to this category or any of its descendants
@@ -212,32 +163,12 @@ export function useProductsWithFilters(productList?: IkasProductList) {
     const mainCatsWithCounts = mainCats.map(mc => ({ cat: mc, count: getCountForCategory(mc) }));
     mainCatsWithCounts.sort((a, b) => b.count - a.count);
 
-    console.log('=== Main categories with counts ===');
-    mainCatsWithCounts.forEach(mc => {
-      console.log(`${mc.cat.name}: ${mc.count} products`);
-    });
-
     // Don't try to match by name - just pick the top 3 by product count
     const selected = mainCatsWithCounts.slice(0, 3).map(mc => mc.cat);
-
-    // Log the final selected categories
-    console.log('=== Final Selected Categories ===');
-    console.log('Selected for sidebar:', selected.slice(0, 3).map(c => ({ id: c.id, name: c.name, parentId: c.parentId })));
-    
-    // If no categories found, log warning and prepare fallback
-    if (finalAllCats.length === 0) {
-      console.warn('⚠️ FALLBACK: No categories detected. Categories might not be loaded from iKAS.');
-      console.warn('Please check:');
-      console.warn('1. Are products loading?', allProducts.length > 0);
-      console.warn('2. Do products have a categories array?');
-      console.warn('3. Do categories have id, name, and parentId fields?');
-    }
 
     // Determine which categories to show in sidebar
     // Always use the "selected" categories (which are now the preferred names: Labside, Chairside, Medical Devices)
     const categoriesToShow = selected.length > 0 ? selected.slice(0, 3) : mainCats.slice(0, 3);
-
-    console.log('Final categories to show:', categoriesToShow.map(c => c.name));
 
     // Return selected top categories (max 3)
     return { all: finalAllCats, main: categoriesToShow };
@@ -333,10 +264,9 @@ export function useProductsWithFilters(productList?: IkasProductList) {
         }
         return false;
       }).length;
-      console.log(`getCategoryProductCount(${categoryId}): fallback count = ${count}`);
       return count;
     }
-    
+
     // Check if this is a fallback category (old style)
     if (categoryId.startsWith('fallback-')) {
       const name = (categoryId || '').toLowerCase();
@@ -366,9 +296,7 @@ export function useProductsWithFilters(productList?: IkasProductList) {
       const cats = (product as any).categories || [];
       return cats.some((cat: any) => cat.id === categoryId);
     }).length;
-    
-    console.log(`getCategoryProductCount(${categoryId}): directCount=${directCount}`);
-    
+
     if (!includeSubcategories) return directCount;
     
     // Also count products in subcategories - use mainCategories from useMemo above
@@ -436,9 +364,7 @@ export function useProductsWithFilters(productList?: IkasProductList) {
 
   // Check if a category or any of its subcategories have products
   const categoryHasProducts = useCallback((category: Category): boolean => {
-    const count = getCategoryProductCount(category.id, true);
-    console.log(`categoryHasProducts(${category.name}): ${count}`);
-    return count > 0;
+    return getCategoryProductCount(category.id, true) > 0;
   }, [getCategoryProductCount]);
 
   // Don't need filteredMainCategories - just return categories.main directly

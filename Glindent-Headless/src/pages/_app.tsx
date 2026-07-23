@@ -2,6 +2,7 @@ import * as React from "react";
 import { AppProps } from "next/app";
 import { IkasStorefrontConfig } from "@ikas/storefront-config";
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "framer-motion";
 
 import Config from "config.json";
@@ -9,8 +10,14 @@ import { NavigationProvider } from "src/components/horizontal-layout";
 import MainLayout from "src/layouts/MainLayout";
 import DefaultLayout from "src/layouts/DefaultLayout";
 import { ToothParticles } from "src/components/tooth-particles";
-import { WelcomeModal } from "src/components/welcome-modal";
 import { useFirstVisit } from "src/hooks/use-first-visit";
+
+// Only ever renders for a first-time visitor on the homepage, and returns null
+// until mounted anyway — keep it out of the main bundle and off the server.
+const WelcomeModal = dynamic(
+  () => import("src/components/welcome-modal").then(m => m.WelcomeModal),
+  { ssr: false }
+);
 
 // Import global styles
 import "src/styles/global.css";
@@ -73,7 +80,7 @@ const IkasThemeApp: React.FC<AppProps> = (props) => {
   return (
     <>
       {/* Welcome Modal - Show only on first visit and homepage */}
-      {hasChecked && (
+      {hasChecked && isFirstVisit && isHomePage && (
         <WelcomeModal
           videoUrl="/videos/welcome.mp4"
           videoMp4Url="/videos/welcome.mp4"
@@ -83,7 +90,7 @@ const IkasThemeApp: React.FC<AppProps> = (props) => {
           subtitle="Discover premium dental supplies"
           enableAutoplay={true}
           showOnlyFirstVisit={true}
-          isOpen={isFirstVisit && isHomePage}
+          isOpen={true}
           onClose={() => {}}
         />
       )}
